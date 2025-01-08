@@ -1,0 +1,94 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudMainContent>
+        @Body
+        <MudAppBar Color="Color.Transparent" Bottom="true" Elevation="1" Fixed="true">
+            <MudSpacer />
+            <MudButton Variant="Variant.Text" OnClick="ToggleMode">
+                <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
+                <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
+                <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
+            </MudButton>
+
+            @if (_isLoggedIn)
+            {
+                <MudText Typo="Typo.body1" Align="Align.Center">Usuário logado:</MudText>
+                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
+                    Deslogar
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Outlined" OnClick="@(() => Navigation.NavigateTo("/"))" Color="Color.Error">
+                    Login
+                </MudButton>
+            }
+        </MudAppBar>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private MudTheme _theme = new();
+    private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider;
+
+    private bool _isLoggedIn;
+
+    [Inject] private AuthService AuthService { get; set; }
+    [Inject] private NavigationManager Navigation { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _mudThemeProvider != null)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            await CheckAuthenticationStatus();
+            StateHasChanged();
+            AuthService.OnAuthenticationStateChanged += HandleAuthenticationStateChanged;
+        }
+    }   
+
+    private async Task CheckAuthenticationStatus()
+    {
+        var token = await AuthService.GetTokenAsync();
+        _isLoggedIn = !string.IsNullOrWhiteSpace(token);
+    }
+
+    private void HandleAuthenticationStateChanged()
+    {
+        InvokeAsync(async () =>
+        {
+            await CheckAuthenticationStatus();
+            StateHasChanged(); // Atualiza a interface ao detectar mudanças
+        });
+    }
+
+    private async Task Logout()
+    {
+        if (_isLoggedIn)
+        {
+            // Logout
+            await AuthService.LogoutAsync();
+            _isLoggedIn = false;
+
+            // Redireciona para a tela de login
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    public void Dispose()
+    {
+        // Remove a inscrição do evento ao descartar o componente
+        AuthService.OnAuthenticationStateChanged -= HandleAuthenticationStateChanged;
+    }
+
+    private void ToggleMode()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+}

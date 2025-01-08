@@ -1,0 +1,79 @@
+﻿@page "/register"
+@inject NavigationManager Navigation
+@inject AuthService AuthService
+@inject ISnackbar Snackbar
+
+<MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
+    <MudCardContent>
+        <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Registro</MudText>
+        <MudForm Model="@loginResponseDto" @ref="registerForm" Validated="HandleValidation">
+            <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponseDto.Name" Required="true"
+                          RequiredError="Nome é obrigatório." />
+            <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponseDto.Login" Required="true"
+                          RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" />
+            <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponseDto.Password" Required="true"
+                          RequiredError="Senha é obrigatória." Type="password" />
+            <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponseDto.ConfirmedPassword" Required="true"
+                          RequiredError="Confirmação de senha é obrigatória." Type="password" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleRegister">
+                Registrar
+            </MudButton>
+        </MudForm>
+    </MudCardContent>
+    <MudCardActions>
+        <MudText Typo="Typo.caption" Align="Align.Center">
+            Já possui uma conta?
+            <MudLink OnClick="IrParaLogin">Login</MudLink>
+        </MudText>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    private MudForm registerForm;
+    private LoginResponseDto loginResponseDto = new();
+
+    private async Task HandleRegister()
+    {
+        await registerForm.Validate(); // Valida o formulário
+        if (registerForm.IsValid)
+        {
+            if (loginResponseDto.Password != loginResponseDto.ConfirmedPassword)
+            {
+                Snackbar.Add("As senhas não coincidem.", Severity.Error); // Exibe o erro
+                return;
+            }
+
+            try
+            {
+                var responseMessage = await AuthService.RegisterAsync(loginResponseDto);
+                if (responseMessage == "Registrado com sucesso")
+                {
+                    Snackbar.Add("Usuário cadastrado com sucesso!", Severity.Success); // Exibe sucesso
+                    Navigation.NavigateTo("/");
+                }
+                else
+                {
+                    Snackbar.Add($"{responseMessage}", Severity.Error); // Exibe erro
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Erro durante o registro: {ex.Message}", Severity.Error); // Exibe erro crítico
+            }
+        }
+        else
+        {
+            Snackbar.Add("Preencha todos os campos obrigatórios corretamente.", Severity.Warning); // Exibe aviso de validação
+        }
+    }
+
+    private void HandleValidation()
+    {
+        StateHasChanged();
+    }
+
+    private void IrParaLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
