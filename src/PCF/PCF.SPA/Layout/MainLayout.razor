@@ -6,8 +6,17 @@
 <MudSnackbarProvider />
 <MudLayout>
     <MudMainContent>
+        <MudAppBar>
+            <MudSpacer />
+            @if (_isLoggedIn)
+            {                
+                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
+                    Deslogar
+                </MudButton>
+            }            
+        </MudAppBar>
         @Body
-        <MudAppBar Color="Color.Transparent" Bottom="true" Elevation="1" Fixed="true">
+        <MudAppBar Bottom="true" Elevation="1" Fixed="true">
             <MudSpacer />
             <MudButton Variant="Variant.Text" OnClick="ToggleMode">
                 <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
@@ -15,19 +24,7 @@
                 <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
             </MudButton>
 
-            @if (_isLoggedIn)
-            {
-                <MudText Typo="Typo.body1" Align="Align.Center">Usuário logado:</MudText>
-                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
-                    Deslogar
-                </MudButton>
-            }
-            else
-            {
-                <MudButton Variant="Variant.Outlined" OnClick="@(() => Navigation.NavigateTo("/"))" Color="Color.Error">
-                    Login
-                </MudButton>
-            }
+            
         </MudAppBar>
     </MudMainContent>
 </MudLayout>

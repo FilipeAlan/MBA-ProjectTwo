@@ -17,7 +17,6 @@
                 _httpClient = httpClient;
                 _localStorage = localStorage;
             }
-
             public async Task<bool> LoginAsync(LoginResponseDto loginResponseDto)
             {
                 try
@@ -45,7 +44,6 @@
                     return false;
                 }
             }
-
             public async Task LogoutAsync()
             {
                 try
@@ -62,12 +60,10 @@
                     throw; // Re-lança a exceção para ser tratada em um nível superior, se necessário
                 }
             }
-
             public async Task<string> GetTokenAsync()
             {
                 return await _localStorage.GetItemAsync<string>("authToken");
             }
-
             public async Task<string> RegisterAsync(LoginResponseDto loginResponseDto)
             {
                 try
@@ -89,7 +85,6 @@
                     return "Erro ao registrar usuário. Tente novamente mais tarde.";
                 }
             }
-
             // Método para notificar a mudança de estado de autenticação
             private void NotifyAuthenticationStateChanged()
             {
