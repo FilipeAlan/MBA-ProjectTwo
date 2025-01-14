@@ -1,10 +1,9 @@
-﻿namespace PCF.Data.Entities
+﻿namespace PCF.Data.Entities.Base
 {
-    public class Entity
+    public abstract class Entity
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime? ModifiedAt { get; set; } = DateTime.UtcNow;
-
     }
 }

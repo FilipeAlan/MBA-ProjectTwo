@@ -1,11 +1,16 @@
-﻿namespace PCF.Data.Entities
+﻿using PCF.Data.Entities.Base;
+
+namespace PCF.Data.Entities
 {
-    public class Categoria:Entity
+    public class Categoria : Entity
     {
-        public string Nome { get; set; }
-        public string Descricao { get; set; }
+        public required string Nome { get; set; }
+        public required string Descricao { get; set; }
         public bool Padrao { get; set; }
-        public Usuario Usuario { get; set; }
-        public IEnumerable<Orcamento> Orcamento { get; set; }
+        public Usuario? Usuario { get; set; }
+
+        public IEnumerable<Orcamento> Orcamentos { get; set; } = [];
+
+        public IEnumerable<Transacao> Transacoes { get; set; } = [];
     }
 }
