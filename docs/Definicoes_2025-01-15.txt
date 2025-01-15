@@ -1,0 +1,15 @@
+Tarefas: 
+Mapeamento EF
+Correcao ID Identify de GUID para INT
+Criacao do User no evento de registro
+Criacao das controllers
+Criacao dos services (para os casos de uso e validacao)
+Criacao dos casos de uso no Blazor
+
+
+Casos de uso:
+- Gerenciamento de usuarios (registro, login, logout, jwt, etc) - FILIPE
+- Definição de orçamentos - EDUARDO/PAULO
+- Categorias - JONATAS
+- Transacoes - LEANDRO/JOSELENO
+- Relatorios - TODOS

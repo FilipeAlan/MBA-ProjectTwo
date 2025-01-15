@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PCF.Data.Context;
-using PCF.Data.Interface;
-using PCF.Data.Repository;
+using PCF.Core.Context;
+using PCF.Core.Interface;
+using PCF.Core.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Default",
+    "Projects": [
+      {
+        "Path": "PCF.API\\PCF.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PCF.SPA\\PCF.SPA.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
