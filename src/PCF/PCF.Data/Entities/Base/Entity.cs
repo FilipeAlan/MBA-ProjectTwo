@@ -1,4 +1,4 @@
-﻿namespace PCF.Data.Entities
+﻿namespace PCF.Data.Entities.Base
 {
     public abstract class Entity
     {

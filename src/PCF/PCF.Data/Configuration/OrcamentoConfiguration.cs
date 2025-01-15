@@ -9,7 +9,7 @@ namespace PCF.Data.Configuration
         public void Configure(EntityTypeBuilder<Orcamento> builder)
         {
             builder.HasKey(k => k.Id);
-            builder.Property(p => p.Mes);
+            //builder.Property(p => p.);
             builder.Property(p => p.ValorLimite);
         }
     }
