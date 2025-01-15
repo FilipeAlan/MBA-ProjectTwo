@@ -1,13 +1,15 @@
-﻿using PCF.Data.Entities.Base;
-using PCF.Data.Enumerables;
+﻿using PCF.Core.Entities.Base;
+using PCF.Core.Enumerables;
 
-namespace PCF.Data.Entities
+namespace PCF.Core.Entities
 {
     public class Transacao : Entity
     {
         public decimal Valor { get; set; }
         public string? Descricao { get; set; }
+        public int CategoriaId { get; set; }
         public required Categoria Categoria { get; set; }
+        public int UsuarioId { get; set; }
         public required Usuario Usuario { get; set; }
         public DateTime DataLancamento { get; set; }
         public TipoEnum Tipo { get; set; }

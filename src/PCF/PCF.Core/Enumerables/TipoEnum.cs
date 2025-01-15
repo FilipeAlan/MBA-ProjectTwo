@@ -1,5 +1,5 @@
 ﻿
-namespace PCF.Data.Enumerables
+namespace PCF.Core.Enumerables
 {
     public enum TipoEnum
     {

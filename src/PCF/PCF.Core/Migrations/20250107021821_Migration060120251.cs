@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace PCF.Data.Migrations
+namespace PCF.Core.Migrations
 {
     /// <inheritdoc />
     public partial class Migration060120251 : Migration

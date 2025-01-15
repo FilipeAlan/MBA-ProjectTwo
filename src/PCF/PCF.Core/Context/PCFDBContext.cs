@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace PCF.Data.Context
+namespace PCF.Core.Context
 {
     public class PCFDBContext: IdentityDbContext
     {

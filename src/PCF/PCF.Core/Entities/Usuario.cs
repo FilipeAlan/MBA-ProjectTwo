@@ -1,12 +1,10 @@
-﻿using PCF.Data.Entities.Base;
+﻿using PCF.Core.Entities.Base;
 
-namespace PCF.Data.Entities
+namespace PCF.Core.Entities
 {
     public class Usuario : Entity
     {
         public required string Nome { get; set; }
-
-        public IEnumerable<OrcamentoGeral> OrcamentosGerais { get; set; } = [];
 
         public IEnumerable<Transacao> Transacoes { get; set; } = [];
 

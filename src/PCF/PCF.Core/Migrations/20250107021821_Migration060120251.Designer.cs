@@ -2,17 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PCF.Data.Context;
+using PCF.Core.Context;
 
 #nullable disable
 
-namespace PCF.Data.Migrations
+namespace PCF.Core.Migrations
 {
     [DbContext(typeof(PCFDBContext))]
-    partial class PCFDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250107021821_Migration060120251")]
+    partial class Migration060120251
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");

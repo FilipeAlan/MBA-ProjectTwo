@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PCF.Data.Entities;
+using PCF.Core.Entities;
 
-namespace PCF.Data.Configuration
+namespace PCF.Core.Configuration
 {
     public class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
     {

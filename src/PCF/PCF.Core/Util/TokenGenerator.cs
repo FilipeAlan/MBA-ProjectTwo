@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-namespace PCF.Data.Util
+namespace PCF.Core.Util
 {
     public static class TokenGenerator
     {

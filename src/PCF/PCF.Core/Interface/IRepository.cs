@@ -1,5 +1,5 @@
 ﻿
-namespace PCF.Data.Interface
+namespace PCF.Core.Interface
 {
     public interface IRepository<T> where T:class
     {

@@ -1,6 +1,6 @@
-﻿using PCF.Data.Entities;
+﻿using PCF.Core.Entities;
 
-namespace PCF.Data.Interface
+namespace PCF.Core.Interface
 {
     public interface IOrcamentoRepository:IRepository<Orcamento>
     {

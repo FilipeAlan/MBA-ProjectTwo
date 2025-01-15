@@ -1,10 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PCF.Data.Context;
-using PCF.Data.Interface;
+using PCF.Core.Context;
+using PCF.Core.Interface;
 
-namespace PCF.Data.Repository
+namespace PCF.Core.Repository
 {
     public class UserRepository : Repository<IdentityUser>, IUserRepository
     {
