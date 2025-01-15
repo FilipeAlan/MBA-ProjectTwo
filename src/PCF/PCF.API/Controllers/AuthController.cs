@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PCF.API.Controllers.Base;
 using PCF.API.Dto;
-using PCF.Data.Interface;
-using PCF.Data.Util;
+using PCF.Core.Interface;
+using PCF.Core.Util;
 
 namespace PCF.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    [AllowAnonymous]
+    public class AuthController : ApiControllerBase
     {
         private readonly IUserRepository _userRepository;
 
