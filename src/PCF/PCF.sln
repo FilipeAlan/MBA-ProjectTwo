@@ -3,13 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35507.96
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scr", "scr", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF.API", "PCF.API\PCF.API.csproj", "{92174AA9-F8AD-4E19-B1F8-7F740C753ADE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF.SPA", "PCF.SPA\PCF.SPA.csproj", "{8A1B9125-B4B0-401F-A32B-8B8A5E582756}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF.Data", "PCF.Data\PCF.Data.csproj", "{06026C85-08A4-4134-87CE-CFDE91778CC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF.Core", "PCF.Core\PCF.Core.csproj", "{06026C85-08A4-4134-87CE-CFDE91778CC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{168CC540-D084-4D47-89DA-105120F983F3}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\README.md = ..\..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,11 +35,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{92174AA9-F8AD-4E19-B1F8-7F740C753ADE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{8A1B9125-B4B0-401F-A32B-8B8A5E582756} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{06026C85-08A4-4134-87CE-CFDE91778CC8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37A9FB24-B1FC-4BFD-AC2F-A9DC8D156032}
