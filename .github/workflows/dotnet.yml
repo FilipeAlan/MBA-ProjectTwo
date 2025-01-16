@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore .\src\PCF\PCF.sln
+      run: dotnet restore src/PCF/PCF.sln
     - name: Build
-      run: dotnet build .\src\PCF\PCF.sln --no-restore
+      run: dotnet build src/PCF/PCF.sln --no-restore
     #- name: Test
     #  run: dotnet test --no-build --verbosity normal --environment=Development
