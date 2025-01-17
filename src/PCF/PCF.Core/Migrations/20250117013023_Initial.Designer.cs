@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PCF.Core.Context;
 
@@ -10,9 +11,11 @@ using PCF.Core.Context;
 namespace PCF.Core.Migrations
 {
     [DbContext(typeof(PCFDBContext))]
-    partial class PCFDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250117013023_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

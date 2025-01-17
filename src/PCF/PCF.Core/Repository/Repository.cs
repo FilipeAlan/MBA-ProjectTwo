@@ -6,6 +6,8 @@ namespace PCF.Core.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
+        // TODO: implementar UoW?
+
         protected readonly PCFDBContext _dbContext;
 
         public Repository(PCFDBContext dbContext)

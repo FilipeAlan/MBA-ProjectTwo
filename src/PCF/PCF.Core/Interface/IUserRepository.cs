@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PCF.Core.Identity;
 
 namespace PCF.Core.Interface
 {
-    public interface IUserRepository : IRepository<IdentityUser>
+    public interface IUserRepository : IRepository<ApplicationUser>
     {
-        Task<IdentityUser> FindByEmailAsync(string email);
-        Task<bool> CheckPasswordAsync(IdentityUser user, string password);
+        Task<ApplicationUser> FindByEmailAsync(string email);
+        Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+        Task<ApplicationUser> CreateAsync(ApplicationUser entity, string userName);
     }
 }
