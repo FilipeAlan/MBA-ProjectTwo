@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
@@ -11,9 +12,26 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
                 <MudText>My Application</MudText>
                 <MudSpacer />
-                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
-                    Deslogar
-                </MudButton>
+                <MudMenu>
+                    <ActivatorContent>
+                        <MudAvatar Variant="Variant.Outlined" Size="Size.Medium">
+                            <MudIcon Icon="@Icons.Material.Filled.AccountCircle" />
+                        </MudAvatar>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudList T="string">
+                            <MudListItem>
+                                <MudText>@userName</MudText>
+                            </MudListItem>
+                            <MudDivider />
+                            <MudListItem OnClick="Logout">
+                                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
+                                    Deslogar
+                                </MudButton>
+                            </MudListItem>
+                        </MudList>
+                    </ChildContent>
+                </MudMenu>
             </MudAppBar>
             <MudDrawer @bind-Open="@_drawerOpen">
                 <AppNavMenu />
@@ -40,6 +58,7 @@
     private MudThemeProvider _mudThemeProvider;
 
     private bool _isLoggedIn;
+    private string? userName;
     bool _drawerOpen = true;
 
     [Inject] private AuthService AuthService { get; set; }
@@ -64,6 +83,11 @@
     private async Task CheckAuthenticationStatus()
     {
         _isLoggedIn = await AuthService.IsLoggedIn();
+        if (_isLoggedIn)
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            userName = authState.User!.Identity!.Name;
+        }
     }
 
     private void HandleAuthenticationStateChanged()

@@ -16,7 +16,7 @@ User: @userName
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         
-        userName = authState.User!.Identity!.Name!;
+        userName = authState.User!.Identity!.Name;
          
     }
 }
