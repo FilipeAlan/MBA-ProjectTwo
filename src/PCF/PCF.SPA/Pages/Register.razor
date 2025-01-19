@@ -12,9 +12,9 @@
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponseDto.Login" Required="true"
                           RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" />
             <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponseDto.Password" Required="true"
-                          RequiredError="Senha é obrigatória." Type="password" />
+                          RequiredError="Senha é obrigatória." Type="password" InputType="InputType.Password" />
             <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponseDto.ConfirmedPassword" Required="true"
-                          RequiredError="Confirmação de senha é obrigatória." Type="password" />
+                          RequiredError="Confirmação de senha é obrigatória." Type="password" InputType="InputType.Password" />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleRegister">
                 Registrar
             </MudButton>

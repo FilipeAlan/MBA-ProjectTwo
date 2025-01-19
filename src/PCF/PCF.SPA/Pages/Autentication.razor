@@ -7,14 +7,21 @@
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Login</MudText>
         <MudForm Model="@loginResponseDto" @ref="loginForm" Validated="HandleValidation">
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponseDto.Login" Required="true"
-                          RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" Immediate="true" />
+            RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" Immediate="true" />
             <MudTextField Class="mb-4" Label="Senha" @bind-Value="loginResponseDto.Password" Required="true"
-                          RequiredError="Senha é obrigatória." Type="password" Immediate="true" />
+            RequiredError="Senha é obrigatória." Type="password" Immediate="true" InputType="InputType.Password" />
             <MudText Color="Color.Error" Typo="Typo.caption" Style="margin-top: 10px;" Hidden="@string.IsNullOrWhiteSpace(errorMessage)">
                 @errorMessage
             </MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin">
-                Entrar
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin" Disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <MudText>Entrar</MudText>    
+                }
             </MudButton>
         </MudForm>
     </MudCardContent>
@@ -30,9 +37,19 @@
     private MudForm loginForm;
     private LoginResponseDto loginResponseDto = new();
     private string errorMessage;
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await AuthService.IsLoggedIn())
+        {
+            Navigation.NavigateTo("/home");
+        }
+    }
 
     private async Task HandleLogin()
     {
+        isLoading = true;
         // Força a validação do formulário
         await loginForm.Validate();
         if (loginForm.IsValid)
@@ -58,6 +75,7 @@
         {
             errorMessage = "Preencha os campos obrigatórios corretamente.";
         }
+        isLoading = false;
     }
 
     private void HandleValidation()

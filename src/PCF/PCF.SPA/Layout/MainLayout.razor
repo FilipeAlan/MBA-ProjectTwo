@@ -5,28 +5,36 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
-    <MudMainContent>
+    @if (_isLoggedIn)
+    {
         <MudAppBar>
-            <MudSpacer />
-            @if (_isLoggedIn)
-            {                
-                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
-                    Deslogar
-                </MudButton>
-            }            
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudText>My Application</MudText>
+            <MudSpacer />        
+            <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
+                Deslogar
+            </MudButton>        
         </MudAppBar>
-        @Body
-        <MudAppBar Bottom="true" Elevation="1" Fixed="true">
-            <MudSpacer />
-            <MudButton Variant="Variant.Text" OnClick="ToggleMode">
-                <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
-                <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
-                <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
-            </MudButton>
+    }
 
-            
-        </MudAppBar>
+    @if (_isLoggedIn)
+    {
+        <MudDrawer @bind-Open="@_drawerOpen">
+            <AppNavMenu />
+        </MudDrawer>
+    }
+
+    <MudMainContent>
+        @Body
     </MudMainContent>
+    <MudAppBar Bottom="true" Elevation="1" Fixed="true">
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" OnClick="ToggleMode">
+            <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
+            <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
+            <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
+        </MudButton>
+    </MudAppBar>
 </MudLayout>
 
 @code {
@@ -35,9 +43,15 @@
     private MudThemeProvider _mudThemeProvider;
 
     private bool _isLoggedIn;
+    bool _drawerOpen = true;
 
     [Inject] private AuthService AuthService { get; set; }
     [Inject] private NavigationManager Navigation { get; set; }
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -48,12 +62,11 @@
             StateHasChanged();
             AuthService.OnAuthenticationStateChanged += HandleAuthenticationStateChanged;
         }
-    }   
+    }
 
     private async Task CheckAuthenticationStatus()
     {
-        var token = await AuthService.GetTokenAsync();
-        _isLoggedIn = !string.IsNullOrWhiteSpace(token);
+        _isLoggedIn = await AuthService.IsLoggedIn();
     }
 
     private void HandleAuthenticationStateChanged()
