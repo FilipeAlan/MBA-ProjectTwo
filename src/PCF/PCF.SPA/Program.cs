@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -34,5 +35,10 @@ builder.Services.AddScoped<IWebApiClient>(sp =>
     return new WebApiClient(baseUri, sp.GetRequiredService<HttpClient>());
 }
 );
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
+
 
 await builder.Build().RunAsync();

@@ -1,7 +1,22 @@
 ﻿@page "/home"
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<br />
+User: @userName
+
+@code {
+    private string? userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        
+        userName = authState.User!.Identity!.Name!;
+         
+    }
+}

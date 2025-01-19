@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 
 namespace PCF.SPA.Services
@@ -7,14 +8,16 @@ namespace PCF.SPA.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
+        private readonly AuthenticationStateProvider _authStateProvider;
 
         // Evento para notificar mudanças no estado de autenticação
         public event Action? OnAuthenticationStateChanged;
 
-        public AuthService(HttpClient httpClient, ILocalStorageService localStorage)
+        public AuthService(HttpClient httpClient, ILocalStorageService localStorage, AuthenticationStateProvider authStateProvider)
         {
             _httpClient = httpClient;
             _localStorage = localStorage;
+            _authStateProvider = authStateProvider;
         }
         public async Task<bool> LoginAsync(LoginResponseDto loginResponseDto)
         {
@@ -28,7 +31,8 @@ namespace PCF.SPA.Services
                     {
                         await _localStorage.SetItemAsync("authToken", token);
                         _httpClient.DefaultRequestHeaders.Authorization =
-                            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                        ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(token);
 
                         // Notifica a mudança de estado de autenticação
                         NotifyAuthenticationStateChanged();
@@ -49,6 +53,8 @@ namespace PCF.SPA.Services
             {
                 await _localStorage.RemoveItemAsync("authToken");
                 _httpClient.DefaultRequestHeaders.Authorization = null;
+
+                ((AuthStateProvider)_authStateProvider).NotifyUserLogout();
 
                 // Notifica a mudança de estado de autenticação
                 NotifyAuthenticationStateChanged();
