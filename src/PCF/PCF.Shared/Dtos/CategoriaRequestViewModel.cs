@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PCF.API.Dto
+namespace PCF.Shared.Dtos
 {
     public class CategoriaRequestViewModel
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.API.Dto;
 using PCF.Core.Entities;
 using PCF.Core.Interface;
+using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {

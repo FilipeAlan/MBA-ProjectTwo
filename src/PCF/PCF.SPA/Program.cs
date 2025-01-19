@@ -1,8 +1,8 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using PCF.SPA;
 using MudBlazor.Services;
-using Blazored.LocalStorage;
+using PCF.SPA;
 using PCF.SPA.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -27,5 +27,12 @@ var apiUrl = builder.Configuration["ApiUrl"] ?? builder.HostEnvironment.BaseAddr
 
 // Configura o HttpClient para o restante da aplicação
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
+builder.Services.AddScoped<IWebApiClient>(sp =>
+{
+    var uri = new Uri(apiUrl);
+    var baseUri = new Uri(uri, "/").ToString();
+    return new WebApiClient(baseUri, sp.GetRequiredService<HttpClient>());
+}
+);
 
 await builder.Build().RunAsync();

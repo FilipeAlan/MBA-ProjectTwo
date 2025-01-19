@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.API.Dto;
 using PCF.Core.Identity;
 using PCF.Core.Interface;
+using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {
