@@ -72,7 +72,8 @@ namespace PCF.SPA.Services
 
         public async Task<bool> IsLoggedIn()
         {
-            return !string.IsNullOrEmpty(await GetTokenAsync());
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            return authState.User?.Identity?.IsAuthenticated ?? false;
         }
 
         public async Task<string> RegisterAsync(LoginResponseDto loginResponseDto)
