@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    <Configurations>Debug;Release;Debug+ApiClientGenerator</Configurations>
+	  <Configurations>Debug;Release;ApiClientGenerator</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +15,6 @@
 	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
 	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.0" />
     <PackageReference Include="MudBlazor" Version="7.15.0" />
-	<PackageReference Include="FluentResults" Version="3.16.0" />
   </ItemGroup>
 
   <ItemGroup>

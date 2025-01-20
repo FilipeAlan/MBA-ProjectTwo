@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
 using PCF.Core.Entities;
+using PCF.Core.Extensions;
 using PCF.Core.Interface;
 using PCF.Shared.Dtos;
 
@@ -31,7 +32,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<IError>>, NoContent>> Edit(int id, CategoriaRequestViewModel categoria)
+        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, CategoriaRequestViewModel categoria)
         {
 
             if (await categoriaService.GetByIdAsync(id) is null)
@@ -46,27 +47,27 @@ namespace PCF.API.Controllers
 
             if (result.IsFailed)
             {
-                return TypedResults.BadRequest(result.Errors);
+                return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
             return TypedResults.NoContent();
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<IError>>, CreatedAtRoute<CategoriaRequestViewModel>>> AddNew(CategoriaRequestViewModel categoria)
+        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<CategoriaRequestViewModel>>> AddNew(CategoriaRequestViewModel categoria)
         {
             var result = await categoriaService.AddAsync(categoria.Adapt<Categoria>());
 
             if (result.IsFailed)
             {
-                return TypedResults.BadRequest(result.Errors);
+                return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
             return TypedResults.CreatedAtRoute(categoria, nameof(GetById), new { id = result.Value });
         }
 
         [HttpDelete("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<IError>>, NoContent>> Delete(int id)
+        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Delete(int id)
         {
             var categoria = await categoriaService.GetByIdAsync(id);
 
@@ -79,7 +80,7 @@ namespace PCF.API.Controllers
 
             if (result.IsFailed)
             {
-                return TypedResults.BadRequest(result.Errors);
+                return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
             return TypedResults.NoContent();

@@ -1,6 +1,5 @@
 ﻿@inject IWebApiClient WebApiClient
-
-@using MudBlazor
+@inject ISnackbar Snackbar
 
 <EditForm Model="newCategory" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
@@ -27,12 +26,15 @@
         try
         {
             await WebApiClient.CategoriasPOSTAsync(newCategory);
+            Snackbar.Add("Categoria cadastrada com sucesso.", Severity.Success);
             MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (ApiException<IEnumerable<string>> e)
+        {
+            Snackbar.Add(string.Join(", ", e.Result), Severity.Error);
         }
         catch (Exception ex)
         {
-            // tratar erros (ex: categoria existente)
-
             // Handle the exception (e.g., show a message to the user)
             Console.WriteLine($"Error adding category: {ex.Message}");
         }

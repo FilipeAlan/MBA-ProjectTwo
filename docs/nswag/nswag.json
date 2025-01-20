@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "../../src/PCF/PCF.API/bin/Debug/net9.0/swagger.json",
+      "url": "../../src/PCF/PCF.API/bin/ApiClientGenerator/net9.0/swagger.json",
       "output": null,
       "newLineBehavior": "Auto"
     }
@@ -48,8 +48,7 @@
       "operationGenerationMode": "MultipleClientsFromOperationId",
       "additionalNamespaceUsages": [
         "PCF.Shared.Dtos",
-        "PCF.SPA.Services.Base",
-        "FluentResults"
+        "PCF.SPA.Services.Base"
       ],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
