@@ -1,0 +1,45 @@
+﻿@inject IWebApiClient WebApiClient
+
+@using MudBlazor
+
+<EditForm Model="newCategory" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+    <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title" ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+        <DialogContent>
+            <MudTextField @bind-Value="newCategory.Nome" Label="Nome" Required="true" />
+            <MudTextField @bind-Value="newCategory.Descricao" Label="Descrição" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Incluir</MudButton>
+            <MudButton OnClick="Cancel">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    private CategoriaRequestViewModel newCategory = new CategoriaRequestViewModel() { Nome = "" };
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private async Task Submit()
+    {
+        try
+        {
+            await WebApiClient.CategoriasPOSTAsync(newCategory);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            // tratar erros (ex: categoria existente)
+
+            // Handle the exception (e.g., show a message to the user)
+            Console.WriteLine($"Error adding category: {ex.Message}");
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

@@ -1,10 +1,13 @@
 ﻿@page "/categorias"
+@using PCF.SPA.Components.Categoria
 @attribute [Authorize]
 @inject IWebApiClient WebApiClient
+@inject IDialogService DialogService
 
 <PageTitle>Categorias</PageTitle>
- 
+
 <MudContainer>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
     <MudGrid>
         <MudItem xs="12">
             <MudTable Items="_categories" Loading="_loading" Hover="true" Bordered="true" Striped="true">
@@ -29,7 +32,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
             _categories = await WebApiClient.CategoriasAllAsync();
@@ -42,6 +44,19 @@
         finally
         {
             _loading = false;
+        }
+    }
+
+    private async Task OpenAddCategoryDialog()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<AdicionarCategoriaDialog>("Nova categoria", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            _categories = await WebApiClient.CategoriasAllAsync();
         }
     }
 }
