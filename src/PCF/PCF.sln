@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PCF.Core", "PCF.Core\PCF.Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{168CC540-D084-4D47-89DA-105120F983F3}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\DEVELOPMENT.md = ..\..\DEVELOPMENT.md
+		..\..\docs\nswag\nswag.json = ..\..\docs\nswag\nswag.json
 		..\..\README.md = ..\..\README.md
 	EndProjectSection
 EndProject
