@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.API.Dto;
+using PCF.Core.Identity;
 using PCF.Core.Interface;
-using PCF.Core.Util;
+using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {
@@ -13,10 +13,12 @@ namespace PCF.API.Controllers
     public class AuthController : ApiControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public AuthController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository, ITokenGenerator tokenGenerator)
         {
             _userRepository = userRepository;
+            _tokenGenerator = tokenGenerator;
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace PCF.API.Controllers
 
                 if (user != null && await _userRepository.CheckPasswordAsync(user, loginResponseDto.Password))
                 {
-                    var token = TokenGenerator.GerarToken(user);
+                    var token = _tokenGenerator.GerarToken(user);
                     return Ok(token);
                 }
 
@@ -61,18 +63,18 @@ namespace PCF.API.Controllers
                 if (user == null)
                 {
                     // Cria um novo IdentityUser
-                    var newUser = new IdentityUser
+                    var newUser = new ApplicationUser
                     {
                         UserName = loginResponseDto.Name,
                         Email = loginResponseDto.Login,
                     };
 
                     // Hash da senha
-                    var passwordHasher = new PasswordHasher<IdentityUser>();
+                    var passwordHasher = new PasswordHasher<ApplicationUser>();
                     newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponseDto.Password);
 
                     // Salva o usuário no banco
-                    await _userRepository.CreateAsync(newUser);
+                    await _userRepository.CreateAsync(newUser, loginResponseDto.Name /*TODO: diferenciar nome x email*/ );
 
                     return Ok("Usuário cadastrado com sucesso.");
                 }

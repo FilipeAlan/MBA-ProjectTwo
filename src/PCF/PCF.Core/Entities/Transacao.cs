@@ -8,9 +8,9 @@ namespace PCF.Core.Entities
         public decimal Valor { get; set; }
         public string? Descricao { get; set; }
         public int CategoriaId { get; set; }
-        public required Categoria Categoria { get; set; }
+        public virtual required Categoria Categoria { get; set; }
         public int UsuarioId { get; set; }
-        public required Usuario Usuario { get; set; }
+        public virtual required Usuario Usuario { get; set; }
         public DateTime DataLancamento { get; set; }
         public TipoEnum Tipo { get; set; }
 

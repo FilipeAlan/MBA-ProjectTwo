@@ -1,4 +1,4 @@
-﻿namespace PCF.API.Dto
+﻿namespace PCF.Shared.Dtos
 {
     public class LoginResponseDto
     {

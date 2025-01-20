@@ -1,43 +1,77 @@
 ﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
-    <MudMainContent>
-        <MudAppBar>
-            <MudSpacer />
-            @if (_isLoggedIn)
-            {                
-                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
-                    Deslogar
-                </MudButton>
-            }            
-        </MudAppBar>
-        @Body
-        <MudAppBar Bottom="true" Elevation="1" Fixed="true">
-            <MudSpacer />
-            <MudButton Variant="Variant.Text" OnClick="ToggleMode">
-                <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
-                <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
-                <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
-            </MudButton>
+    <AuthorizeView>
+        <Authorized>
+            <MudAppBar>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                <MudText>My Application</MudText>
+                <MudSpacer />
+                <MudMenu>
+                    <ActivatorContent>
+                        <MudAvatar Variant="Variant.Outlined" Size="Size.Medium">
+                            <MudIcon Icon="@Icons.Material.Filled.AccountCircle" />
+                        </MudAvatar>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudList T="string">
+                            <MudListItem>
+                                <MudText>Usuário: @userName</MudText>
+                            </MudListItem>
+                            <MudDivider />
+                            <MudListItem OnClick="Logout">
+                                <MudButton Variant="Variant.Outlined" OnClick="Logout" Color="Color.Success">
+                                    Deslogar
+                                </MudButton>
+                            </MudListItem>
+                        </MudList>
+                    </ChildContent>
+                </MudMenu>
+            </MudAppBar>
+            <MudDrawer @bind-Open="@_drawerOpen">
+                <AppNavMenu />
+            </MudDrawer>
+        </Authorized>
+    </AuthorizeView>
 
-            
-        </MudAppBar>
+    <MudMainContent>
+        @Body
     </MudMainContent>
+    <AuthorizeView>
+        <NotAuthorized>
+            <MudAppBar Bottom="true" Elevation="1" Fixed="true">
+                <MudSpacer />
+                <MudButton Variant="Variant.Text" OnClick="ToggleMode">
+                    <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
+                    <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
+                    <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
+                </MudButton>
+            </MudAppBar>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudLayout>
 
 @code {
     private MudTheme _theme = new();
     private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
+    private MudThemeProvider _mudThemeProvider = default!;
 
     private bool _isLoggedIn;
+    private string? userName;
+    bool _drawerOpen = true;
 
-    [Inject] private AuthService AuthService { get; set; }
-    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private AuthService AuthService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -48,12 +82,16 @@
             StateHasChanged();
             AuthService.OnAuthenticationStateChanged += HandleAuthenticationStateChanged;
         }
-    }   
+    }
 
     private async Task CheckAuthenticationStatus()
     {
-        var token = await AuthService.GetTokenAsync();
-        _isLoggedIn = !string.IsNullOrWhiteSpace(token);
+        _isLoggedIn = await AuthService.IsLoggedIn();
+        if (_isLoggedIn)
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            userName = authState.User!.Identity!.Name;
+        }
     }
 
     private void HandleAuthenticationStateChanged()

@@ -1,0 +1,62 @@
+﻿@page "/categorias"
+@using PCF.SPA.Components.Categoria
+@attribute [Authorize]
+@inject IWebApiClient WebApiClient
+@inject IDialogService DialogService
+
+<PageTitle>Categorias</PageTitle>
+
+<MudContainer>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudTable Items="_categories" Loading="_loading" Hover="true" Bordered="true" Striped="true">
+                <HeaderContent>
+                    <MudTh>Id</MudTh>
+                    <MudTh>Nome</MudTh>
+                    <MudTh>Padrão</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Id">@context.Id</MudTd>
+                    <MudTd DataLabel="Nome">@context.Nome</MudTd>
+                    <MudTd DataLabel="Padrão">@context.Padrao</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private IEnumerable<CategoriaResponseViewModel> _categories = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _categories = await WebApiClient.CategoriasAllAsync();
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception (e.g., show a message to the user)
+            Console.WriteLine($"Error fetching categories: {ex.Message}");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task OpenAddCategoryDialog()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<AdicionarCategoriaDialog>("Nova categoria", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            _categories = await WebApiClient.CategoriasAllAsync();
+        }
+    }
+}

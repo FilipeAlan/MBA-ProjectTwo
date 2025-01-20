@@ -6,8 +6,8 @@ namespace PCF.Core.Entities
     {
         public decimal ValorLimite { get; set; }
         public int UsuarioId { get; set; }
-        public required Usuario Usuario { get; set; }
+        public virtual required Usuario Usuario { get; set; }
         public int? CategoriaId { get; set; }
-        public required Categoria? Categoria { get; set; }
+        public virtual required Categoria? Categoria { get; set; }
     }
 }
