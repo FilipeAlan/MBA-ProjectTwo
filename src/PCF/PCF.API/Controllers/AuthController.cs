@@ -74,7 +74,7 @@ namespace PCF.API.Controllers
                     newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponseDto.Password);
 
                     // Salva o usuário no banco
-                    await _userRepository.CreateAsync(newUser, loginResponseDto.Name /*TODO: diferenciar nome x email*/ );
+                    await _userRepository.CreateAsync(newUser, loginResponseDto.Name);
 
                     return Ok("Usuário cadastrado com sucesso.");
                 }
