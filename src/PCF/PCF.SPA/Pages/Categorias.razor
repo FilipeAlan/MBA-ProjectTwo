@@ -54,7 +54,7 @@
         var dialog = await DialogService.ShowAsync<AdicionarCategoriaDialog>("Nova categoria", parameters, options);
         var result = await dialog.Result;
 
-        if (!result.Canceled)
+        if (!result!.Canceled)
         {
             _categories = await WebApiClient.CategoriasAllAsync();
         }

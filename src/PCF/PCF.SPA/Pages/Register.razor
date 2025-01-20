@@ -29,7 +29,7 @@
 </MudCard>
 
 @code {
-    private MudForm registerForm;
+    private MudForm registerForm = default!;
     private LoginResponseDto loginResponseDto = new();
 
     private async Task HandleRegister()

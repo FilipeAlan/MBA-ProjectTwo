@@ -34,9 +34,9 @@
 </MudCard>
 
 @code {
-    private MudForm loginForm;
+    private MudForm loginForm = default!;
     private LoginResponseDto loginResponseDto = new();
-    private string errorMessage;
+    private string? errorMessage;
     private bool isLoading;
 
     protected override async Task OnInitializedAsync()

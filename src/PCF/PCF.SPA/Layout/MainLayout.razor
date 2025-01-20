@@ -21,7 +21,7 @@
                     <ChildContent>
                         <MudList T="string">
                             <MudListItem>
-                                <MudText>@userName</MudText>
+                                <MudText>Usuário: @userName</MudText>
                             </MudListItem>
                             <MudDivider />
                             <MudListItem OnClick="Logout">
@@ -42,27 +42,31 @@
     <MudMainContent>
         @Body
     </MudMainContent>
-    <MudAppBar Bottom="true" Elevation="1" Fixed="true">
-        <MudSpacer />
-        <MudButton Variant="Variant.Text" OnClick="ToggleMode">
-            <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
-            <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
-            <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
-        </MudButton>
-    </MudAppBar>
+    <AuthorizeView>
+        <NotAuthorized>
+            <MudAppBar Bottom="true" Elevation="1" Fixed="true">
+                <MudSpacer />
+                <MudButton Variant="Variant.Text" OnClick="ToggleMode">
+                    <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
+                    <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
+                    <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
+                </MudButton>
+            </MudAppBar>
+        </NotAuthorized>
+    </AuthorizeView>
 </MudLayout>
 
 @code {
     private MudTheme _theme = new();
     private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
+    private MudThemeProvider _mudThemeProvider = default!;
 
     private bool _isLoggedIn;
     private string? userName;
     bool _drawerOpen = true;
 
-    [Inject] private AuthService AuthService { get; set; }
-    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private AuthService AuthService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
 
     void DrawerToggle()
     {
