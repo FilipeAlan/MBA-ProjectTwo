@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
@@ -9,56 +10,37 @@ using PCF.Shared.Dtos;
 namespace PCF.API.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     [AllowAnonymous]
-    public class AuthController : ApiControllerBase
+    public class AuthController(IUserRepository userRepository,ITokenGenerator tokenGenerator) : ApiControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ITokenGenerator _tokenGenerator;
-
-        public AuthController(IUserRepository userRepository, ITokenGenerator tokenGenerator)
-        {
-            _userRepository = userRepository;
-            _tokenGenerator = tokenGenerator;
-        }
-
-        /// <summary>
-        /// Realiza o login de um usuário.
-        /// </summary>
-        /// <param name="loginResponseDto">DTO contendo as credenciais do usuário.</param>
-        /// <returns>Token JWT se o login for bem-sucedido, ou mensagem de erro.</returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginResponseDto loginResponseDto)
+        public async Task<Results<Ok<string>,UnauthorizedHttpResult,StatusCodeHttpResult>> Login([FromBody] LoginResponseDto loginResponseDto) 
         {
             try
             {
-                var user = await _userRepository.FindByEmailAsync(loginResponseDto.Login);
+                var user = await userRepository.FindByEmailAsync(loginResponseDto.Login);
 
-                if (user != null && await _userRepository.CheckPasswordAsync(user, loginResponseDto.Password))
+                if (user != null && await userRepository.CheckPasswordAsync(user, loginResponseDto.Password))
                 {
-                    var token = _tokenGenerator.GerarToken(user);
-                    return Ok(token);
+                    var token = tokenGenerator.GerarToken(user);
+                    return TypedResults.Ok(token);
                 }
 
-                return Unauthorized("Credenciais inválidas.");
+                return TypedResults.Unauthorized();
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, $"Erro ao realizar login: {ex.Message}");
+                return TypedResults.StatusCode(500);
             }
         }
-
-        /// <summary>
-        /// Realiza o registro de um novo usuário.
-        /// </summary>
-        /// <param name="loginResponseDto">DTO contendo os dados do usuário.</param>
-        /// <returns>Mensagem de sucesso ou erro.</returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] LoginResponseDto loginResponseDto)
+        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponseDto loginResponseDto)
         {
             try
             {
                 // Verifica se o usuário já existe
-                var user = await _userRepository.FindByEmailAsync(loginResponseDto.Login);
+                var user = await userRepository.FindByEmailAsync(loginResponseDto.Login);
 
                 if (user == null)
                 {
@@ -74,16 +56,16 @@ namespace PCF.API.Controllers
                     newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponseDto.Password);
 
                     // Salva o usuário no banco
-                    await _userRepository.CreateAsync(newUser, loginResponseDto.Name);
+                    await userRepository.CreateAsync(newUser, loginResponseDto.Name);
 
-                    return Ok("Usuário cadastrado com sucesso.");
+                    return TypedResults.Ok();
                 }
 
-                return Conflict("Usuário já cadastrado.");
+                return TypedResults.Conflict();
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, $"Erro ao realizar registro: {ex.Message}");
+                return TypedResults.StatusCode(500);
             }
         }
     }
