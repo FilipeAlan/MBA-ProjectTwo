@@ -12,5 +12,9 @@ namespace PCF.Core.Interface
         Task<bool> CheckIfExistsByIdAsync(int categoriaId, int usuarioId);
 
         Task<IEnumerable<OrcamentoResponseViewModel>> GetOrcamentoWithCategoriaAsync(int? usuarioId);
+
+        Task<decimal> CheckAmountAvailableAsync(int usuarioId, DateTime data);
+
+        Task<decimal> CheckAmountAvailableByCategoriaAsync(int usuarioId, DateTime data, int categoriaId);
     }
 }

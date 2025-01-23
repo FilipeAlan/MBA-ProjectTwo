@@ -4,7 +4,7 @@ using PCF.Shared.Dtos;
 
 namespace PCF.Core.Services
 {
-    public class OrcamentoServices(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository) : IOrcamentoService
+    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository) : IOrcamentoService
     {
         public async Task<IEnumerable<Orcamento>> GetAllAsync()
         {
@@ -50,6 +50,22 @@ namespace PCF.Core.Services
         public async Task<Result<int>> AddAsync(Orcamento orcamento)
         {
             ArgumentNullException.ThrowIfNull(orcamento);
+
+            decimal orcamentoDisponivel = 0;
+
+            if (orcamento.CategoriaId != null)
+            {
+                orcamentoDisponivel = await repository.CheckAmountAvailableByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now, orcamento.CategoriaId.Value);
+            }
+            else
+            {
+                orcamentoDisponivel = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            }
+
+            if (orcamentoDisponivel < orcamento.ValorLimite)
+            {
+                return Result.Fail<int>("Valor do orçamento maior que o disponível");
+            }
 
             orcamento.ValorLimite = orcamento.ValorLimite;
             orcamento.UsuarioId = appIdentityUser.GetUserId();

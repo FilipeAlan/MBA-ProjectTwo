@@ -16,7 +16,6 @@ namespace PCF.Core.Repository
         public async Task<bool> CheckIfExistsByIdAsync(int categoriaId, int usuarioId)
         {
             return await _dbContext.Orcamentos.AnyAsync(c => c.CategoriaId == categoriaId && c.UsuarioId == usuarioId);
-            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<Orcamento>> GetAllAsync(int usuarioId)
@@ -47,11 +46,11 @@ namespace PCF.Core.Repository
                             c.Nome AS NomeCategoria,
                             u.Nome AS NomeUsuario
                         FROM 
-                            Orcamentos o
+                            Orcamento o
                         LEFT JOIN 
-                            Categorias c ON o.CategoriaId = c.Id
+                            Categoria c ON o.CategoriaId = c.Id
                         LEFT JOIN
-                            Usuarios u ON o.UsuarioId = u.Id
+                            Usuario u ON o.UsuarioId = u.Id
                         WHERE 
                             (o.UsuarioId = @UsuarioId OR o.UsuarioId IS NULL)";
 
@@ -60,6 +59,64 @@ namespace PCF.Core.Repository
             var result = await connection.QueryAsync<OrcamentoResponseViewModel>(query, parameters);
 
             return result;
+        }
+
+        public async Task<decimal> CheckAmountAvailableAsync(int usuarioId, DateTime data)
+        {
+            using var connection = _dbContext.Database.GetDbConnection();
+
+            var inicioMes = new DateTime(data.Year, data.Month, 1);
+            var fimMes = inicioMes.AddMonths(1).AddDays(-1);
+
+            var query = @"
+                        SELECT 
+                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0) -
+                            COALESCE(SUM(CASE WHEN t.Tipo = 1 THEN t.Valor ELSE 0 END), 0) AS OrcamentoDisponivel
+                        FROM
+                            Transacao t
+                        WHERE
+                            t.UsuarioId = @UsuarioId AND
+                            t.Data BETWEEN @InicioMes AND @FimMes";
+
+            var parameters = new
+            {
+                UsuarioId = usuarioId,
+                InicioMes = inicioMes,
+                FimMes = fimMes
+            };
+
+            return await connection.QueryFirstOrDefault(query, parameters);
+
+        }
+
+        public async Task<decimal> CheckAmountAvailableByCategoriaAsync(int usuarioId, DateTime data, int categoriaId)
+        {
+            using var connection = _dbContext.Database.GetDbConnection();
+
+            var inicioMes = new DateTime(data.Year, data.Month, 1);
+            var fimMes = inicioMes.AddMonths(1).AddDays(-1);
+
+            var query = @"
+                        SELECT 
+                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0) -
+                            COALESCE(SUM(CASE WHEN t.Tipo = 1 THEN t.Valor ELSE 0 END), 0) AS OrcamentoDisponivelCategoria
+                        FROM
+                            Transacao t
+                        WHERE
+                            t.UsuarioId = @UsuarioId AND
+                            t.CategoriaId = @CategoriaId AND    
+                            t.Data BETWEEN @InicioMes AND @FimMes";
+
+            var parameters = new
+            {
+                UsuarioId = usuarioId,
+                InicioMes = inicioMes,
+                FimMes = fimMes,
+                CategoriaId = categoriaId
+            };
+
+            return await connection.QueryFirstOrDefault(query, parameters);
+
         }
     }
 }
