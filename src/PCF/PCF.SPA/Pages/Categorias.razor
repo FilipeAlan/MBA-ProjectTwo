@@ -9,15 +9,15 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
-    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
+    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.Id" Editable="false" />
             <PropertyColumn Property="x => x.Nome" Editable="true" />
             <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="true" Required="false" />
-            <TemplateColumn Title="Padrão">
+            <PropertyColumn Property="x => x.Padrao" Editable="false">
                 <HeaderTemplate>
+                    <span>Padrão?</span>
                     <MudTooltip Text="Categorias padrão não podem ser editadas ou excluídas">
-                        <span>Padrão?</span>
                         <MudIconButton Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Small" />
                     </MudTooltip>
                 </HeaderTemplate>
@@ -31,12 +31,19 @@
                         <span>Não</span>
                     }
                 </CellTemplate>
-            </TemplateColumn>
+            </PropertyColumn>
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
-                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" Disabled="context.Item.Padrao" />
-                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteCategory(context.Item.Id)" title="Excluir" Disabled="context.Item.Padrao" />
+                        @if (!context.Item.Padrao)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" Disabled="context.Item.Padrao" />
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteCategory(context.Item.Id)" title="Excluir" Disabled="context.Item.Padrao" />
+                        }
+                        else
+                        {
+                            <span>&nbsp;</span>
+                        }
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
@@ -59,6 +66,7 @@
         try
         {
             _categories = await WebApiClient.CategoriasAllAsync();
+            _categories = _categories.OrderBy(x => x.Nome);
         }
         catch (Exception ex)
         {
