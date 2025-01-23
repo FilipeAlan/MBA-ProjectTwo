@@ -36,6 +36,7 @@
 
     private async Task LoadCategoriesAsync()
     {
+        _loading = true;
         try
         {
             _categories = await WebApiClient.CategoriasAllAsync();
