@@ -52,7 +52,7 @@ namespace PCF.Core.Repository
                         LEFT JOIN
                             Usuario u ON o.UsuarioId = u.Id
                         WHERE 
-                            (o.UsuarioId = @UsuarioId OR o.UsuarioId IS NULL)";
+                            o.UsuarioId = @UsuarioId";
 
             var parameters = new { UsuarioId = usuarioId };
 
