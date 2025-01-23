@@ -1,4 +1,5 @@
 ﻿using PCF.Core.Entities;
+using PCF.Shared.Dtos;
 
 namespace PCF.Core.Interface
 {
@@ -9,5 +10,7 @@ namespace PCF.Core.Interface
         Task<Orcamento?> GetByIdAsync(int id, int usuarioId);
 
         Task<bool> CheckIfExistsByIdAsync(int categoriaId, int usuarioId);
+
+        Task<IEnumerable<OrcamentoResponseViewModel>> GetOrcamentoWithCategoriaAsync(int? usuarioId);
     }
 }

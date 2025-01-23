@@ -18,6 +18,13 @@ namespace PCF.API.Controllers
             return TypedResults.Ok(list.Adapt<IEnumerable<OrcamentoResponseViewModel>>());
         }
 
+        [HttpGet("Listar")]
+        public async Task<Ok<IEnumerable<OrcamentoResponseViewModel>>> GetAllWithCategorias()
+        {
+            var list = await orcamentoService.GetAllWithDescriptionAsync();
+            return TypedResults.Ok(list.Adapt<IEnumerable<OrcamentoResponseViewModel>>());
+        }
+
         [HttpGet("{id}", Name = "ObterOrcamentoPorId")]
         public async Task<Results<Ok<OrcamentoResponseViewModel>, NotFound>> GetById(int id)
         {

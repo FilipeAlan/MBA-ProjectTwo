@@ -1,5 +1,6 @@
 ﻿using PCF.Core.Entities;
 using PCF.Core.Interface;
+using PCF.Shared.Dtos;
 
 namespace PCF.Core.Services
 {
@@ -50,17 +51,17 @@ namespace PCF.Core.Services
         {
             ArgumentNullException.ThrowIfNull(orcamento);
 
-            //if (await repository.CheckIfExistsByIdAsync(orcamento.CategoriaId, appIdentityUser.GetUserId()))
-            //{
-            //    return Result.Fail<int>("Categoria já lançada para o usuário");
-            //}
-
             orcamento.ValorLimite = orcamento.ValorLimite;
             orcamento.UsuarioId = appIdentityUser.GetUserId();
-            
+            orcamento.CategoriaId = orcamento.CategoriaId;
 
             await repository.CreateAsync(orcamento);
             return Result.Ok(orcamento.Id);
+        }
+
+        public async Task<IEnumerable<OrcamentoResponseViewModel>> GetAllWithDescriptionAsync()
+        {
+            return await repository.GetOrcamentoWithCategoriaAsync(appIdentityUser.GetUserId());
         }
     }
 }

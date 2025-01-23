@@ -1,4 +1,5 @@
 ﻿using PCF.Core.Entities;
+using PCF.Shared.Dtos;
 
 namespace PCF.Core.Interface
 {
@@ -13,5 +14,7 @@ namespace PCF.Core.Interface
         Task<Result> UpdateAsync(Orcamento orcamento);
 
         Task<Result<int>> AddAsync(Orcamento orcamento);
+
+        Task<IEnumerable<OrcamentoResponseViewModel>> GetAllWithDescriptionAsync();
     }
 }
