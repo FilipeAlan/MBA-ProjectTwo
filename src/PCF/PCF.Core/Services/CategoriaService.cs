@@ -32,7 +32,7 @@ namespace PCF.Core.Services
 
             if (categoria.Transacoes.Any())
             {
-                return Result.Fail("Categoria possui transações");
+                return Result.Fail("Categoria possui transações. Para removê-la, primeiro altere as categorias das transações existentes.");
             }
 
             await repository.DeleteAsync(id);

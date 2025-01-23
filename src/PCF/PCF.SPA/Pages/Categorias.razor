@@ -3,27 +3,26 @@
 @attribute [Authorize]
 @inject IWebApiClient WebApiClient
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 <PageTitle>Categorias</PageTitle>
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
-    <MudGrid>
-        <MudItem xs="12">
-            <MudTable Items="_categories" Loading="_loading" Hover="true" Bordered="true" Striped="true">
-                <HeaderContent>
-                    <MudTh>Id</MudTh>
-                    <MudTh>Nome</MudTh>
-                    <MudTh>Padrão</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Id">@context.Id</MudTd>
-                    <MudTd DataLabel="Nome">@context.Nome</MudTd>
-                    <MudTd DataLabel="Padrão">@context.Padrao</MudTd>
-                </RowTemplate>
-            </MudTable>
-        </MudItem>
-    </MudGrid>
+    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" />
+            <PropertyColumn Property="x => x.Nome" />
+            <PropertyColumn Property="x => x.Descricao" Title="Descrição" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" OnClick="() => DeleteCategory(context.Item.Id)" title="Excluir" Disabled="context.Item.Padrao" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
 </MudContainer>
 
 @code {
@@ -32,14 +31,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCategoriesAsync();
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        _loading = true;
         try
         {
             _categories = await WebApiClient.CategoriasAllAsync();
         }
         catch (Exception ex)
         {
-            // Handle the exception (e.g., show a message to the user)
-            Console.WriteLine($"Error fetching categories: {ex.Message}");
+            Snackbar.Add($"Erro não esperado: {ex.Message}", Severity.Error);
         }
         finally
         {
@@ -56,7 +60,42 @@
 
         if (!result!.Canceled)
         {
-            _categories = await WebApiClient.CategoriasAllAsync();
+            await LoadCategoriesAsync();
+        }
+    }
+
+    private async Task DeleteCategory(int id)
+    {
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true
+            };
+
+        bool? result = await DialogService.ShowMessageBox(
+            "Confirmação",
+            "Tem certeza que deseja deletar esta categoria?",
+            yesText: "Sim", cancelText: "Não", options: options);
+
+        if (result == true)
+        {
+            try
+            {
+                await WebApiClient.CategoriasDELETEAsync(id);
+                Snackbar.Add("Categoria removida com sucesso.", Severity.Success);
+                await LoadCategoriesAsync();
+            }
+            catch (ApiException e) when (e.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                Snackbar.Add("Categoria inexistente", Severity.Warning);
+            }
+            catch (ApiException<IEnumerable<string>> e) when (e.StatusCode == (int)HttpStatusCode.BadRequest && e.Result.Any())
+            {
+                Snackbar.Add(string.Join(", ", e.Result), Severity.Warning);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Erro ao deletar categoria: {ex.Message}", Severity.Error);
+            }
         }
     }
 }
