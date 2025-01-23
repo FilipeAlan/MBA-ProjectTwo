@@ -9,11 +9,29 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
-    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit" >
+    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.Id" Editable="false" />
-            <PropertyColumn Property="x => x.Nome" Editable="true" />           
+            <PropertyColumn Property="x => x.Nome" Editable="true" />
             <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="true" Required="false" />
+            <TemplateColumn Title="Padrão">
+                <HeaderTemplate>
+                    <MudTooltip Text="Categorias padrão não podem ser editadas ou excluídas">
+                        <span>Padrão?</span>
+                        <MudIconButton Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Small" />
+                    </MudTooltip>
+                </HeaderTemplate>
+                <CellTemplate>
+                    @if (context.Item.Padrao)
+                    {
+                        <span>Sim</span>
+                    }
+                    else
+                    {
+                        <span>Não</span>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
