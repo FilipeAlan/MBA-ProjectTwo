@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace PCF.API.Controllers.Base
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public abstract class ApiControllerBase : ControllerBase
     {
     }
