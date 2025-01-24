@@ -6,10 +6,11 @@ namespace PCF.Core.Entities
     {
         public required string Nome { get; set; }
 
-        public virtual IEnumerable<Transacao> Transacoes { get; set; } = [];
+        public virtual ICollection<Transacao> Transacoes { get; set; } = new List<Transacao>();
 
-        public virtual IEnumerable<Categoria> Categorias { get; set; } = [];
+        public virtual ICollection<Categoria> Categorias { get; set; } = new List<Categoria>();
 
-        public virtual IEnumerable<Orcamento> Orcamentos { get; set; } = [];
+        public virtual ICollection<Orcamento> Orcamentos { get; set; } = new List<Orcamento>();
+
     }
 }

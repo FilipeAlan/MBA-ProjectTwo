@@ -18,6 +18,11 @@ namespace PCF.Core.Repository
             return await _dbContext.Orcamentos.AnyAsync(c => c.CategoriaId == categoriaId && c.UsuarioId == usuarioId);
         }
 
+        public async Task<bool> CheckIfExistsGeralByIdAsync(int usuarioId)
+        {
+            return await _dbContext.Orcamentos.AnyAsync(c => c.CategoriaId == null && c.UsuarioId == usuarioId);
+        }
+
         public async Task<IEnumerable<Orcamento>> GetAllAsync(int usuarioId)
         {
             return await _dbContext.Orcamentos
@@ -66,7 +71,7 @@ namespace PCF.Core.Repository
             using var connection = _dbContext.Database.GetDbConnection();
 
             var inicioMes = new DateTime(data.Year, data.Month, 1);
-            var fimMes = inicioMes.AddMonths(1).AddDays(-1);
+            var fimMes = new DateTime(inicioMes.Year, inicioMes.Month, DateTime.DaysInMonth(inicioMes.Year, inicioMes.Month), 23, 59, 59);
 
             var query = @"
                         SELECT 
@@ -76,7 +81,7 @@ namespace PCF.Core.Repository
                             Transacao t
                         WHERE
                             t.UsuarioId = @UsuarioId AND
-                            t.Data BETWEEN @InicioMes AND @FimMes";
+                            t.DataLancamento BETWEEN @InicioMes AND @FimMes";
 
             var parameters = new
             {
@@ -85,27 +90,27 @@ namespace PCF.Core.Repository
                 FimMes = fimMes
             };
 
-            return await connection.QueryFirstOrDefault(query, parameters);
+            var result = await connection.QueryFirstOrDefaultAsync<decimal?>(query, parameters);
+            return result ?? 0;
 
         }
 
-        public async Task<decimal> CheckAmountAvailableByCategoriaAsync(int usuarioId, DateTime data, int categoriaId)
+        public async Task<decimal> CheckAmountUsedByCategoriaAsync(int usuarioId, DateTime data, int categoriaId)
         {
             using var connection = _dbContext.Database.GetDbConnection();
 
             var inicioMes = new DateTime(data.Year, data.Month, 1);
-            var fimMes = inicioMes.AddMonths(1).AddDays(-1);
+            var fimMes = new DateTime(inicioMes.Year, inicioMes.Month, DateTime.DaysInMonth(inicioMes.Year, inicioMes.Month), 23, 59, 59);
 
             var query = @"
                         SELECT 
-                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0) -
                             COALESCE(SUM(CASE WHEN t.Tipo = 1 THEN t.Valor ELSE 0 END), 0) AS OrcamentoDisponivelCategoria
                         FROM
                             Transacao t
                         WHERE
                             t.UsuarioId = @UsuarioId AND
                             t.CategoriaId = @CategoriaId AND    
-                            t.Data BETWEEN @InicioMes AND @FimMes";
+                            t.DataLancamento BETWEEN @InicioMes AND @FimMes";
 
             var parameters = new
             {
@@ -115,7 +120,8 @@ namespace PCF.Core.Repository
                 CategoriaId = categoriaId
             };
 
-            return await connection.QueryFirstOrDefault(query, parameters);
+            var result = await connection.QueryFirstOrDefaultAsync<decimal?>(query, parameters);
+            return result ?? 0;
 
         }
     }
