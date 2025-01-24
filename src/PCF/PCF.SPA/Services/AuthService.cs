@@ -29,6 +29,7 @@ namespace PCF.SPA.Services
                     var token = await response.Content.ReadAsStringAsync();
                     if (!string.IsNullOrWhiteSpace(token))
                     {
+                        token = token.Trim('"');
                         await _localStorage.SetItemAsync("authToken", token);
                         _httpClient.DefaultRequestHeaders.Authorization =
                          new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
