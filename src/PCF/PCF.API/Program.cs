@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using PCF.API.Configuration;
 using PCF.API.Services;
+using PCF.Core.Config;
 using PCF.Core.Context;
 using PCF.Core.Identity;
 using PCF.Core.Interface;
@@ -114,6 +115,7 @@ if (app.Environment.IsDevelopment())
         {
             var dbContext = services.GetRequiredService<PCFDBContext>();
             await dbContext.Database.MigrateAsync();
+            await dbContext.EnsureSeedDataAsync();
         }
         catch (Exception ex)
         {

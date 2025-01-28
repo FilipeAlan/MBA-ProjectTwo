@@ -8,6 +8,6 @@ namespace PCF.Core.Interface
 
         Task<Categoria?> GetByIdAsync(int id, int usuarioId);
 
-        Task<bool> CheckIfExistsByNomeAsync(string nome, int usuarioId);
+        Task<bool> CheckIfExistsByNomeAsync(int currentId, string nome, int usuarioId);
     }
 }

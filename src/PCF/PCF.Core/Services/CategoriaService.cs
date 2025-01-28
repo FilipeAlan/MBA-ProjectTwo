@@ -9,7 +9,7 @@ namespace PCF.Core.Services
         {
             ArgumentNullException.ThrowIfNull(categoria);
 
-            if (await repository.CheckIfExistsByNomeAsync(categoria.Nome, appIdentityUser.GetUserId()))
+            if (await repository.CheckIfExistsByNomeAsync(default, categoria.Nome, appIdentityUser.GetUserId()))
             {
                 return Result.Fail<int>("Já existe uma categoria com este nome");
             }
@@ -60,7 +60,7 @@ namespace PCF.Core.Services
                 return Result.Fail("Categoria inexistente");
             }
 
-            if (await repository.CheckIfExistsByNomeAsync(categoria.Nome, appIdentityUser.GetUserId()))
+            if (await repository.CheckIfExistsByNomeAsync(categoriaExistente.Id, categoria.Nome, appIdentityUser.GetUserId()))
             {
                 return Result.Fail("Já existe uma categoria com este nome");
             }
