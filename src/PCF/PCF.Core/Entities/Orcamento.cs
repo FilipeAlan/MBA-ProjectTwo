@@ -8,6 +8,6 @@ namespace PCF.Core.Entities
         public int UsuarioId { get; set; }
         public virtual required Usuario Usuario { get; set; }
         public int? CategoriaId { get; set; }
-        public virtual required Categoria? Categoria { get; set; }
+        public virtual Categoria? Categoria { get; set; }
     }
 }

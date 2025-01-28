@@ -40,6 +40,35 @@ namespace PCF.Core.Services
                 return Result.Fail("Orçamento inexistente");
             }
 
+            decimal orcamentoUtilizadoCategoria = 0;
+            decimal orcamentoGeral = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
+
+            if (orcamentoExistente.CategoriaId != null)
+            {
+                orcamentoUtilizadoCategoria =
+                    await repository.CheckAmountUsedByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now,
+                        orcamentoExistente.CategoriaId.Value);
+
+                if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
+                {
+                    return Result.Fail(
+                        "Valor do orçamento para a categoria informada maior que os lançamentos alocados");
+                }
+
+                if (orcamento.ValorLimite > orcamentoGeral)
+                {
+                    return Result.Fail(
+                        "Valor do orçamento da categoria não pode ser maior que o total disponível");
+                }
+            }
+            else
+            {
+                if (orcamentoGeral < orcamento.ValorLimite)
+                {
+                    return Result.Fail("Valor do orçamento maior que o disponível");
+                }
+            }
+
             orcamentoExistente.ValorLimite = orcamento.ValorLimite;
 
             await repository.UpdateAsync(orcamentoExistente);
@@ -51,20 +80,44 @@ namespace PCF.Core.Services
         {
             ArgumentNullException.ThrowIfNull(orcamento);
 
-            decimal orcamentoDisponivel = 0;
+            decimal orcamentoUtilizadoCategoria = 0;
+            decimal orcamentoGeral = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamento.CategoriaId != null)
             {
-                orcamentoDisponivel = await repository.CheckAmountAvailableByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now, orcamento.CategoriaId.Value);
+
+                if (await repository.CheckIfExistsByIdAsync(orcamento.CategoriaId.Value, appIdentityUser.GetUserId()))
+                {
+                    return Result.Fail<int>("Já existe um orçamento para essa categoria lançado");
+                }
+
+                orcamentoUtilizadoCategoria =
+                    await repository.CheckAmountUsedByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now,
+                        orcamento.CategoriaId.Value);
+
+                if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
+                {
+                    return Result.Fail<int>(
+                        "Valor do orçamento para a categoria informada maior que os lançamentos alocados");
+                }
+
+                if (orcamento.ValorLimite > orcamentoGeral)
+                {
+                    return Result.Fail<int>(
+                        "Valor do orçamento da categoria não pode ser maior que o total disponível");
+                }
             }
             else
             {
-                orcamentoDisponivel = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
-            }
+                if (await repository.CheckIfExistsGeralByIdAsync(appIdentityUser.GetUserId()))
+                {
+                    return Result.Fail<int>("Já existe um orçamento geral lançado");
+                }
 
-            if (orcamentoDisponivel < orcamento.ValorLimite)
-            {
-                return Result.Fail<int>("Valor do orçamento maior que o disponível");
+                if (orcamentoGeral < orcamento.ValorLimite)
+                {
+                    return Result.Fail<int>("Valor do orçamento maior que o disponível");
+                }
             }
 
             orcamento.ValorLimite = orcamento.ValorLimite;

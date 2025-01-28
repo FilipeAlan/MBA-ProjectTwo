@@ -12,13 +12,6 @@ namespace PCF.API.Controllers
     public class OrcamentosController(IOrcamentoService orcamentoService) : ApiControllerBase
     {
         [HttpGet]
-        public async Task<Ok<IEnumerable<OrcamentoResponseViewModel>>> GetAll()
-        {
-            var list = await orcamentoService.GetAllAsync();
-            return TypedResults.Ok(list.Adapt<IEnumerable<OrcamentoResponseViewModel>>());
-        }
-
-        [HttpGet("Listar")]
         public async Task<Ok<IEnumerable<OrcamentoResponseViewModel>>> GetAllWithCategorias()
         {
             var list = await orcamentoService.GetAllWithDescriptionAsync();

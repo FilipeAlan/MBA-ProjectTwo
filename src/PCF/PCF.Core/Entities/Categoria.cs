@@ -10,7 +10,7 @@ namespace PCF.Core.Entities
         public int? UsuarioId { get; set; }
         public virtual Usuario? Usuario { get; set; }
 
-        public virtual ICollection<Orcamento> Orcamentos { get; set; } = [];
+        public virtual ICollection<Orcamento> Orcamentos { get; set; } = new List<Orcamento>();
 
         public virtual ICollection<Transacao> Transacoes { get; set; } = [];
     }

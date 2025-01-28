@@ -10,11 +10,13 @@ namespace PCF.Core.Interface
         Task<Orcamento?> GetByIdAsync(int id, int usuarioId);
 
         Task<bool> CheckIfExistsByIdAsync(int categoriaId, int usuarioId);
+        
+        Task<bool> CheckIfExistsGeralByIdAsync(int usuarioId);
 
         Task<IEnumerable<OrcamentoResponseViewModel>> GetOrcamentoWithCategoriaAsync(int? usuarioId);
 
         Task<decimal> CheckAmountAvailableAsync(int usuarioId, DateTime data);
 
-        Task<decimal> CheckAmountAvailableByCategoriaAsync(int usuarioId, DateTime data, int categoriaId);
+        Task<decimal> CheckAmountUsedByCategoriaAsync(int usuarioId, DateTime data, int categoriaId);
     }
 }
