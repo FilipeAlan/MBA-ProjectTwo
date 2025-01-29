@@ -14,12 +14,14 @@ namespace PCF.Core.Entities
         public DateTime DataLancamento { get; set; }
         public TipoEnum Tipo { get; set; }
 
-        public void Validar()
+        //TODO - Avaliar se é necessário criar um validador separado.
+        public Boolean Validar()
         {
             if (Valor <= 0)
             {
-                throw new Exception("Valor da transação deve ser maior que zero.");
+                return false;
             }
+            return true;
         }
 
     }
