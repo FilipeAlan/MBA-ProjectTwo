@@ -1,0 +1,84 @@
+﻿@page "/orcamento"
+@inject IWebApiClient WebApiClient
+@inject ISnackbar Snackbar
+
+<EditForm Model="newOrcamento" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+    <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title" ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+        <DialogContent>
+            <!-- Campo para ValorLimite -->
+            <MudTextField @bind-Value="newOrcamento.ValorLimite" Label="Valor Limite" Required="true" InputType="InputType.Number" />
+
+            <!-- Campo para CategoriaId -->
+            <MudSelect @bind-Value="newOrcamento.CategoriaId" Label="Categoria" T="int?">
+                @foreach (var categoria in categorias)
+                {
+                    <MudSelectItem Value="@categoria.Id">@categoria.Nome</MudSelectItem>
+                }
+            </MudSelect>
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <MudText>SALVAR</MudText>
+                }
+            </MudButton>
+            <MudButton OnClick="Cancel">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    private bool isLoading;
+    private OrcamentoRequestViewModel newOrcamento = new OrcamentoRequestViewModel() { ValorLimite = 0, CategoriaId = null };
+    private List<CategoriaResponseViewModel> categorias = new List<CategoriaResponseViewModel>();
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Carrega as categorias disponíveis
+        try
+        {
+            var categoriasResponse = await WebApiClient.CategoriasAllAsync();
+            categorias = categoriasResponse.ToList();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao carregar categorias: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task Submit()
+    {
+        isLoading = true;
+
+        try
+        {
+            await WebApiClient.OrcamentosPOSTAsync(newOrcamento);
+            Snackbar.Add("Orçamento cadastrado com sucesso.", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (ApiException<IEnumerable<string>> e) when (e.StatusCode == (int)System.Net.HttpStatusCode.BadRequest && e.Result.Any())
+        {
+            Snackbar.Add(string.Join(", ", e.Result), Severity.Warning);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro não esperado: {ex.Message}", Severity.Error);
+        }
+
+        isLoading = false;
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}
