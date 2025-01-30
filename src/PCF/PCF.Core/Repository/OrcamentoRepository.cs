@@ -26,7 +26,7 @@ namespace PCF.Core.Repository
         public async Task<IEnumerable<Orcamento>> GetAllAsync(int usuarioId)
         {
             return await _dbContext.Orcamentos
-                .Where(c => c.UsuarioId == usuarioId || c.UsuarioId == null)
+                .Where(c => c.UsuarioId == usuarioId)
                 .ToListAsync();
         }
 
@@ -57,7 +57,8 @@ namespace PCF.Core.Repository
                         LEFT JOIN
                             Usuario u ON o.UsuarioId = u.Id
                         WHERE 
-                            o.UsuarioId = @UsuarioId";
+                            o.UsuarioId = @UsuarioId
+                        ORDER BY C.Nome";
 
             var parameters = new { UsuarioId = usuarioId };
 
