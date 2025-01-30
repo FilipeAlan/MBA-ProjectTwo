@@ -9,16 +9,17 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddOrcamentoDialog">Adicionar orçamento</MudButton>
-    <MudDataGrid T="OrcamentoResponseViewModel" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false">
+    <MudDataGrid T="OrcamentoResponseViewModel" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
-            <PropertyColumn Property="x => x.OrcamentoId" Title="ID" />
-            <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" />
-            <PropertyColumn Property="x => x.NomeUsuario" Title="Usuário" />
-            <PropertyColumn Property="x => x.NomeCategoria" Title="Categoria" />
+            <PropertyColumn Property="x => x.OrcamentoId" Title="ID" Editable="false" />
+            <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" Editable="true" Required="true" />
+            <PropertyColumn Property="x => x.NomeUsuario" Title="Usuário" Editable="false" />
+            <PropertyColumn Property="x => x.NomeCategoria" Title="Categoria" Editable="false" Required="false" />
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" OnClick="() => DeleteOrcamento(context.Item.OrcamentoId)" title="Excluir" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteOrcamento(context.Item.OrcamentoId)" title="Excluir" />
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
@@ -65,6 +66,40 @@
         }
     }
 
+    private async Task CommitEdit(OrcamentoResponseViewModel item)
+    {
+        var request = new OrcamentoRequestViewModel
+            {
+                ValorLimite = item.ValorLimite,
+                CategoriaId = item.CategoriaId
+            };
+
+        _loading = true;
+
+        try
+        {
+            await WebApiClient.OrcamentosPUTAsync(item.OrcamentoId, request);
+            Snackbar.Add("Orçmento atualizado com sucesso", severity: Severity.Success);
+        }
+        catch (ApiException e) when (e.StatusCode == (int)HttpStatusCode.NotFound)
+        {
+            Snackbar.Add("Orçamento inexistente", Severity.Warning);
+        }
+        catch (ApiException<IEnumerable<string>> e) when (e.StatusCode == (int)HttpStatusCode.BadRequest && e.Result.Any())
+        {
+            Snackbar.Add(string.Join(", ", e.Result), Severity.Warning);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao atualizar orçamento: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            await LoadOrcamentosAsync();
+            _loading = false;
+        }
+    }
+    
     private async Task DeleteOrcamento(int id)
     {
         var options = new DialogOptions
