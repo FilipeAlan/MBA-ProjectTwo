@@ -26,7 +26,7 @@ namespace PCF.Core.Repository
         public async Task<IEnumerable<Orcamento>> GetAllAsync(int usuarioId)
         {
             return await _dbContext.Orcamentos
-                .Where(c => c.UsuarioId == usuarioId || c.UsuarioId == null)
+                .Where(c => c.UsuarioId == usuarioId)
                 .ToListAsync();
         }
 
@@ -35,7 +35,6 @@ namespace PCF.Core.Repository
             return await _dbContext.Orcamentos
                 .Include(c => c.Categoria)
                 .Include(c => c.Usuario)
-                .OrderBy(o => o.Categoria.Descricao)
                 .FirstOrDefaultAsync(c => c.Id == id && c.UsuarioId == usuarioId);
         }
 
