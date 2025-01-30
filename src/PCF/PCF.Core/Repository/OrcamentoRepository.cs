@@ -35,6 +35,7 @@ namespace PCF.Core.Repository
             return await _dbContext.Orcamentos
                 .Include(c => c.Categoria)
                 .Include(c => c.Usuario)
+                .OrderBy(o => o.Categoria.Descricao)
                 .FirstOrDefaultAsync(c => c.Id == id && c.UsuarioId == usuarioId);
         }
 
@@ -57,7 +58,8 @@ namespace PCF.Core.Repository
                         LEFT JOIN
                             Usuario u ON o.UsuarioId = u.Id
                         WHERE 
-                            o.UsuarioId = @UsuarioId";
+                            o.UsuarioId = @UsuarioId
+                        ORDER BY C.Nome";
 
             var parameters = new { UsuarioId = usuarioId };
 

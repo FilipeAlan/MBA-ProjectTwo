@@ -13,7 +13,7 @@
             <MudSelect @bind-Value="newOrcamento.CategoriaId" Label="Categoria" T="int?">
                 @foreach (var categoria in categorias)
                 {
-                    <MudSelectItem Value="@categoria.Id">@categoria.Nome</MudSelectItem>
+                    <MudSelectItem T="int?" Value="@categoria.Id">@categoria.Nome</MudSelectItem>
                 }
             </MudSelect>
         </DialogContent>
