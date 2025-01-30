@@ -9,15 +9,41 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
-    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="true" Filterable="false">
+    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
-            <PropertyColumn Property="x => x.Id" />
-            <PropertyColumn Property="x => x.Nome" />
-            <PropertyColumn Property="x => x.Descricao" Title="Descrição" />
+            <PropertyColumn Property="x => x.Id" Editable="false" />
+            <PropertyColumn Property="x => x.Nome" Editable="true" />
+            <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="true" Required="false" />
+            <PropertyColumn Property="x => x.Padrao" Editable="false">
+                <HeaderTemplate>
+                    <span>Padrão?</span>
+                    <MudTooltip Text="Categorias padrão não podem ser editadas ou excluídas">
+                        <MudIconButton Icon="@Icons.Material.Filled.HelpOutline" Size="Size.Small" />
+                    </MudTooltip>
+                </HeaderTemplate>
+                <CellTemplate>
+                    @if (context.Item.Padrao)
+                    {
+                        <span>Sim</span>
+                    }
+                    else
+                    {
+                        <span>Não</span>
+                    }
+                </CellTemplate>
+            </PropertyColumn>
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Error" OnClick="() => DeleteCategory(context.Item.Id)" title="Excluir" Disabled="context.Item.Padrao" />
+                        @if (!context.Item.Padrao)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" Disabled="context.Item.Padrao" />
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteCategory(context.Item.Id)" title="Excluir" Disabled="context.Item.Padrao" />
+                        }
+                        else
+                        {
+                            <span>&nbsp;</span>
+                        }
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
@@ -40,6 +66,7 @@
         try
         {
             _categories = await WebApiClient.CategoriasAllAsync();
+            _categories = _categories.OrderBy(x => x.Nome);
         }
         catch (Exception ex)
         {
@@ -78,6 +105,8 @@
 
         if (result == true)
         {
+            _loading = true;
+
             try
             {
                 await WebApiClient.CategoriasDELETEAsync(id);
@@ -96,6 +125,44 @@
             {
                 Snackbar.Add($"Erro ao deletar categoria: {ex.Message}", Severity.Error);
             }
+            finally
+            {
+                _loading = false;
+            }
+        }
+    }
+
+    private async Task CommitEdit(CategoriaResponseViewModel item)
+    {
+        var request = new CategoriaRequestViewModel
+            {
+                Nome = item.Nome,
+                Descricao = item.Descricao,
+            };
+
+        _loading = true;
+
+        try
+        {
+            await WebApiClient.CategoriasPUTAsync(item.Id, request);
+            Snackbar.Add("Categoria atualizada com sucesso.", Severity.Success);
+        }
+        catch (ApiException e) when (e.StatusCode == (int)HttpStatusCode.NotFound)
+        {
+            Snackbar.Add("Categoria inexistente", Severity.Warning);
+        }
+        catch (ApiException<IEnumerable<string>> e) when (e.StatusCode == (int)HttpStatusCode.BadRequest && e.Result.Any())
+        {
+            Snackbar.Add(string.Join(", ", e.Result), Severity.Warning);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao atualizar categoria: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            await LoadCategoriesAsync();
+            _loading = false;
         }
     }
 }
