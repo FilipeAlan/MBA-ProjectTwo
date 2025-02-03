@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject AuthenticationStateProvider AuthStateProvider
 
 <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudPopoverProvider />
@@ -9,8 +8,8 @@
     <AuthorizeView>
         <Authorized>
             <MudAppBar>
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-                <MudText>My Application</MudText>
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" />
+                <MudText>Plataforma de Controle Financeiro Pessoal</MudText>
                 <MudSpacer />
                 <MudMenu>
                     <ActivatorContent>
@@ -34,96 +33,98 @@
                 </MudMenu>
             </MudAppBar>
             <MudDrawer @bind-Open="@_drawerOpen">
-                <AppNavMenu />
+                <AppNavMenu OnLogout="Logout" />
             </MudDrawer>
         </Authorized>
     </AuthorizeView>
-
     <MudMainContent>
         @Body
     </MudMainContent>
-    <AuthorizeView>
-        <NotAuthorized>
-            <MudAppBar Bottom="true" Elevation="1" Fixed="true">
-                <MudSpacer />
-                <MudButton Variant="Variant.Text" OnClick="ToggleMode">
-                    <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
-                    <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
-                    <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
-                </MudButton>
-            </MudAppBar>
-        </NotAuthorized>
-    </AuthorizeView>
+    <MudDivider style="height:60px;width:0px;"></MudDivider>
+    <MudAppBar Bottom="true" Elevation="1" Fixed="true">
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" OnClick="ToggleMode">
+            <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
+            <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
+            <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
+        </MudButton>
+    </MudAppBar>
 </MudLayout>
 
 @code {
     private MudTheme _theme = new();
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider = default!;
-
     private bool _isLoggedIn;
     private string? userName;
     bool _drawerOpen = true;
 
-    [Inject] private AuthService AuthService { get; set; } = default!;
+    [Inject] private AuthManagerService AuthManagerService { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private Blazored.LocalStorage.ILocalStorageService LocalStorage { get; set; } = default!;  // 📌 Adicionando Local Storage
 
-    void DrawerToggle()
+    protected override async Task OnInitializedAsync()
     {
-        _drawerOpen = !_drawerOpen;
-    }
+        // Verifica autenticação inicial
+        await CheckAuthenticationStatus();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && _mudThemeProvider != null)
-        {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await CheckAuthenticationStatus();
-            StateHasChanged();
-            AuthService.OnAuthenticationStateChanged += HandleAuthenticationStateChanged;
-        }
+        // Carrega o modo escuro salvo no Local Storage
+        _isDarkMode = await LocalStorage.GetItemAsync<bool>("darkMode");
+
+        // Inscreve no evento de mudança de estado (apenas uma vez)
+        AuthManagerService.OnAuthenticationStateChanged += HandleAuthenticationStateChanged;
     }
 
     private async Task CheckAuthenticationStatus()
     {
-        _isLoggedIn = await AuthService.IsLoggedIn();
+        _isLoggedIn = await AuthManagerService.IsLoggedInAsync();
         if (_isLoggedIn)
         {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            userName = authState.User!.Identity!.Name;
+            var authState = await AuthManagerService.GetAuthenticationStateAsync();
+            userName = authState.User.Identity?.Name;
         }
+        else
+        {
+            userName = null;
+        }
+
+        StateHasChanged(); // Apenas uma atualização da UI após verificação do status
     }
 
     private void HandleAuthenticationStateChanged()
     {
-        InvokeAsync(async () =>
-        {
-            await CheckAuthenticationStatus();
-            StateHasChanged(); // Atualiza a interface ao detectar mudanças
-        });
+        InvokeAsync(CheckAuthenticationStatus);
     }
-
     private async Task Logout()
     {
         if (_isLoggedIn)
         {
-            // Logout
-            await AuthService.LogoutAsync();
-            _isLoggedIn = false;
+            await AuthManagerService.LogoutAsync();
 
-            // Redireciona para a tela de login
-            Navigation.NavigateTo("/");
+            //Notifica o sistema sobre a mudança no estado de autenticação
+            await AuthManagerService.NotifyAuthenticationStateChangedAsync();
+
+            _isLoggedIn = false;
+            userName = null;
+
+            StateHasChanged(); //Atualiza a interface imediatamente
+
+            //Garante que a página seja recarregada corretamente
+            Navigation.NavigateTo("/", forceLoad: true);
         }
     }
-
     public void Dispose()
     {
         // Remove a inscrição do evento ao descartar o componente
-        AuthService.OnAuthenticationStateChanged -= HandleAuthenticationStateChanged;
+        AuthManagerService.OnAuthenticationStateChanged -= HandleAuthenticationStateChanged;
     }
-
-    private void ToggleMode()
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    private async Task ToggleMode()
     {
         _isDarkMode = !_isDarkMode;
+        await LocalStorage.SetItemAsync("darkMode", _isDarkMode); // 📌 Salva no Local Storage
     }
 }

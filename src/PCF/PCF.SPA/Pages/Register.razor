@@ -1,6 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager Navigation
-@inject AuthService AuthService
+@inject AuthManagerService AuthManagerService
 @inject ISnackbar Snackbar
 
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
@@ -45,7 +45,7 @@
 
             try
             {
-                var responseMessage = await AuthService.RegisterAsync(loginResponseDto);
+                var responseMessage = await AuthManagerService.RegisterAsync(loginResponseDto);
                 if (responseMessage == "Registrado com sucesso")
                 {
                     Snackbar.Add("Usuário cadastrado com sucesso!", Severity.Success); // Exibe sucesso

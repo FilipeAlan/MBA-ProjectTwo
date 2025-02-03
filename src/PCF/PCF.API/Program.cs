@@ -134,10 +134,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.UseCors("CorsPolicy");
 app.MapControllers();
 
 await app.RunAsync();

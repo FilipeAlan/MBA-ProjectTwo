@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace PCF.SPA.Services
 {
-    public class AuthenticationManager : AuthenticationStateProvider
+    public class AuthManagerService : AuthenticationStateProvider
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorageService;
@@ -14,12 +14,13 @@ namespace PCF.SPA.Services
 
         public event Action? OnAuthenticationStateChanged;
 
-        public AuthenticationManager(HttpClient httpClient, ILocalStorageService localStorageService)
+        public AuthManagerService(HttpClient httpClient, ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;
             _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
+
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var token = await _localStorageService.GetItemAsync<string>("authToken");
@@ -29,11 +30,15 @@ namespace PCF.SPA.Services
                 return _anonymous;
             }
 
+            // Configurar a autorização no HttpClient com o token
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var claims = JwtParser.ParseClaimsFromJwt(token);
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwtAuthType")));
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwtAuthType"));
+
+            return new AuthenticationState(authenticatedUser);
         }
+
         public async Task<bool> LoginAsync(LoginResponseDto loginResponseDto)
         {
             try
@@ -45,7 +50,7 @@ namespace PCF.SPA.Services
                     if (!string.IsNullOrWhiteSpace(token))
                     {
                         await SaveTokenAsync(token);
-                        NotifyAuthenticationStateChanged();
+                        await NotifyAuthenticationStateChangedAsync();
                         return true;
                     }
                 }
@@ -57,12 +62,13 @@ namespace PCF.SPA.Services
                 return false;
             }
         }
+
         public async Task LogoutAsync()
         {
             try
             {
                 await RemoveTokenAsync();
-                NotifyUserLogout();
+                await NotifyAuthenticationStateChangedAsync();
             }
             catch (Exception ex)
             {
@@ -70,6 +76,7 @@ namespace PCF.SPA.Services
                 throw;
             }
         }
+
         public async Task<string> RegisterAsync(LoginResponseDto loginResponseDto)
         {
             try
@@ -89,39 +96,44 @@ namespace PCF.SPA.Services
                 return "Erro ao registrar usuário. Tente novamente mais tarde.";
             }
         }
+
         public async Task<bool> IsLoggedInAsync()
         {
             var authState = await GetAuthenticationStateAsync();
             return authState.User.Identity?.IsAuthenticated ?? false;
         }
+
         private async Task SaveTokenAsync(string token)
         {
             await _localStorageService.SetItemAsync("authToken", token);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
+
         private async Task RemoveTokenAsync()
         {
             await _localStorageService.RemoveItemAsync("authToken");
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
+
         private bool IsTokenExpired(string token)
         {
             var claims = JwtParser.ParseClaimsFromJwt(token);
             var expiry = claims.FirstOrDefault(c => c.Type == "exp");
-            if (expiry == null) return true;
 
-            var expiryDate = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expiry.Value)).UtcDateTime;
+            if (expiry == null)
+                return true;
+
+            if (!long.TryParse(expiry.Value, out var expValue))
+                return true;
+
+            var expiryDate = DateTimeOffset.FromUnixTimeSeconds(expValue).UtcDateTime;
             return expiryDate <= DateTime.UtcNow;
         }
-        private void NotifyUserLogout()
+
+        public async Task NotifyAuthenticationStateChangedAsync()
         {
-            NotifyAuthenticationStateChanged(Task.FromResult(_anonymous));
-            OnAuthenticationStateChanged?.Invoke();
-        }
-        private void NotifyAuthenticationStateChanged()
-        {
-            var authState = GetAuthenticationStateAsync();
-            NotifyAuthenticationStateChanged(authState);
+            var authState = await GetAuthenticationStateAsync();
+            NotifyAuthenticationStateChanged(Task.FromResult(authState));
             OnAuthenticationStateChanged?.Invoke();
         }
     }

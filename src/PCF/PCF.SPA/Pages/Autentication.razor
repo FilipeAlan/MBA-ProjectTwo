@@ -1,15 +1,13 @@
 ﻿@page "/"
-@inject NavigationManager Navigation
-@inject AuthService AuthService
 
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
     <MudCardContent>
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Login</MudText>
         <MudForm Model="@loginResponseDto" @ref="loginForm" Validated="HandleValidation">
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponseDto.Login" Required="true"
-            RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" Immediate="true" />
+                          RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" Immediate="true" />
             <MudTextField Class="mb-4" Label="Senha" @bind-Value="loginResponseDto.Password" Required="true"
-            RequiredError="Senha é obrigatória." Type="password" Immediate="true" InputType="InputType.Password" />
+                          RequiredError="Senha é obrigatória." Type="password" Immediate="true" InputType="InputType.Password" />
             <MudText Color="Color.Error" Typo="Typo.caption" Style="margin-top: 10px;" Hidden="@string.IsNullOrWhiteSpace(errorMessage)">
                 @errorMessage
             </MudText>
@@ -20,7 +18,7 @@
                 }
                 else
                 {
-                    <MudText>Entrar</MudText>    
+                    <MudText>Entrar</MudText>
                 }
             </MudButton>
         </MudForm>
@@ -34,48 +32,63 @@
 </MudCard>
 
 @code {
-    private MudForm loginForm = default!;
+    private MudForm? loginForm;
     private LoginResponseDto loginResponseDto = new();
     private string? errorMessage;
     private bool isLoading;
 
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private AuthManagerService AuthManagerService { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
-        if (await AuthService.IsLoggedIn())
+        // Evita chamar `StateHasChanged()` desnecessariamente
+        if (await AuthManagerService.IsLoggedInAsync())
         {
-            Navigation.NavigateTo("/home");
+            Navigation.NavigateTo("/home", forceLoad: true);
         }
     }
 
     private async Task HandleLogin()
     {
         isLoading = true;
+        errorMessage = null;
+        StateHasChanged(); // Atualiza a UI imediatamente para refletir o estado do botão
+
         // Força a validação do formulário
-        await loginForm.Validate();
-        if (loginForm.IsValid)
+        if (loginForm is not null)
         {
-            try
-            {
-                var success = await AuthService.LoginAsync(loginResponseDto);
-                if (success)
-                {
-                    Navigation.NavigateTo("/home");
-                }
-                else
-                {
-                    errorMessage = "Credenciais inválidas. Por favor, tente novamente.";
-                }
-            }
-            catch (Exception ex)
-            {
-                errorMessage = $"Erro ao realizar login: {ex.Message}";
-            }
+            await loginForm.Validate();
         }
-        else
+
+        if (loginForm is null || !loginForm.IsValid)
         {
             errorMessage = "Preencha os campos obrigatórios corretamente.";
+            isLoading = false;
+            StateHasChanged();
+            return;
         }
+
+        try
+        {
+            var success = await AuthManagerService.LoginAsync(loginResponseDto);
+            if (success)
+            {
+                // Redireciona para a home e força o carregamento da página para garantir que a autenticação foi processada corretamente
+                Navigation.NavigateTo("/home", forceLoad: true);
+            }
+            else
+            {
+                errorMessage = "Credenciais inválidas. Por favor, tente novamente.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao realizar login: {ex.Message}";
+        }
+
         isLoading = false;
+        StateHasChanged(); // Atualiza a UI após erro ou sucesso
     }
 
     private void HandleValidation()
