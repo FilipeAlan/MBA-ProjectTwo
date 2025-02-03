@@ -44,6 +44,7 @@ namespace PCF.SPA.Services
                     var token = await response.Content.ReadAsStringAsync();
                     if (!string.IsNullOrWhiteSpace(token))
                     {
+                        token = token.Trim('"');
                         await SaveTokenAsync(token);
                         NotifyAuthenticationStateChanged();
                         return true;
