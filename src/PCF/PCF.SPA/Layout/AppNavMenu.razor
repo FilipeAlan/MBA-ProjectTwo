@@ -1,36 +1,15 @@
-﻿<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
-
-<MudNavMenu>
-    <MudNavLink Icon="@Icons.Material.Filled.Home" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+﻿<MudNavMenu>
+    <MudNavLink Icon="@Icons.Material.Filled.Home" Href="/home" Match="NavLinkMatch.All">Home</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.Category" Href="/categorias" Match="NavLinkMatch.Prefix">Categorias</MudNavLink>
     <MudNavLink Icon="@Icons.Material.Filled.MonetizationOn" Href="/orcamentos" Match="NavLinkMatch.Prefix">Orçamentos</MudNavLink>
-    <MudNavLink Icon="@Icons.Material.Filled.Logout" Href="/logout" Match="NavLinkMatch.Prefix">Sair</MudNavLink>
+    <MudNavLink Icon="@Icons.Material.Filled.Logout" OnClick="OnLogoutClicked">Sair</MudNavLink>
 </MudNavMenu>
 
-<MudSpacer />
-<MudButton Variant="Variant.Text" OnClick="ToggleMode">
-    <MudIcon Color="@(_isDarkMode ? Color.Info : Color.Warning)" Icon="@Icons.Material.Outlined.LightMode" />
-    <MudIcon Color="Color.Default" Icon="@(_isDarkMode ? Icons.Material.Outlined.ArrowForward : Icons.Material.Outlined.ArrowBack)" />
-    <MudIcon Color="@(_isDarkMode ? Color.Warning : Color.Info)" Icon="@Icons.Material.Outlined.ModeNight" />
-</MudButton>
-
-
 @code {
-    private MudTheme _theme = new();
-    private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider = default!;
+    [Parameter] public EventCallback OnLogout { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task OnLogoutClicked()
     {
-        if (firstRender && _mudThemeProvider != null)
-        {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            StateHasChanged();
-        }
-    }
-
-    private void ToggleMode()
-    {
-        _isDarkMode = !_isDarkMode;
+        await OnLogout.InvokeAsync();
     }
 }
