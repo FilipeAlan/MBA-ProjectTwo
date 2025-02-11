@@ -9,7 +9,7 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddOrcamentoDialog">Adicionar orçamento</MudButton>
-    <MudDataGrid T="OrcamentoResponseViewModel" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
+    <MudDataGrid T="OrcamentoResponse" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.OrcamentoId" Title="ID" Editable="false" />
             <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" Editable="true" Required="true" />
@@ -28,7 +28,7 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<OrcamentoResponseViewModel> _orcamentos = [];
+    private IEnumerable<OrcamentoResponse> _orcamentos = [];
     private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
@@ -66,9 +66,9 @@
         }
     }
 
-    private async Task CommitEdit(OrcamentoResponseViewModel item)
+    private async Task CommitEdit(OrcamentoResponse item)
     {
-        var request = new OrcamentoRequestViewModel
+        var request = new OrcamentoRequest
             {
                 ValorLimite = item.ValorLimite,
                 CategoriaId = item.CategoriaId

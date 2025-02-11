@@ -15,13 +15,13 @@ namespace PCF.API.Controllers
     public class AuthController(IUserRepository userRepository,ITokenGenerator tokenGenerator) : ApiControllerBase
     {
         [HttpPost("login")]
-        public async Task<Results<Ok<string>,UnauthorizedHttpResult,StatusCodeHttpResult>> Login([FromBody] LoginResponse loginResponseDto) 
+        public async Task<Results<Ok<string>,UnauthorizedHttpResult,StatusCodeHttpResult>> Login([FromBody] LoginResponse loginResponse) 
         {
             try
             {
-                var user = await userRepository.FindByEmailAsync(loginResponseDto.Login);
+                var user = await userRepository.FindByEmailAsync(loginResponse.Login);
 
-                if (user != null && await userRepository.CheckPasswordAsync(user, loginResponseDto.Password))
+                if (user != null && await userRepository.CheckPasswordAsync(user, loginResponse.Password))
                 {
                     var token = tokenGenerator.GerarToken(user);
                     return TypedResults.Ok(token);
@@ -35,28 +35,28 @@ namespace PCF.API.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponse loginResponseDto)
+        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponse loginResponse)
         {
             try
             {
                 // Verifica se o usuário já existe
-                var user = await userRepository.FindByEmailAsync(loginResponseDto.Login);
+                var user = await userRepository.FindByEmailAsync(loginResponse.Login);
 
                 if (user == null)
                 {
                     // Cria um novo IdentityUser
                     var newUser = new ApplicationUser
                     {
-                        UserName = loginResponseDto.Name,
-                        Email = loginResponseDto.Login,
+                        UserName = loginResponse.Name,
+                        Email = loginResponse.Login,
                     };
 
                     // Hash da senha
                     var passwordHasher = new PasswordHasher<ApplicationUser>();
-                    newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponseDto.Password);
+                    newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponse.Password);
 
                     // Salva o usuário no banco
-                    await userRepository.CreateAsync(newUser, loginResponseDto.Name);
+                    await userRepository.CreateAsync(newUser, loginResponse.Name);
 
                     return TypedResults.Ok();
                 }

@@ -6,14 +6,14 @@
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
     <MudCardContent>
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Registro</MudText>
-        <MudForm Model="@loginResponseDto" @ref="registerForm" Validated="HandleValidation">
-            <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponseDto.Name" Required="true"
+        <MudForm Model="@loginResponse" @ref="registerForm" Validated="HandleValidation">
+            <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponse.Name" Required="true"
                           RequiredError="Nome é obrigatório." />
-            <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponseDto.Login" Required="true"
+            <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponse.Login" Required="true"
                           RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" />
-            <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponseDto.Password" Required="true"
+            <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponse.Password" Required="true"
                           RequiredError="Senha é obrigatória." Type="password" InputType="InputType.Password" />
-            <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponseDto.ConfirmedPassword" Required="true"
+            <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponse.ConfirmedPassword" Required="true"
                           RequiredError="Confirmação de senha é obrigatória." Type="password" InputType="InputType.Password" />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleRegister">
                 Registrar
@@ -30,14 +30,14 @@
 
 @code {
     private MudForm registerForm = default!;
-    private LoginResponseDto loginResponseDto = new();
+    private LoginResponse loginResponse = new();
 
     private async Task HandleRegister()
     {
         await registerForm.Validate(); // Valida o formulário
         if (registerForm.IsValid)
         {
-            if (loginResponseDto.Password != loginResponseDto.ConfirmedPassword)
+            if (loginResponse.Password != loginResponse.ConfirmedPassword)
             {
                 Snackbar.Add("As senhas não coincidem.", Severity.Error); // Exibe o erro
                 return;
@@ -45,7 +45,7 @@
 
             try
             {
-                var responseMessage = await AuthManagerService.RegisterAsync(loginResponseDto);
+                var responseMessage = await AuthManagerService.RegisterAsync(loginResponse);
                 if (responseMessage == "Registrado com sucesso")
                 {
                     Snackbar.Add("Usuário cadastrado com sucesso!", Severity.Success); // Exibe sucesso

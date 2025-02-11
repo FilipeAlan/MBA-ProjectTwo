@@ -35,8 +35,8 @@
 
 @code {
     private bool isLoading;
-    private OrcamentoRequestViewModel newOrcamento = new OrcamentoRequestViewModel() { ValorLimite = 0, CategoriaId = null };
-    private List<CategoriaResponseViewModel> categorias = new List<CategoriaResponseViewModel>();
+    private OrcamentoRequest newOrcamento = new OrcamentoRequest() { ValorLimite = 0, CategoriaId = null };
+    private List<CategoriaResponse> categorias = new List<CategoriaResponse>();
 
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = default!;
