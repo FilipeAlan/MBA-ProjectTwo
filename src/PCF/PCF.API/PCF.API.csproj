@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PCF.Core\PCF.Core.csproj" />
-    <ProjectReference Include="..\PCF.Shared\PCF.Shared.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

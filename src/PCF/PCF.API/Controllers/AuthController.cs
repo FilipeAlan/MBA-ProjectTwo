@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
+using PCF.Core.Dtos;
 using PCF.Core.Identity;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {
@@ -15,7 +15,7 @@ namespace PCF.API.Controllers
     public class AuthController(IUserRepository userRepository,ITokenGenerator tokenGenerator) : ApiControllerBase
     {
         [HttpPost("login")]
-        public async Task<Results<Ok<string>,UnauthorizedHttpResult,StatusCodeHttpResult>> Login([FromBody] LoginResponseDto loginResponseDto) 
+        public async Task<Results<Ok<string>,UnauthorizedHttpResult,StatusCodeHttpResult>> Login([FromBody] LoginResponse loginResponseDto) 
         {
             try
             {
@@ -35,7 +35,7 @@ namespace PCF.API.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponseDto loginResponseDto)
+        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponse loginResponseDto)
         {
             try
             {

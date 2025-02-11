@@ -1,4 +1,6 @@
-﻿namespace PCF.Shared.Dtos
+﻿using PCF.Core.Enumerables;
+
+namespace PCF.Core.Dtos
 {
     public class TransacaoResponse
     {
@@ -7,6 +9,6 @@
         public int CategoriaId { get; set; }
         public int UsuarioId { get; set; }
         public DateTime DataLancamento { get; set; }
-        public TipoEnumDto Tipo { get; set; }
+        public TipoEnum Tipo { get; set; }
     }
 }

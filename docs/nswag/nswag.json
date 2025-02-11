@@ -47,7 +47,6 @@
       "className": "{controller}WebApiClient",
       "operationGenerationMode": "MultipleClientsFromOperationId",
       "additionalNamespaceUsages": [
-        "PCF.Shared.Dtos",
         "PCF.SPA.Services.Base"
       ],
       "additionalContractNamespaceUsages": [],
@@ -90,7 +89,7 @@
       "inlineNamedDictionaries": false,
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
-      "generateDtoTypes": false,
+      "generateDtoTypes": true,
       "generateOptionalPropertiesAsNullable": false,
       "generateNullableReferenceTypes": false,
       "templateDirectory": null,

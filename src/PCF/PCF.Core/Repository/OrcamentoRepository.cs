@@ -1,9 +1,9 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
 using PCF.Core.Context;
+using PCF.Core.Dtos;
 using PCF.Core.Entities;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.Core.Repository
 {
@@ -38,7 +38,7 @@ namespace PCF.Core.Repository
                 .FirstOrDefaultAsync(c => c.Id == id && c.UsuarioId == usuarioId);
         }
 
-        public async Task<IEnumerable<OrcamentoResponseViewModel>> GetOrcamentoWithCategoriaAsync(int? usuarioId)
+        public async Task<IEnumerable<OrcamentoResponse>> GetOrcamentoWithCategoriaAsync(int? usuarioId)
         {
             using var connection = _dbContext.Database.GetDbConnection();
 
@@ -62,7 +62,7 @@ namespace PCF.Core.Repository
 
             var parameters = new { UsuarioId = usuarioId };
 
-            var result = await connection.QueryAsync<OrcamentoResponseViewModel>(query, parameters);
+            var result = await connection.QueryAsync<OrcamentoResponse>(query, parameters);
 
             return result;
         }

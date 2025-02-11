@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PCF.Core.Enumerables;
+using System.ComponentModel.DataAnnotations;
 
-namespace PCF.Shared.Dtos
+namespace PCF.Core.Dtos
 {
     public class TransacaoRequest
     {
-        
+
         public required decimal Valor { get; set; }
 
         public int UsuarioId { get; set; }
@@ -15,7 +16,7 @@ namespace PCF.Shared.Dtos
 
         public required DateTime DataLancamento { get; set; }
 
-        public TipoEnumDto Tipo { get; set; }
+        public TipoEnum Tipo { get; set; }
 
     }
 }
