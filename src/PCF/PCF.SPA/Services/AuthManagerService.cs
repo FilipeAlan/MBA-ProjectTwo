@@ -39,11 +39,11 @@ namespace PCF.SPA.Services
             return new AuthenticationState(authenticatedUser);
         }
 
-        public async Task<bool> LoginAsync(LoginResponseDto loginResponseDto)
+        public async Task<bool> LoginAsync(LoginResponse loginResponse)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("auth/login", loginResponseDto);
+                var response = await _httpClient.PostAsJsonAsync("auth/login", loginResponse);
                 if (response.IsSuccessStatusCode)
                 {
                     var token = await response.Content.ReadAsStringAsync();
@@ -78,11 +78,11 @@ namespace PCF.SPA.Services
             }
         }
 
-        public async Task<string> RegisterAsync(LoginResponseDto loginResponseDto)
+        public async Task<string> RegisterAsync(LoginResponse loginResponse)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("auth/register", loginResponseDto);
+                var response = await _httpClient.PostAsJsonAsync("auth/register", loginResponse);
                 if (response.IsSuccessStatusCode)
                 {
                     return "Registrado com sucesso";

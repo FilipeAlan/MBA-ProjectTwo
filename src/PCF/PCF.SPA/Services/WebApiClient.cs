@@ -29,57 +29,57 @@ namespace PCF.SPA.Services
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> LoginAsync(LoginResponseDto body);
+        System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> LoginAsync(LoginResponseDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(LoginResponseDto body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(LoginResponseDto body, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponseViewModel>> CategoriasAllAsync();
+        System.Threading.Tasks.Task RegisterAsync(LoginResponse body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponseViewModel>> CategoriasAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task RegisterAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponse>> CategoriasAllAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponse>> CategoriasAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CategoriaRequestViewModel> CategoriasPOSTAsync(CategoriaRequestViewModel body);
+        System.Threading.Tasks.Task<CategoriaRequest> CategoriasPOSTAsync(CategoriaRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CategoriaRequestViewModel> CategoriasPOSTAsync(CategoriaRequestViewModel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CategoriaRequest> CategoriasPOSTAsync(CategoriaRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CategoriaResponseViewModel> GetByIdAsync(int id);
+        System.Threading.Tasks.Task<CategoriaResponse> GetByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CategoriaResponseViewModel> GetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CategoriaResponse> GetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequestViewModel body);
+        System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequestViewModel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -92,39 +92,39 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponseViewModel>> OrcamentosAllAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponse>> OrcamentosAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponseViewModel>> OrcamentosAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponse>> OrcamentosAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OrcamentoRequestViewModel> OrcamentosPOSTAsync(OrcamentoRequestViewModel body);
+        System.Threading.Tasks.Task<OrcamentoRequest> OrcamentosPOSTAsync(OrcamentoRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OrcamentoRequestViewModel> OrcamentosPOSTAsync(OrcamentoRequestViewModel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<OrcamentoRequest> OrcamentosPOSTAsync(OrcamentoRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OrcamentoResponseViewModel> ObterOrcamentoPorIdAsync(int id);
+        System.Threading.Tasks.Task<OrcamentoResponse> ObterOrcamentoPorIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OrcamentoResponseViewModel> ObterOrcamentoPorIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<OrcamentoResponse> ObterOrcamentoPorIdAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequestViewModel body);
+        System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequestViewModel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -257,7 +257,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> LoginAsync(LoginResponseDto body)
+        public virtual System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body)
         {
             return LoginAsync(body, System.Threading.CancellationToken.None);
         }
@@ -265,7 +265,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> LoginAsync(LoginResponseDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -339,7 +339,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task RegisterAsync(LoginResponseDto body)
+        public virtual System.Threading.Tasks.Task RegisterAsync(LoginResponse body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -347,7 +347,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task RegisterAsync(LoginResponseDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task RegisterAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -421,7 +421,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponseViewModel>> CategoriasAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponse>> CategoriasAllAsync()
         {
             return CategoriasAllAsync(System.Threading.CancellationToken.None);
         }
@@ -429,7 +429,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponseViewModel>> CategoriasAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<CategoriaResponse>> CategoriasAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -470,7 +470,7 @@ namespace PCF.SPA.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<CategoriaResponseViewModel>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<CategoriaResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -499,7 +499,7 @@ namespace PCF.SPA.Services
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CategoriaRequestViewModel> CategoriasPOSTAsync(CategoriaRequestViewModel body)
+        public virtual System.Threading.Tasks.Task<CategoriaRequest> CategoriasPOSTAsync(CategoriaRequest body)
         {
             return CategoriasPOSTAsync(body, System.Threading.CancellationToken.None);
         }
@@ -507,7 +507,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CategoriaRequestViewModel> CategoriasPOSTAsync(CategoriaRequestViewModel body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CategoriaRequest> CategoriasPOSTAsync(CategoriaRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -562,7 +562,7 @@ namespace PCF.SPA.Services
                         else
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CategoriaRequestViewModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CategoriaRequest>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -591,7 +591,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CategoriaResponseViewModel> GetByIdAsync(int id)
+        public virtual System.Threading.Tasks.Task<CategoriaResponse> GetByIdAsync(int id)
         {
             return GetByIdAsync(id, System.Threading.CancellationToken.None);
         }
@@ -599,7 +599,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CategoriaResponseViewModel> GetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CategoriaResponse> GetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -644,7 +644,7 @@ namespace PCF.SPA.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CategoriaResponseViewModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CategoriaResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -679,7 +679,7 @@ namespace PCF.SPA.Services
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequestViewModel body)
+        public virtual System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequest body)
         {
             return CategoriasPUTAsync(id, body, System.Threading.CancellationToken.None);
         }
@@ -687,7 +687,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequestViewModel body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task CategoriasPUTAsync(int id, CategoriaRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -867,7 +867,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponseViewModel>> OrcamentosAllAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponse>> OrcamentosAllAsync()
         {
             return OrcamentosAllAsync(System.Threading.CancellationToken.None);
         }
@@ -875,7 +875,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponseViewModel>> OrcamentosAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<OrcamentoResponse>> OrcamentosAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -916,7 +916,7 @@ namespace PCF.SPA.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<OrcamentoResponseViewModel>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.IEnumerable<OrcamentoResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -945,7 +945,7 @@ namespace PCF.SPA.Services
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OrcamentoRequestViewModel> OrcamentosPOSTAsync(OrcamentoRequestViewModel body)
+        public virtual System.Threading.Tasks.Task<OrcamentoRequest> OrcamentosPOSTAsync(OrcamentoRequest body)
         {
             return OrcamentosPOSTAsync(body, System.Threading.CancellationToken.None);
         }
@@ -953,7 +953,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OrcamentoRequestViewModel> OrcamentosPOSTAsync(OrcamentoRequestViewModel body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<OrcamentoRequest> OrcamentosPOSTAsync(OrcamentoRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1008,7 +1008,7 @@ namespace PCF.SPA.Services
                         else
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<OrcamentoRequestViewModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<OrcamentoRequest>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1037,7 +1037,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OrcamentoResponseViewModel> ObterOrcamentoPorIdAsync(int id)
+        public virtual System.Threading.Tasks.Task<OrcamentoResponse> ObterOrcamentoPorIdAsync(int id)
         {
             return ObterOrcamentoPorIdAsync(id, System.Threading.CancellationToken.None);
         }
@@ -1045,7 +1045,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OrcamentoResponseViewModel> ObterOrcamentoPorIdAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<OrcamentoResponse> ObterOrcamentoPorIdAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -1090,7 +1090,7 @@ namespace PCF.SPA.Services
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<OrcamentoResponseViewModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<OrcamentoResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1125,7 +1125,7 @@ namespace PCF.SPA.Services
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequestViewModel body)
+        public virtual System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequest body)
         {
             return OrcamentosPUTAsync(id, body, System.Threading.CancellationToken.None);
         }
@@ -1133,7 +1133,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequestViewModel body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task OrcamentosPUTAsync(int id, OrcamentoRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2119,7 +2119,7 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CategoriaRequestViewModel
+    public partial class CategoriaRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("nome")]
@@ -2134,7 +2134,7 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CategoriaResponseViewModel
+    public partial class CategoriaResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -2158,7 +2158,7 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LoginResponseDto
+    public partial class LoginResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
@@ -2176,7 +2176,7 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class OrcamentoRequestViewModel
+    public partial class OrcamentoRequest
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("valorLimite")]
@@ -2189,7 +2189,7 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class OrcamentoResponseViewModel
+    public partial class OrcamentoResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("valorLimite")]

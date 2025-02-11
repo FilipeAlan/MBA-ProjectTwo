@@ -9,7 +9,7 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddCategoryDialog">Adicionar categoria</MudButton>
-    <MudDataGrid T="CategoriaResponseViewModel" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
+    <MudDataGrid T="CategoriaResponse" Items="_categories" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.Id" Editable="false" />
             <PropertyColumn Property="x => x.Nome" Editable="true" />
@@ -52,7 +52,7 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<CategoriaResponseViewModel> _categories = [];
+    private IEnumerable<CategoriaResponse> _categories = [];
     private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
@@ -132,9 +132,9 @@
         }
     }
 
-    private async Task CommitEdit(CategoriaResponseViewModel item)
+    private async Task CommitEdit(CategoriaResponse item)
     {
-        var request = new CategoriaRequestViewModel
+        var request = new CategoriaRequest
             {
                 Nome = item.Nome,
                 Descricao = item.Descricao,
