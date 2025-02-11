@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
+using PCF.Core.Dtos;
 using PCF.Core.Entities;
 using PCF.Core.Extensions;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {
@@ -12,14 +12,14 @@ namespace PCF.API.Controllers
     public class OrcamentosController(IOrcamentoService orcamentoService) : ApiControllerBase
     {
         [HttpGet]
-        public async Task<Ok<IEnumerable<OrcamentoResponseViewModel>>> GetAllWithCategorias()
+        public async Task<Ok<IEnumerable<OrcamentoResponse>>> GetAllWithCategorias()
         {
             var list = await orcamentoService.GetAllWithDescriptionAsync();
-            return TypedResults.Ok(list.Adapt<IEnumerable<OrcamentoResponseViewModel>>());
+            return TypedResults.Ok(list.Adapt<IEnumerable<OrcamentoResponse>>());
         }
 
         [HttpGet("{id}", Name = "ObterOrcamentoPorId")]
-        public async Task<Results<Ok<OrcamentoResponseViewModel>, NotFound>> GetById(int id)
+        public async Task<Results<Ok<OrcamentoResponse>, NotFound>> GetById(int id)
         {
             var orcamento = await orcamentoService.GetByIdAsync(id);
 
@@ -28,11 +28,11 @@ namespace PCF.API.Controllers
                 return TypedResults.NotFound();
             }
 
-            return TypedResults.Ok(orcamento.Adapt<OrcamentoResponseViewModel>());
+            return TypedResults.Ok(orcamento.Adapt<OrcamentoResponse>());
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, OrcamentoRequestViewModel orcamento)
+        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, OrcamentoRequest orcamento)
         {
 
             if (await orcamentoService.GetByIdAsync(id) is null)
@@ -54,7 +54,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<OrcamentoRequestViewModel>>> AddNew(OrcamentoRequestViewModel orcamento)
+        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<OrcamentoRequest>>> AddNew(OrcamentoRequest orcamento)
         {
             var result = await orcamentoService.AddAsync(orcamento.Adapt<Orcamento>());
 

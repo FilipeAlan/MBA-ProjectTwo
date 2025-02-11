@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PCF.Shared.Dtos
+namespace PCF.Core.Dtos
 {
-    public class CategoriaRequestViewModel
+    public class CategoriaRequest
     {
         [Required]
         [MaxLength(250)]

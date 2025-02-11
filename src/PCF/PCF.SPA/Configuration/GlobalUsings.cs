@@ -1,2 +1,1 @@
-﻿global using PCF.Shared.Dtos;
-global using MudBlazor;
+﻿global using MudBlazor;

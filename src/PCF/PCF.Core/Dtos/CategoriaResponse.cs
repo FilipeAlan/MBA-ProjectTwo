@@ -1,6 +1,6 @@
-﻿namespace PCF.Shared.Dtos
+﻿namespace PCF.Core.Dtos
 {
-    public class CategoriaResponseViewModel
+    public class CategoriaResponse
     {
         public int Id { get; set; }
         public DateTime CriadoEm { get; set; }

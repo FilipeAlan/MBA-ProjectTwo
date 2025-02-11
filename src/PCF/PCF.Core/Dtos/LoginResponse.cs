@@ -1,6 +1,6 @@
-﻿namespace PCF.Shared.Dtos
+﻿namespace PCF.Core.Dtos
 {
-    public class LoginResponseDto
+    public class LoginResponse
     {
         public string Name { get; set; } = string.Empty; //Somente para registro.
         public string Login { get; set; } = string.Empty;

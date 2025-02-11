@@ -1,6 +1,6 @@
-﻿namespace PCF.Shared.Dtos
+﻿namespace PCF.Core.Dtos
 {
-    public class OrcamentoResponseViewModel
+    public class OrcamentoResponse
     {
         public decimal ValorLimite { get; set; }
         public int OrcamentoId { get; set; }

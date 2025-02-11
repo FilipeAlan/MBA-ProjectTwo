@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
+using PCF.Core.Dtos;
 using PCF.Core.Entities;
 using PCF.Core.Extensions;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {
@@ -12,14 +12,14 @@ namespace PCF.API.Controllers
     public class CategoriasController(ICategoriaService categoriaService) : ApiControllerBase
     {
         [HttpGet]
-        public async Task<Ok<IEnumerable<CategoriaResponseViewModel>>> GetAll()
+        public async Task<Ok<IEnumerable<CategoriaResponse>>> GetAll()
         {
             var list = await categoriaService.GetAllAsync();
-            return TypedResults.Ok(list.Adapt<IEnumerable<CategoriaResponseViewModel>>());
+            return TypedResults.Ok(list.Adapt<IEnumerable<CategoriaResponse>>());
         }
 
         [HttpGet("{id}", Name = nameof(GetById))]
-        public async Task<Results<Ok<CategoriaResponseViewModel>, NotFound>> GetById(int id)
+        public async Task<Results<Ok<CategoriaResponse>, NotFound>> GetById(int id)
         {
             var categoria = await categoriaService.GetByIdAsync(id);
 
@@ -28,11 +28,11 @@ namespace PCF.API.Controllers
                 return TypedResults.NotFound();
             }
 
-            return TypedResults.Ok(categoria.Adapt<CategoriaResponseViewModel>());
+            return TypedResults.Ok(categoria.Adapt<CategoriaResponse>());
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, CategoriaRequestViewModel categoria)
+        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, CategoriaRequest categoria)
         {
 
             if (await categoriaService.GetByIdAsync(id) is null)
@@ -54,7 +54,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<CategoriaRequestViewModel>>> AddNew(CategoriaRequestViewModel categoria)
+        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<CategoriaRequest>>> AddNew(CategoriaRequest categoria)
         {
             var result = await categoriaService.AddAsync(categoria.Adapt<Categoria>());
 

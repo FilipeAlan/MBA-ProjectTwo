@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
+using PCF.Core.Dtos;
 using PCF.Core.Entities;
 using PCF.Core.Enumerables;
 using PCF.Core.Extensions;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers
 {

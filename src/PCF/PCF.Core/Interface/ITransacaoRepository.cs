@@ -1,6 +1,5 @@
 ﻿using PCF.Core.Entities;
 using PCF.Core.Enumerables;
-using PCF.Shared.Dtos;
 
 namespace PCF.Core.Interface
 {

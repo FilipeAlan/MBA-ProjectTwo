@@ -1,6 +1,6 @@
-﻿using PCF.Core.Entities;
+﻿using PCF.Core.Dtos;
+using PCF.Core.Entities;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 
 namespace PCF.Core.Services
 {
@@ -128,7 +128,7 @@ namespace PCF.Core.Services
             return Result.Ok(orcamento.Id);
         }
 
-        public async Task<IEnumerable<OrcamentoResponseViewModel>> GetAllWithDescriptionAsync()
+        public async Task<IEnumerable<OrcamentoResponse>> GetAllWithDescriptionAsync()
         {
             return await repository.GetOrcamentoWithCategoriaAsync(appIdentityUser.GetUserId());
         }
