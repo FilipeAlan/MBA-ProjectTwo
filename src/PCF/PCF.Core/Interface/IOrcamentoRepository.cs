@@ -15,8 +15,8 @@ namespace PCF.Core.Interface
 
         Task<IEnumerable<OrcamentoResponse>> GetOrcamentoWithCategoriaAsync(int? usuarioId);
 
-        Task<decimal> CheckTotalBudgetAsync(int usuarioId, DateTime data);
+        Task<Orcamento?> GetByCategoriaAsync(int categoria, int usuarioId);
 
-        Task<decimal> CheckAmountUsedByCategoriaAsync(int usuarioId, DateTime data, int categoriaId);
+        Task<Orcamento?> GetGeralAsync(int usuarioId);
     }
 }

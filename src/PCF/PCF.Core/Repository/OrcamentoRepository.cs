@@ -38,6 +38,22 @@ namespace PCF.Core.Repository
                 .FirstOrDefaultAsync(c => c.Id == id && c.UsuarioId == usuarioId);
         }
 
+        public async Task<Orcamento?> GetByCategoriaAsync(int categoria, int usuarioId)
+        {
+            return await _dbContext.Orcamentos
+                .Include(c => c.Categoria)
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.CategoriaId == categoria && c.UsuarioId == usuarioId);
+        }
+
+        public async Task<Orcamento?> GetGeralAsync(int usuarioId)
+        {
+            return await _dbContext.Orcamentos
+                .Include(c => c.Categoria)
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.CategoriaId == null && c.UsuarioId == usuarioId);
+        }
+
         public async Task<IEnumerable<OrcamentoResponse>> GetOrcamentoWithCategoriaAsync(int? usuarioId)
         {
             using var connection = _dbContext.Database.GetDbConnection();
@@ -65,64 +81,6 @@ namespace PCF.Core.Repository
             var result = await connection.QueryAsync<OrcamentoResponse>(query, parameters);
 
             return result;
-        }
-
-        public async Task<decimal> CheckTotalBudgetAsync(int usuarioId, DateTime data)
-        {
-            using var connection = _dbContext.Database.GetDbConnection();
-
-            var inicioMes = new DateTime(data.Year, data.Month, 1);
-            var fimMes = new DateTime(inicioMes.Year, inicioMes.Month, DateTime.DaysInMonth(inicioMes.Year, inicioMes.Month), 23, 59, 59);
-
-            var query = @"
-                        SELECT 
-                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0)
-                        FROM
-                            Transacao t
-                        WHERE
-                            t.UsuarioId = @UsuarioId AND
-                            t.DataLancamento BETWEEN @InicioMes AND @FimMes";
-
-            var parameters = new
-            {
-                UsuarioId = usuarioId,
-                InicioMes = inicioMes,
-                FimMes = fimMes
-            };
-
-            var result = await connection.QueryFirstOrDefaultAsync<decimal?>(query, parameters);
-            return result ?? 0;
-
-        }
-
-        public async Task<decimal> CheckAmountUsedByCategoriaAsync(int usuarioId, DateTime data, int categoriaId)
-        {
-            using var connection = _dbContext.Database.GetDbConnection();
-
-            var inicioMes = new DateTime(data.Year, data.Month, 1);
-            var fimMes = new DateTime(inicioMes.Year, inicioMes.Month, DateTime.DaysInMonth(inicioMes.Year, inicioMes.Month), 23, 59, 59);
-
-            var query = @"
-                        SELECT 
-                            COALESCE(SUM(CASE WHEN t.Tipo = 1 THEN t.Valor ELSE 0 END), 0) AS OrcamentoDisponivelCategoria
-                        FROM
-                            Transacao t
-                        WHERE
-                            t.UsuarioId = @UsuarioId AND
-                            t.CategoriaId = @CategoriaId AND    
-                            t.DataLancamento BETWEEN @InicioMes AND @FimMes";
-
-            var parameters = new
-            {
-                UsuarioId = usuarioId,
-                InicioMes = inicioMes,
-                FimMes = fimMes,
-                CategoriaId = categoriaId
-            };
-
-            var result = await connection.QueryFirstOrDefaultAsync<decimal?>(query, parameters);
-            return result ?? 0;
-
         }
     }
 }

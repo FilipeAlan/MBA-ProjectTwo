@@ -1,11 +1,15 @@
 ﻿using PCF.Core.Entities;
 using PCF.Core.Enumerables;
+using PCF.Core.Globalization;
 using PCF.Core.Interface;
+using PCF.Core.Repository;
 
 namespace PCF.Core.Services
 {
-    public class TransacaoService(IAppIdentityUser appIdentityUser, ITransacaoRepository repository) : ITransacaoService
+    public class TransacaoService(IAppIdentityUser appIdentityUser, ITransacaoRepository repository, IOrcamentoRepository orcamentoRepository) : ITransacaoService
     {
+        private string retorno;
+
         public async Task<Result<int>> AddAsync(Transacao Transacao)
         {
             ArgumentNullException.ThrowIfNull(Transacao);
@@ -78,6 +82,38 @@ namespace PCF.Core.Services
             TransacaoExistente.Descricao = Transacao.Descricao;
             TransacaoExistente.Valor = Transacao.Valor;
             TransacaoExistente.Tipo = Transacao.Tipo;
+
+            if (TransacaoExistente.CategoriaId != null)
+            {
+                decimal totalUtilizadoCategoriaMes = 0;
+                decimal totalEntradasMes = await repository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
+                decimal totalUtilizadoMes =
+                    await repository.CheckAmountUsedCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
+
+                var orcamentoCategoria =
+                    await orcamentoRepository.GetByCategoriaAsync(TransacaoExistente.CategoriaId,
+                        appIdentityUser.GetUserId());
+
+                var orcamentoGeral =
+                    await orcamentoRepository.GetGeralAsync(
+                        appIdentityUser.GetUserId());
+
+                totalUtilizadoCategoriaMes =
+                    await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now,
+                        TransacaoExistente.CategoriaId);
+
+                if (TransacaoExistente.Tipo == 0)
+                {
+
+                }
+                else
+                {
+                    if (totalUtilizadoCategoriaMes > orcamentoCategoria.ValorLimite)
+                    {
+                        retorno = $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(orcamentoCategoria.ValorLimite)} da categoria {orcamentoCategoria.Categoria.Descricao}, saldo no mês corrente.";
+                    }
+                }
+            }
 
             await repository.UpdateAsync(TransacaoExistente);
 

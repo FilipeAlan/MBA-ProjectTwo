@@ -6,7 +6,7 @@ using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
-    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository) : IOrcamentoService
+    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository, ITransacaoRepository transacaoRepository) : IOrcamentoService
     {
         private string retorno;
 
@@ -45,13 +45,15 @@ namespace PCF.Core.Services
             }
 
             decimal orcamentoUtilizadoCategoria = 0;
-            decimal orcamentoGeral = await repository.CheckTotalBudgetAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            decimal orcamentoGeral = await transacaoRepository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            decimal orcamentoUtilizadoGeral =
+                await transacaoRepository.CheckAmountUsedCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamentoExistente.CategoriaId != null)
             {
                 //Identifica o total utilizado pela categoria no mês corrente
                 orcamentoUtilizadoCategoria =
-                    await repository.CheckAmountUsedByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now,
+                    await transacaoRepository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now,
                         orcamentoExistente.CategoriaId.Value);
 
                 if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
@@ -65,13 +67,13 @@ namespace PCF.Core.Services
                     retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} da categoria {orcamentoExistente.Categoria.Descricao}, é maior que o orçamento Geral {FormatoMoeda.ParaReal(orcamentoUtilizadoCategoria)} no mês corrente.";
                 }
             }
-            //else
-            //{
-            //    if (orcamentoGeral < orcamento.ValorLimite)
-            //    {
-            //        return Result.Fail("Valor do orçamento maior que o disponível");
-            //    }
-            //}
+            else
+            {
+                if (orcamentoUtilizadoGeral > orcamento.ValorLimite)
+                {
+                    retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} é insuficiente para o total comprometido de {FormatoMoeda.ParaReal(orcamentoUtilizadoGeral)} no mês corrente.";
+                }
+            }
 
             orcamentoExistente.ValorLimite = orcamento.ValorLimite;
 
@@ -93,7 +95,7 @@ namespace PCF.Core.Services
             ArgumentNullException.ThrowIfNull(orcamento);
 
             decimal orcamentoUtilizadoCategoria = 0;
-            decimal orcamentoGeral = await repository.CheckTotalBudgetAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            decimal orcamentoGeral = await transacaoRepository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamento.CategoriaId != null)
             {
@@ -115,7 +117,7 @@ namespace PCF.Core.Services
                 }
 
                 orcamentoUtilizadoCategoria =
-                    await repository.CheckAmountUsedByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now,
+                    await transacaoRepository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now,
                         orcamento.CategoriaId.Value);
 
                 if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
