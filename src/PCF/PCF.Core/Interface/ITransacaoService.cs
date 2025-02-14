@@ -13,7 +13,6 @@ namespace PCF.Core.Interface
 
         Task<IEnumerable<Transacao>> GetAllByTipoAsync(TipoEnum tipo);
 
-
         Task<Transacao?> GetByIdAsync(int id);
 
         Task<Result> DeleteAsync(int id);

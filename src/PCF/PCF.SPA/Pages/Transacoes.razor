@@ -1,0 +1,165 @@
+﻿@page "/transacoes"
+@attribute [Authorize]
+@inject IWebApiClient ApiClient
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>Transações</PageTitle>
+
+<MudContainer>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddTransactionDialog">
+        Nova Transação
+    </MudButton>
+
+    <MudDataGrid T="TransacaoResponse" Items="_transacoes" Loading="_loading" Hover="true" Bordered="false" Striped="false"
+                 Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="true">
+        <Columns>
+            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
+            <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
+
+            <!-- Exibir o nome da categoria em vez do ID -->
+            <TemplateColumn Title="Categoria">
+                <CellTemplate>
+                    @(ObterNomeCategoria(context.Item.CategoriaId))
+                </CellTemplate>
+            </TemplateColumn>
+
+            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
+
+            <!-- Exibir TipoEnum corretamente -->
+            <TemplateColumn Title="Tipo">
+                <CellTemplate>
+                    @ObterNomeTipo(context.Item.Tipo)
+                </CellTemplate>
+            </TemplateColumn>
+
+            <!-- Botões Editar e Excluir -->
+            <TemplateColumn Title="Ações" CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                       OnClick="() => OpenEditTransactionDialog(context.Item)"
+                                       Title="Editar" />
+
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete"
+                                       OnClick="() => DeleteTransaction(context.Item.Id)"
+                                       Title="Excluir"
+                                       Color="Color.Error" />
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    private IEnumerable<TransacaoResponse> _transacoes = [];
+    private Dictionary<int, string> _categoriasMap = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTransactionsAsync();
+    }
+
+    private async Task LoadTransactionsAsync()
+    {
+        _loading = true;
+        try
+        {
+            var categorias = await ApiClient.CategoriasAllAsync();
+            _categoriasMap = categorias.ToDictionary(c => c.Id, c => c.Nome);
+
+            _transacoes = await ApiClient.TransacoesAllAsync();
+            _transacoes = _transacoes.OrderBy(x => x.DataLancamento);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao carregar transações: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private string ObterNomeCategoria(int? categoriaId)
+    {
+        if (categoriaId == null) return "Sem Categoria";
+        return _categoriasMap.TryGetValue(categoriaId.Value, out var nome) ? nome : "Desconhecida";
+    }
+
+    private async Task OpenAddTransactionDialog()
+    {
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<AdicionarTransacaoDialog>("Nova Transação", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadTransactionsAsync();
+        }
+    }
+
+    private async Task OpenEditTransactionDialog(TransacaoResponse transacao)
+    {
+        var parameters = new DialogParameters
+        {
+            ["Transacao"] = transacao
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<AdicionarTransacaoDialog>("Editar Transação", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await LoadTransactionsAsync();
+        }
+    }
+
+    private async Task DeleteTransaction(int id)
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        bool? result = await DialogService.ShowMessageBox(
+            "Confirmação",
+            "Tem certeza que deseja deletar esta transação?",
+            yesText: "Sim", cancelText: "Não", options: options);
+
+        if (result == true)
+        {
+            _loading = true;
+
+            try
+            {
+                await ApiClient.TransacoesDELETEAsync(id);
+                Snackbar.Add("Transação removida com sucesso.", Severity.Success);
+                await LoadTransactionsAsync();
+            }
+            catch (ApiException e) when (e.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                Snackbar.Add("Transação não encontrada", Severity.Warning);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Erro ao deletar transação: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                _loading = false;
+            }
+        }
+    }
+
+    private string ObterNomeTipo(TipoEnum tipo)
+    {
+        return tipo switch
+        {
+            TipoEnum._0 => "Receita",
+            TipoEnum._1 => "Despesa",
+            _ => "Desconhecido"
+        };
+    }
+}
