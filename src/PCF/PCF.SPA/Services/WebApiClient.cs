@@ -2226,6 +2226,9 @@ namespace PCF.SPA.Services
     public partial class TransacaoRequest
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("valor")]
         public double Valor { get; set; }
 
@@ -2250,6 +2253,9 @@ namespace PCF.SPA.Services
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class TransacaoResponse
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("valor")]
         public double Valor { get; set; }
