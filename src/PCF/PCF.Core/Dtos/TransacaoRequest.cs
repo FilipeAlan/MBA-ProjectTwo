@@ -1,11 +1,10 @@
 ﻿using PCF.Core.Enumerables;
-using System.ComponentModel.DataAnnotations;
 
 namespace PCF.Core.Dtos
 {
     public class TransacaoRequest
     {
-
+        public int? Id { get; set; }
         public required decimal Valor { get; set; }
 
         public int UsuarioId { get; set; }
