@@ -1,11 +1,15 @@
 ﻿using PCF.Core.Dtos;
 using PCF.Core.Entities;
+using PCF.Core.Extensions;
+using PCF.Core.Globalization;
 using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
-    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository) : IOrcamentoService
+    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository) : IOrcamentoService
     {
+        private string retorno;
+
         public async Task<IEnumerable<Orcamento>> GetAllAsync()
         {
             return await repository.GetAllAsync(appIdentityUser.GetUserId());
@@ -41,39 +45,47 @@ namespace PCF.Core.Services
             }
 
             decimal orcamentoUtilizadoCategoria = 0;
-            decimal orcamentoGeral = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            decimal orcamentoGeral = await repository.CheckTotalBudgetAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamentoExistente.CategoriaId != null)
             {
+                //Identifica o total utilizado pela categoria no mês corrente
                 orcamentoUtilizadoCategoria =
                     await repository.CheckAmountUsedByCategoriaAsync(appIdentityUser.GetUserId(), DateTime.Now,
                         orcamentoExistente.CategoriaId.Value);
 
                 if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
                 {
-                    return Result.Fail(
-                        "Valor do orçamento para a categoria informada maior que os lançamentos alocados");
+                    retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} é insuficiente para os gastos totais da categoria {orcamentoExistente.Categoria.Descricao}, saldo {FormatoMoeda.ParaReal(orcamentoUtilizadoCategoria)} no mês corrente.";
+
                 }
 
                 if (orcamento.ValorLimite > orcamentoGeral)
                 {
-                    return Result.Fail(
-                        "Valor do orçamento da categoria não pode ser maior que o total disponível");
+                    retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} da categoria {orcamentoExistente.Categoria.Descricao}, é maior que o orçamento Geral {FormatoMoeda.ParaReal(orcamentoUtilizadoCategoria)} no mês corrente.";
                 }
             }
-            else
-            {
-                if (orcamentoGeral < orcamento.ValorLimite)
-                {
-                    return Result.Fail("Valor do orçamento maior que o disponível");
-                }
-            }
+            //else
+            //{
+            //    if (orcamentoGeral < orcamento.ValorLimite)
+            //    {
+            //        return Result.Fail("Valor do orçamento maior que o disponível");
+            //    }
+            //}
 
             orcamentoExistente.ValorLimite = orcamento.ValorLimite;
 
             await repository.UpdateAsync(orcamentoExistente);
 
-            return Result.Ok();
+            var result = Result.Ok()
+                .WithSuccess("Orçamento atualizado com sucesso!");
+
+            if (!string.IsNullOrEmpty(retorno))
+            {
+                result.Reasons.Add(new Warning(retorno));
+            }
+
+            return result;
         }
 
         public async Task<Result<int>> AddAsync(Orcamento orcamento)
@@ -81,10 +93,21 @@ namespace PCF.Core.Services
             ArgumentNullException.ThrowIfNull(orcamento);
 
             decimal orcamentoUtilizadoCategoria = 0;
-            decimal orcamentoGeral = await repository.CheckAmountAvailableAsync(appIdentityUser.GetUserId(), DateTime.Now);
+            decimal orcamentoGeral = await repository.CheckTotalBudgetAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamento.CategoriaId != null)
             {
+                var categoria = await categotiaRepository.GetByIdAsync((int)orcamento.CategoriaId, appIdentityUser.GetUserId());
+
+                if (categoria == null)
+                {
+                    categoria = await categotiaRepository.GetGeralByIdAsync((int)orcamento.CategoriaId);
+                }
+
+                if (categoria is null)
+                {
+                    return Result.Fail<int>("Categoria informada é inválida.");
+                }
 
                 if (await repository.CheckIfExistsByIdAsync(orcamento.CategoriaId.Value, appIdentityUser.GetUserId()))
                 {
@@ -97,14 +120,12 @@ namespace PCF.Core.Services
 
                 if (orcamentoUtilizadoCategoria > orcamento.ValorLimite)
                 {
-                    return Result.Fail<int>(
-                        "Valor do orçamento para a categoria informada maior que os lançamentos alocados");
+                    retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} é insuficiente para os gastos totais da categoria {categoria.Descricao}, saldo {FormatoMoeda.ParaReal(orcamentoUtilizadoCategoria)} no mês corrente.";
                 }
 
                 if (orcamento.ValorLimite > orcamentoGeral)
                 {
-                    return Result.Fail<int>(
-                        "Valor do orçamento da categoria não pode ser maior que o total disponível");
+                    retorno = $"Ajuste seu orçamento, pois o novo valor informado {FormatoMoeda.ParaReal(orcamento.ValorLimite)} da categoria {categoria.Descricao}, é maior que o orçamento Geral {FormatoMoeda.ParaReal(orcamentoUtilizadoCategoria)} no mês corrente.";
                 }
             }
             else
@@ -114,10 +135,10 @@ namespace PCF.Core.Services
                     return Result.Fail<int>("Já existe um orçamento geral lançado");
                 }
 
-                if (orcamentoGeral < orcamento.ValorLimite)
-                {
-                    return Result.Fail<int>("Valor do orçamento maior que o disponível");
-                }
+                //if (orcamentoGeral < orcamento.ValorLimite)
+                //{
+                //    return Result.Fail<int>("Valor do orçamento maior que o disponível");
+                //}
             }
 
             orcamento.ValorLimite = orcamento.ValorLimite;
@@ -125,7 +146,16 @@ namespace PCF.Core.Services
             orcamento.CategoriaId = orcamento.CategoriaId;
 
             await repository.CreateAsync(orcamento);
-            return Result.Ok(orcamento.Id);
+            //return Result.Ok(orcamento.Id);
+            var result = Result.Ok()
+                .WithSuccess("Orçamento atualizado com sucesso!");
+
+            if (!string.IsNullOrEmpty(retorno))
+            {
+                result.WithReason(new Warning(retorno));
+            }
+
+            return result;
         }
 
         public async Task<IEnumerable<OrcamentoResponse>> GetAllWithDescriptionAsync()

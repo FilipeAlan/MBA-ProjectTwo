@@ -22,6 +22,11 @@ namespace PCF.Core.Repository
             return await _dbContext.Categorias.FirstOrDefaultAsync(c => c.Id == id && c.UsuarioId == usuarioId);
         }
 
+        public async Task<Categoria?> GetGeralByIdAsync(int id)
+        {
+            return await _dbContext.Categorias.FirstOrDefaultAsync(c => c.Id == id && c.Padrao == true);
+        }
+
         public async Task<bool> CheckIfExistsByNomeAsync(int currentId, string nome, int usuarioId)
         {
             return await _dbContext.Categorias.AnyAsync(c => c.Nome == nome && c.UsuarioId == usuarioId && c.Id != currentId);

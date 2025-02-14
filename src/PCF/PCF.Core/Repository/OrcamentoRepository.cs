@@ -67,7 +67,7 @@ namespace PCF.Core.Repository
             return result;
         }
 
-        public async Task<decimal> CheckAmountAvailableAsync(int usuarioId, DateTime data)
+        public async Task<decimal> CheckTotalBudgetAsync(int usuarioId, DateTime data)
         {
             using var connection = _dbContext.Database.GetDbConnection();
 
@@ -76,8 +76,7 @@ namespace PCF.Core.Repository
 
             var query = @"
                         SELECT 
-                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0) -
-                            COALESCE(SUM(CASE WHEN t.Tipo = 1 THEN t.Valor ELSE 0 END), 0) AS OrcamentoDisponivel
+                            COALESCE(SUM(CASE WHEN t.Tipo = 0 THEN t.Valor ELSE 0 END), 0)
                         FROM
                             Transacao t
                         WHERE
