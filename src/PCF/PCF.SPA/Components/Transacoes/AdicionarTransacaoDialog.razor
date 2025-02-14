@@ -1,0 +1,148 @@
+﻿@inject IWebApiClient WebApiClient
+@inject ISnackbar Snackbar
+
+<EditForm Model="newTransaction" OnValidSubmit="Submit">
+    <DataAnnotationsValidator />
+    <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title"
+               ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+        <DialogContent>
+            <MudTextField @bind-Value="newTransaction.Valor" Label="Valor" Required="true" Type="number" />
+            <MudTextField @bind-Value="newTransaction.Descricao" Label="Descrição" Required="true" />
+
+            <MudSelect T="int?" @bind-Value="newTransaction.CategoriaId" Label="Categoria" Required="true">
+                <MudSelectItem T="int?" Value="null">Selecione uma categoria</MudSelectItem>
+                @foreach (var categoria in _categorias)
+                {
+                    <MudSelectItem T="int?" Value="@categoria.Id">@categoria.Nome</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudDatePicker @bind-Value="newTransaction.DataLancamento" Label="Data de Lançamento" Required="true" />
+
+            <MudSelect T="TipoEnum" @bind-Value="newTransaction.Tipo" Label="Tipo" Required="true">
+                @foreach (var tipo in Enum.GetValues<TipoEnum>())
+                {
+                    <MudSelectItem T="TipoEnum" Value="@(tipo)"> @ObterNomeTipo(tipo) </MudSelectItem>
+                }
+            </MudSelect>
+        </DialogContent>
+
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <MudText>@(IsEditMode ? "ATUALIZAR" : "INCLUIR")</MudText>
+                }
+            </MudButton>
+            <MudButton OnClick="Cancel">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    private bool isLoading;
+    private TransacaoRequest newTransaction = new();
+    private IEnumerable<CategoriaResponse> _categorias = [];
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public TransacaoResponse? Transacao { get; set; }
+
+    private bool IsEditMode => Transacao != null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategorias();
+
+        if (IsEditMode)
+        {
+            newTransaction = new TransacaoRequest
+            {
+                Valor = Transacao.Valor,
+                Descricao = Transacao.Descricao,
+                CategoriaId = Transacao.CategoriaId,
+                DataLancamento = Transacao.DataLancamento,
+                Tipo = Transacao.Tipo
+            };
+        }
+        else
+        {
+            newTransaction = new TransacaoRequest
+            {
+                Valor = 0,
+                Descricao = "",
+                CategoriaId = null,
+                DataLancamento = DateTime.Now,
+                Tipo = TipoEnum._0
+            };
+        }
+    }
+
+    private async Task LoadCategorias()
+    {
+        try
+        {
+            _categorias = await WebApiClient.CategoriasAllAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro ao carregar categorias: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (newTransaction.CategoriaId == null)
+        {
+            Snackbar.Add("Por favor, selecione uma categoria.", Severity.Warning);
+            return;
+        }
+
+        isLoading = true;
+
+        try
+        {
+            if (IsEditMode)
+            {
+                await WebApiClient.TransacoesPUTAsync(Transacao!.Id, newTransaction);
+                Snackbar.Add("Transação atualizada com sucesso.", Severity.Success);
+            }
+            else
+            {
+                await WebApiClient.TransacoesPOSTAsync(newTransaction);
+                Snackbar.Add("Transação cadastrada com sucesso.", Severity.Success);
+            }
+
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erro não esperado: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+
+    private string ObterNomeTipo(TipoEnum tipo)
+    {
+        return tipo switch
+        {
+            TipoEnum._0 => "Receita",
+            TipoEnum._1 => "Despesa",
+            _ => "Desconhecido"
+        };
+    }
+}

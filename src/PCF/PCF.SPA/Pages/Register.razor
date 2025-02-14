@@ -9,13 +9,22 @@
         <MudForm Model="@loginResponse" @ref="registerForm" Validated="HandleValidation">
             <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponse.Name" Required="true"
                           RequiredError="Nome é obrigatório." />
+
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponse.Login" Required="true"
                           RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" />
+
+            <!-- Campo de Senha -->
             <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponse.Password" Required="true"
-                          RequiredError="Senha é obrigatória." Type="password" InputType="InputType.Password" />
+                          RequiredError="Senha é obrigatória." Type="password" InputType="InputType.Password"
+                          Immediate="true" Validation="(string senha) => ValidarSenha(senha)" />
+
+            <!-- Confirmação de Senha -->
             <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponse.ConfirmedPassword" Required="true"
-                          RequiredError="Confirmação de senha é obrigatória." Type="password" InputType="InputType.Password" />
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleRegister">
+                          RequiredError="Confirmação de senha é obrigatória." Type="password" InputType="InputType.Password"
+                          Immediate="true" Validation="(string confSenha) => ValidarConfirmacaoSenha(confSenha)" />
+
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleRegisterAsync">
                 Registrar
             </MudButton>
         </MudForm>
@@ -29,51 +38,58 @@
 </MudCard>
 
 @code {
-    private MudForm registerForm = default!;
+    private MudForm registerForm;
     private LoginResponse loginResponse = new();
-
-    private async Task HandleRegister()
-    {
-        await registerForm.Validate(); // Valida o formulário
-        if (registerForm.IsValid)
-        {
-            if (loginResponse.Password != loginResponse.ConfirmedPassword)
-            {
-                Snackbar.Add("As senhas não coincidem.", Severity.Error); // Exibe o erro
-                return;
-            }
-
-            try
-            {
-                var responseMessage = await AuthManagerService.RegisterAsync(loginResponse);
-                if (responseMessage == "Registrado com sucesso")
-                {
-                    Snackbar.Add("Usuário cadastrado com sucesso!", Severity.Success); // Exibe sucesso
-                    Navigation.NavigateTo("/");
-                }
-                else
-                {
-                    Snackbar.Add($"{responseMessage}", Severity.Error); // Exibe erro
-                }
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Erro durante o registro: {ex.Message}", Severity.Error); // Exibe erro crítico
-            }
-        }
-        else
-        {
-            Snackbar.Add("Preencha todos os campos obrigatórios corretamente.", Severity.Warning); // Exibe aviso de validação
-        }
-    }
-
-    private void HandleValidation()
-    {
-        StateHasChanged();
-    }
 
     private void IrParaLogin()
     {
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/login");
+    }
+
+    private async Task HandleRegisterAsync()
+    {
+        await registerForm.Validate();
+        if (!registerForm.IsValid)
+        {
+            Snackbar.Add("Corrija os erros antes de registrar.", Severity.Warning);
+            return;
+        }
+
+        // Chamada correta para RegisterAsync
+        var resultado = await AuthManagerService.RegisterAsync(loginResponse);
+
+        Snackbar.Add(resultado, Severity.Error);
+
+    }
+
+    private string? ValidarSenha(string senha)
+    {
+        if (string.IsNullOrEmpty(senha))
+            return "A senha é obrigatória.";
+
+        if (senha.Length < 8)
+            return "A senha deve ter pelo menos 8 caracteres.";
+
+        if (!senha.Any(char.IsUpper))
+            return "A senha deve conter pelo menos uma letra maiúscula.";
+
+        if (!senha.Any(char.IsLower))
+            return "A senha deve conter pelo menos uma letra minúscula.";
+
+        if (!senha.Any(char.IsDigit))
+            return "A senha deve conter pelo menos um número.";
+
+        if (!senha.Any(c => "!@#$%^&*()_+{}[]:;<>,.?/~".Contains(c)))
+            return "A senha deve conter pelo menos um caractere especial (!@#$%^&* etc.).";
+
+        return null; // Senha válida
+    }
+
+    private string? ValidarConfirmacaoSenha(string confSenha)
+    {
+        if (confSenha != loginResponse.Password)
+            return "As senhas não coincidem.";
+
+        return null; // Confirmação válida
     }
 }
