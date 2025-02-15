@@ -79,7 +79,7 @@
                 Descricao = "",
                 CategoriaId = null,
                 DataLancamento = DateTime.Now,
-                Tipo = TipoEnum._0
+                Tipo = TipoEnum.Entrada 
             };
         }
     }
@@ -140,8 +140,8 @@
     {
         return tipo switch
         {
-            TipoEnum._0 => "Receita",
-            TipoEnum._1 => "Despesa",
+            TipoEnum.Entrada => "Receita",
+            TipoEnum.Saida => "Despesa",
             _ => "Desconhecido"
         };
     }
