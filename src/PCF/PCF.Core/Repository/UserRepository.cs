@@ -22,7 +22,7 @@ namespace PCF.Core.Repository
         }
         public async Task<ApplicationUser> CreateAsync(ApplicationUser entity, string userName)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync(); // Inicia a transação
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
             try
             {
@@ -38,16 +38,15 @@ namespace PCF.Core.Repository
 
                 await _dbContext.Usuarios.AddAsync(appUser);
 
-                // Commit das operações no contexto
                 await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync(); // Confirma a transação
+                await transaction.CommitAsync();
 
                 return result;
             }
             catch
             {
-                await transaction.RollbackAsync(); // Reverte a transação em caso de erro
-                throw; // Propaga o erro para o chamador
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }
