@@ -3,11 +3,11 @@
     "Name": "Default",
     "Projects": [
       {
-        "Path": "PCF.API\\PCF.API.csproj",
+        "Path": "PCF.SPA\\PCF.SPA.csproj",
         "Action": "Start"
       },
       {
-        "Path": "PCF.SPA\\PCF.SPA.csproj",
+        "Path": "PCF.API\\PCF.API.csproj",
         "Action": "Start"
       }
     ]

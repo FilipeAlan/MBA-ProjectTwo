@@ -7,6 +7,7 @@ namespace PCF.Core.Interface
         Task<IEnumerable<Categoria>> GetAllAsync(int usuarioId);
 
         Task<Categoria?> GetByIdAsync(int id, int usuarioId);
+        Task<Categoria?> GetGeralByIdAsync(int id);
 
         Task<bool> CheckIfExistsByNomeAsync(int currentId, string nome, int usuarioId);
     }
