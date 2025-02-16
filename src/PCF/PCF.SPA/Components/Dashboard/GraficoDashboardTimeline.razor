@@ -1,0 +1,59 @@
+@inject IWebApiClient WebApiClient
+
+@if (!_loading)
+{
+    <MudChart ChartOptions="Options"
+              ChartType="ChartType.Line"
+              ChartSeries="Series"
+              XAxisLabels="Labels.ToArray()"
+              Width="100%"
+              Height="350px" />
+}
+else
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+
+@code {
+    private bool _loading = true;
+
+    public List<ChartSeries>? Series { get; set; }
+    public List<string> Labels { get; set; } = [];
+    public ChartOptions Options { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    public async Task LoadDataAsync()
+    {
+        _loading = true;
+        var result = await WebApiClient.HistoricoMensalAsync();
+
+        var entradas = new List<double>();
+        var saidas = new List<double>();
+        var saldoMes = new List<double>();
+
+        foreach (var item in result.Historico)
+        {
+            entradas.Add(item.Entradas);
+            saidas.Add(-item.Saidas);
+            saldoMes.Add(item.Entradas - item.Saidas);
+            Labels.Add(item.Periodo.ToString("MMM"));
+        }
+
+        Options.YAxisTicks = 1000;
+        Options.LineStrokeWidth = 2;
+        Options.ChartPalette = ["#88d8b0", "#ffcb5c", "#6a82fb"];
+        Series =
+        [
+        new ChartSeries { Name = "Entradas", Data = entradas.ToArray() },
+        new ChartSeries { Name = "Saídas", Data = saidas.ToArray() },
+        new ChartSeries { Name = "Saldo", Data = saldoMes.ToArray() }
+        ];
+
+        _loading = false;
+        StateHasChanged();
+    }
+}

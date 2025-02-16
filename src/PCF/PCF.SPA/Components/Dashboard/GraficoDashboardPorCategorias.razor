@@ -1,0 +1,58 @@
+@inject IWebApiClient WebApiClient
+
+@if (!_loading)
+{
+    if (Valores.Any()){
+
+        var combinedLabels = Categorias.Zip(Valores, (categoria, valor) => $"{categoria}: {valor:C}").ToArray();
+
+        <MudChart ChartType="ChartType.Pie"
+                  InputLabels="@combinedLabels"
+                  InputData="@Valores!.ToArray()"
+                  Width="300px"
+                  Height="300px"
+                  ChartOptions="@(new() { ChartPalette = @PaletaCores})" />
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Normal">Sem transações para este período</MudAlert>
+    }    
+}
+else
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+
+@code {
+    private bool _loading = true;
+
+    [Parameter]
+    public string[] PaletaCores { get; set; } = default!;
+
+    [Parameter]
+    public required TipoEnum Tipo { get; set; }
+
+    [Parameter]
+    public DateTime Periodo { get; set; }
+
+    public List<double> Valores { get; set; } = [];
+    public List<string> Categorias { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    public async Task LoadDataAsync()
+    {
+        _loading = true;
+
+        var result = await WebApiClient.TransacoesPorCategoriaAsync(Periodo, Tipo);
+
+        Valores = result.Categorias.Select(c => c.Valor).ToList();
+        Categorias = result.Categorias.Select(c => c.NomeCategoria).ToList();
+
+        _loading = false;
+        StateHasChanged();
+    }
+}

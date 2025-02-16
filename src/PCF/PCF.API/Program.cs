@@ -9,6 +9,7 @@ using PCF.Core.Identity;
 using PCF.Core.Interface;
 using PCF.Core.Repository;
 using PCF.Core.Services;
+using System.Text.Json.Serialization;
 using Vernou.Swashbuckle.HttpResultsAdapter;
 
 // TODO: organizar classe usando extension methods
@@ -56,7 +57,11 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
 builder.Services.AddScoped<IAppIdentityUser, AppIdentityUser>();
 
 // Adiciona serviços da API
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
@@ -64,6 +69,8 @@ builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
 builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 

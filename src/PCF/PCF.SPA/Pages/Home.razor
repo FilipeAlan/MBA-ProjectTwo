@@ -1,8 +1,197 @@
 ﻿@page "/home"
 @attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+@inject ISnackbar Snackbar
+@inject IWebApiClient WebApiClient
 
-<h1>Hello, world!</h1>
+<PageTitle>PCF - Dashboard</PageTitle>
 
-Welcome to your new app.
+<MudGrid Justify="Justify.Center" Class="pa-5">
+    <MudItem lg="12" md="12" sm="12" xs="12">
+        <MudGrid Justify="Justify.Center">
+            <MudItem lg="12" md="12" sm="12" xs="12">
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Dashboard</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+
+                            <div class="d-flex justify-end mt-4 mb-4">
+                                <MudSelect T="int"
+                                           Label="Mês"
+                                           Style="width: 150px"
+                                           @bind-Value="Mes"
+                                           @bind-Value:after="OnDateChanged"
+                                           AnchorOrigin="Origin.BottomCenter">
+                                    @for (var mesDif = 1; mesDif <= 12; mesDif++)
+                                    {
+                                        var date = new DateTime(DateTime.Now.Year, mesDif, 1);
+                                        <MudSelectItem T="int" Value="@mesDif">
+                                            @(date.ToString("MMMM"))
+                                        </MudSelectItem>
+                                    }
+                                </MudSelect>
+                                <MudSelect T="int"
+                                           Label="Ano"
+                                           @bind-Value="Ano"
+                                           @bind-Value:after="OnDateChanged"
+                                           AnchorOrigin="Origin.BottomCenter">
+                                    @for (var anoDif = 0; anoDif <= 5; anoDif++)
+                                    {
+                                        var date = new DateTime(DateTime.Now.Year - anoDif, 1, 1);
+                                        <MudSelectItem T="int" Value="@date.Year">
+                                            @(date.ToString("yyyy"))
+                                        </MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </div>
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                </MudCard>
+            </MudItem>
+
+            <MudItem lg="6" md="6" sm="6" xs="6">
+                <MudCard Class="pa-4" Style="height: 150px">
+
+                    <MudCardContent>
+                        <p>
+                            <strong>Saldo:</strong>
+                        </p>
+                        @if (SaldoMes is null)
+                        {
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudText Color="@( SaldoMes.Value >= 0 ?   Color.Success : Color.Error  )" Typo="Typo.h4">
+                                @(SaldoMes.Value.ToString("c"))
+                            </MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem lg="6" md="6" sm="6" xs="6">
+                <MudCard Class="pa-1" Style="height: 150px">
+
+                    <MudCardContent>
+                        @if (SaldoMes is null)
+                        {
+                            <strong>Entradas:</strong>
+                            <br />
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+
+                            <br />
+                            <strong>Saídas:</strong>
+                            <br />
+                            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <strong>Entradas:</strong>
+
+                            <MudText Color="Color.Success">
+                                @(SaldoEntradasMes!.Value.ToString("c"))
+                            </MudText>
+
+                            <br />
+                            <strong>Saídas:</strong>
+
+                            <MudText Color="Color.Error">
+                                @(SaldoSaidasMes!.Value.ToString("c"))
+                            </MudText>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem lg="6" md="12" sm="12" xs="12">
+                <MudCard Class="pa-1">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Entradas</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <GraficoDashboardPorCategorias @ref="graficoEntradas" Tipo="TipoEnum.Entrada" Periodo="@(new DateTime(Ano, Mes, 1))" PaletaCores="@entradasPalette" />
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem lg="6" md="12" sm="12" xs="12">
+                <MudCard Class="pa-1">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Saídas</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <GraficoDashboardPorCategorias @ref="graficoSaidas" Tipo="TipoEnum.Saida" Periodo="@(new DateTime(Ano, Mes, 1))" PaletaCores="@saidasPalette" />
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+
+            <MudItem lg="12" md="12" sm="12" xs="12">
+                <MudCard Class="pa-1">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Histórico (últimos 12 meses)</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <GraficoDashboardTimeline />
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private GraficoDashboardPorCategorias? graficoEntradas { get; set; }
+    private GraficoDashboardPorCategorias? graficoSaidas { get; set; }
+
+    private int Ano { get; set; } = DateTime.Now.Year;
+    private int Mes { get; set; } = DateTime.Now.Month;
+
+    private double? SaldoMes { get; set; }
+    private double? SaldoEntradasMes { get; set; }
+    private double? SaldoSaidasMes { get; set; }
+
+    private readonly string[] entradasPalette = new[] { "#1f0660", "#8760c5", "#00c9a7", "#845ec2", "#d65db1", "#ff6f91", "#ff9671", "#ffc75f", "#f9f871", "#d73222" };
+    private readonly string[] saidasPalette = new[] { "#ff8066", "#c34a36", "#b0a8b9", "#4b4453", "#845ec2", "#fefedf", "#926c00", "#d73222", "#ffc75f", "#ff6f91" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ObterSaldoAsync();
+    }
+
+    private async Task OnDateChanged()
+    {
+        graficoEntradas!.Periodo = new DateTime(Ano, Mes, 1);
+        graficoSaidas!.Periodo = new DateTime(Ano, Mes, 1);
+
+        try
+        {
+            await Task.WhenAll(
+                ObterSaldoAsync(),
+                graficoEntradas!.LoadDataAsync(),
+                graficoSaidas!.LoadDataAsync()
+            );
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Erro ao atualizar dashboard: {e.Message}", Severity.Error);
+        }
+    }
+
+    private async Task ObterSaldoAsync()
+    {
+        SaldoMes = null;
+        SaldoEntradasMes = null;
+        SaldoSaidasMes = null;
+
+        var result = await WebApiClient.ResumoAsync(new DateTime(Ano, Mes, 1));
+
+        SaldoEntradasMes = result.Entradas;
+        SaldoSaidasMes = result.Saidas;
+        SaldoMes = SaldoEntradasMes - SaldoSaidasMes;
+    }
+
+}
