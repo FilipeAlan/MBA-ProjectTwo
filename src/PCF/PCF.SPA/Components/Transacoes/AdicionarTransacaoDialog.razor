@@ -4,9 +4,9 @@
 <EditForm Model="newTransaction" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
     <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title"
-               ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+    ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
         <DialogContent>
-            <MudTextField @bind-Value="newTransaction.Valor" Label="Valor" Required="true" Type="number" />
+            <MudTextField @bind-Value="newTransaction.Valor" Label="Valor" Required="true" Format="C" T="double" />
             <MudTextField @bind-Value="newTransaction.Descricao" Label="Descrição" Required="true" />
 
             <MudSelect T="int?" @bind-Value="newTransaction.CategoriaId" Label="Categoria" Required="true">
@@ -16,9 +16,8 @@
                     <MudSelectItem T="int?" Value="@categoria.Id">@categoria.Nome</MudSelectItem>
                 }
             </MudSelect>
- 
-            <MudDatePicker @bind-Date="_dataDoLancamento" Label="Data de Lançamento" Required="true" /> 
 
+            <MudDatePicker @bind-Date="dataLancamentoAux" Label="Data de Lançamento" Required="true" />
 
             <MudSelect T="TipoEnum" @bind-Value="newTransaction.Tipo" Label="Tipo" Required="true">
                 @foreach (var tipo in Enum.GetValues<TipoEnum>())
@@ -50,6 +49,20 @@
     private IEnumerable<CategoriaResponse> _categorias = [];
     private DateTime? _dataDoLancamento = DateTime.Now;
 
+    private DateTime? dataLancamentoAux
+    {
+        get => newTransaction.DataLancamento == default
+            ? (DateTime?)null // Se estiver vazia, retorna null para evitar valores errados
+            : newTransaction.DataLancamento.LocalDateTime;
+        set
+        {
+            if (value.HasValue)
+            {
+                newTransaction.DataLancamento = new DateTimeOffset(value.Value, TimeZoneInfo.Local.GetUtcOffset(value.Value));
+            }
+        }
+    }
+
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = default!;
 
@@ -66,7 +79,7 @@
         {
             newTransaction = new TransacaoRequest
             {
-                Valor = Transacao.Valor,
+                Valor = Transacao!.Valor,
                 Descricao = Transacao.Descricao,
                 CategoriaId = Transacao.CategoriaId,
                 DataLancamento = Transacao.DataLancamento,
@@ -81,7 +94,7 @@
                 Descricao = "",
                 CategoriaId = null,
                 DataLancamento = DateTime.Now,
-                Tipo = TipoEnum._0
+                Tipo = TipoEnum.Entrada 
             };
         }
     }
@@ -143,8 +156,8 @@
     {
         return tipo switch
         {
-            TipoEnum._0 => "Receita",
-            TipoEnum._1 => "Despesa",
+            TipoEnum.Entrada => "Receita",
+            TipoEnum.Saida => "Despesa",
             _ => "Desconhecido"
         };
     }

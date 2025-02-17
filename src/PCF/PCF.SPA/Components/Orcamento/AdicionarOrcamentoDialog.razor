@@ -7,7 +7,7 @@
     <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title" ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
         <DialogContent>
             <!-- Campo para ValorLimite -->
-            <MudTextField @bind-Value="newOrcamento.ValorLimite" Label="Valor Limite" Required="true" InputType="InputType.Number" />
+            <MudTextField @bind-Value="newOrcamento.ValorLimite" Label="Valor Limite" Required="true" Format="C" T="double" />
 
             <!-- Campo para CategoriaId -->
             <MudSelect @bind-Value="newOrcamento.CategoriaId" Label="Categoria" T="int?">
@@ -25,7 +25,7 @@
                 }
                 else
                 {
-                    <MudText>SALVAR</MudText>
+                    <MudText>INCLUIR</MudText>
                 }
             </MudButton>
             <MudButton OnClick="Cancel">Cancelar</MudButton>

@@ -6,21 +6,21 @@
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
     <MudCardContent>
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Registro</MudText>
-        <MudForm Model="@loginResponse" @ref="registerForm" Validated="HandleValidation">
+        <MudForm Model="@loginResponse" @ref="registerForm" >
             <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponse.Name" Required="true"
                           RequiredError="Nome é obrigatório." />
 
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponse.Login" Required="true"
-                          RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" />
+                          RequiredError="E-mail é obrigatório." type="email" Placeholder="exemplo@email.com" />
 
             <!-- Campo de Senha -->
             <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponse.Password" Required="true"
-                          RequiredError="Senha é obrigatória." Type="password" InputType="InputType.Password"
+                          RequiredError="Senha é obrigatória." type="password" InputType="InputType.Password"
                           Immediate="true" Validation="(string senha) => ValidarSenha(senha)" />
 
             <!-- Confirmação de Senha -->
             <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponse.ConfirmedPassword" Required="true"
-                          RequiredError="Confirmação de senha é obrigatória." Type="password" InputType="InputType.Password"
+                          RequiredError="Confirmação de senha é obrigatória." type="password" InputType="InputType.Password"
                           Immediate="true" Validation="(string confSenha) => ValidarConfirmacaoSenha(confSenha)" />
 
 
@@ -38,17 +38,17 @@
 </MudCard>
 
 @code {
-    private MudForm registerForm;
+    private MudForm? registerForm;
     private LoginResponse loginResponse = new();
 
     private void IrParaLogin()
     {
-        Navigation.NavigateTo("/login");
+        Navigation.NavigateTo("/");
     }
 
     private async Task HandleRegisterAsync()
     {
-        await registerForm.Validate();
+        await registerForm!.Validate();
         if (!registerForm.IsValid)
         {
             Snackbar.Add("Corrija os erros antes de registrar.", Severity.Warning);
@@ -58,8 +58,14 @@
         // Chamada correta para RegisterAsync
         var resultado = await AuthManagerService.RegisterAsync(loginResponse);
 
-        Snackbar.Add(resultado, Severity.Error);
+        if (resultado.IsSuccess )
+        {
+            Snackbar.Add(resultado.Value, Severity.Success);
+            Navigation.NavigateTo("/");
+            return;
+        }
 
+        Snackbar.Add(string.Join(", ", resultado.Errors.Select(e => e.Message)), Severity.Error);
     }
 
     private string? ValidarSenha(string senha)

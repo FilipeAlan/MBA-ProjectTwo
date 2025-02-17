@@ -17,5 +17,11 @@ namespace PCF.Core.Interface
 
         Task<IEnumerable<Transacao>> GetAllByTipoTransacaoAsync(TipoEnum tipo, int usuarioId);
 
+        Task<decimal> CheckTotalBudgetCurrentMonthAsync(int usuarioId, DateTime data);
+
+        Task<decimal> CheckAmountUsedByCategoriaCurrentMonthAsync(int usuarioId, DateTime data, int categoriaId);
+
+        Task<decimal> CheckAmountUsedCurrentMonthAsync(int usuarioId, DateTime data);
+
     }
 }

@@ -3,12 +3,14 @@
     "Name": "Default",
     "Projects": [
       {
-        "Path": "PCF.API\\PCF.API.csproj",
-        "Action": "Start"
+        "Path": "PCF.SPA\\PCF.SPA.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
       },
       {
-        "Path": "PCF.SPA\\PCF.SPA.csproj",
-        "Action": "Start"
+        "Path": "PCF.API\\PCF.API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
       }
     ]
   }

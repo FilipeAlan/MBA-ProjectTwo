@@ -5,11 +5,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-	  <Configurations>Debug;Release;ApiClientGenerator</Configurations>
+	<Configurations>Debug;Release;ApiClientGenerator</Configurations>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+	<PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
