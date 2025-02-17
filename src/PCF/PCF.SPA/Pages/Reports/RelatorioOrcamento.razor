@@ -1,0 +1,28 @@
+﻿@page "/reports/orcamentos"
+@attribute [Authorize]
+
+<PageTitle>Acompanhamento do Orçamento Realizado</PageTitle>
+<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
+ <MudDatePicker Label="Data Inicial" @bind-Date="_dataInicial" DateFormat="dd/MM/yyyy" />
+ </div>
+<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
+ <MudDatePicker Label="Data Final" @bind-Date="_dataFinal" Format="dd/MM/yyyy" />
+</div>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
+
+<MudContainer>
+    <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
+        <Columns>
+            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
+            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
+            <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
+            <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
+            <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
+            <PropertyColumn Property="x => x.Usuario" Title="Usuário" Editable="false" />
+
+        </Columns>
+    </MudDataGrid>
+</MudContainer>
+
+

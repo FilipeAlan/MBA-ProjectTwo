@@ -64,6 +64,8 @@ builder.Services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
 builder.Services.AddScoped<IOrcamentoService, OrcamentoService>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<IRelatorioRepository, RelatorioRepository>();
+builder.Services.AddScoped<IRelatorioService, RelatorioService>();
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 

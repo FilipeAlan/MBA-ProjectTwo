@@ -16,8 +16,9 @@
                     <MudSelectItem T="int?" Value="@categoria.Id">@categoria.Nome</MudSelectItem>
                 }
             </MudSelect>
+ 
+            <MudDatePicker @bind-Date="_dataDoLancamento" Label="Data de Lançamento" Required="true" /> 
 
-            <MudDatePicker @bind-Value="newTransaction.DataLancamento" Label="Data de Lançamento" Required="true" />
 
             <MudSelect T="TipoEnum" @bind-Value="newTransaction.Tipo" Label="Tipo" Required="true">
                 @foreach (var tipo in Enum.GetValues<TipoEnum>())
@@ -47,6 +48,7 @@
     private bool isLoading;
     private TransacaoRequest newTransaction = new();
     private IEnumerable<CategoriaResponse> _categorias = [];
+    private DateTime? _dataDoLancamento = DateTime.Now;
 
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = default!;
@@ -115,6 +117,7 @@
             }
             else
             {
+                newTransaction.DataLancamento = new DateTimeOffset(_dataDoLancamento.Value);
                 await WebApiClient.TransacoesPOSTAsync(newTransaction);
                 Snackbar.Add("Transação cadastrada com sucesso.", Severity.Success);
             }
