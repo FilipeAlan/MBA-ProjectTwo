@@ -137,7 +137,7 @@
             }
             else
             {
-                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux.Value);
+                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
                 TransacaoResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
 
                 if (string.IsNullOrEmpty(result.Mensagem))
