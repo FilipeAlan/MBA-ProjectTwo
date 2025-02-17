@@ -47,6 +47,7 @@
     private bool isLoading;
     private TransacaoRequest newTransaction = new();
     private IEnumerable<CategoriaResponse> _categorias = [];
+    private DateTime? _dataDoLancamento = DateTime.Now;
 
     private DateTime? dataLancamentoAux
     {
@@ -129,6 +130,7 @@
             }
             else
             {
+                newTransaction.DataLancamento = new DateTimeOffset(_dataDoLancamento.Value);
                 await WebApiClient.TransacoesPOSTAsync(newTransaction);
                 Snackbar.Add("Transação cadastrada com sucesso.", Severity.Success);
             }

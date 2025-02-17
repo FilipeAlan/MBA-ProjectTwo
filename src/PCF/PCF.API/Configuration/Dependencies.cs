@@ -48,6 +48,7 @@ namespace PCF.API.Configuration
             services.AddScoped<IOrcamentoService, OrcamentoService>();
             services.AddScoped<ITransacaoService, TransacaoService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IRelatorioService, RelatorioService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IAppIdentityUser, AppIdentityUser>();
 
@@ -61,6 +62,7 @@ namespace PCF.API.Configuration
             services.AddScoped<IOrcamentoRepository, OrcamentoRepository>();
             services.AddScoped<ITransacaoRepository, TransacaoRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IRelatorioRepository, RelatorioRepository>();
 
             return services;
         }
