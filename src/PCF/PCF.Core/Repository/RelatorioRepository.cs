@@ -39,7 +39,8 @@ namespace PCF.Core.Repository
                 Categoria = t.Categoria.Nome,
                 Tipo = t.Tipo.ToString(),
                 UsuarioId = t.UsuarioId,
-                Usuario = t.Usuario.Nome
+                Usuario = t.Usuario.Nome,
+                TipoLancamento = t.Tipo == 0 ? "Entrada" : "Saída"
             }).ToList();
 
             return listaOrcamento;

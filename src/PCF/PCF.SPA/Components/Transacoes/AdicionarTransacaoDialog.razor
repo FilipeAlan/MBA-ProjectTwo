@@ -4,7 +4,7 @@
 <EditForm Model="newTransaction" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
     <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title"
-    ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+               ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
         <DialogContent>
             <MudTextField @bind-Value="newTransaction.Valor" Label="Valor" Required="true" Format="C" T="double" />
             <MudTextField @bind-Value="newTransaction.Descricao" Label="Descrição" Required="true" />
@@ -46,7 +46,7 @@
 @code {
     private bool isLoading;
     private TransacaoRequest newTransaction = new();
-    private IEnumerable<CategoriaResponse> _categorias = [];    
+    private IEnumerable<CategoriaResponse> _categorias = [];
 
     private DateTime? dataLancamentoAux
     {
@@ -77,24 +77,24 @@
         if (IsEditMode)
         {
             newTransaction = new TransacaoRequest
-            {
-                Valor = Transacao!.Valor,
-                Descricao = Transacao.Descricao,
-                CategoriaId = Transacao.CategoriaId,
-                DataLancamento = Transacao.DataLancamento,
-                Tipo = Transacao.Tipo
-            };
+                {
+                    Valor = Transacao!.Valor,
+                    Descricao = Transacao.Descricao,
+                    CategoriaId = Transacao.CategoriaId,
+                    DataLancamento = Transacao.DataLancamento,
+                    Tipo = Transacao.Tipo
+                };
         }
         else
         {
             newTransaction = new TransacaoRequest
-            {
-                Valor = 0,
-                Descricao = "",
-                CategoriaId = null,
-                DataLancamento = DateTime.Now,
-                Tipo = TipoEnum.Entrada 
-            };
+                {
+                    Valor = 0,
+                    Descricao = "",
+                    CategoriaId = null,
+                    DataLancamento = DateTime.Now,
+                    Tipo = TipoEnum.Entrada
+                };
         }
     }
 
@@ -124,17 +124,37 @@
         {
             if (IsEditMode)
             {
-                await WebApiClient.TransacoesPUTAsync(Transacao!.Id, newTransaction);
-                Snackbar.Add("Transação atualizada com sucesso.", Severity.Success);
+                var result = await WebApiClient.TransacoesPUTAsync(Transacao!.Id, newTransaction);
+
+                if (string.IsNullOrEmpty(result.Mensagem))
+                {
+                    Snackbar.Add("Transação atualizada com sucesso.", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add(result.Mensagem, Severity.Warning);
+                }
             }
             else
             {
-                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux.Value);
-                await WebApiClient.TransacoesPOSTAsync(newTransaction);
-                Snackbar.Add("Transação cadastrada com sucesso.", Severity.Success);
+                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
+                TransacaoResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
+
+                if (string.IsNullOrEmpty(result.Mensagem))
+                {
+                    Snackbar.Add("Transação cadastrada com sucesso.", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add(result.Mensagem, Severity.Warning);
+                }
             }
 
             MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (ApiException<IEnumerable<string>> e) when (e.StatusCode == (int)System.Net.HttpStatusCode.BadRequest && e.Result.Any())
+        {
+            Snackbar.Add(string.Join(", ", e.Result), Severity.Warning);
         }
         catch (Exception ex)
         {

@@ -11,14 +11,11 @@ namespace PCF.SPA.Pages.Reports
         private DateTime? _dataInicial = DateTime.Today.AddDays(-1);
         private DateTime? _dataFinal = DateTime.Today;
 
-        [Inject] private IWebApiClient WebApiClient { get; set; } 
-        [Inject] private IDialogService DialogService { get; set; } 
-        [Inject] private ISnackbar Snackbar { get; set; } 
+        [Inject] private IWebApiClient WebApiClient { get; set; } = default!;
+        [Inject] private IDialogService DialogService { get; set; } = default!;
+        [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
-        protected override async Task OnInitializedAsync()
-        {
-           // await LoadOrcamentosAsync();
-        }
+
 
         private async Task LoadOrcamentosAsync()
         {

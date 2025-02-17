@@ -180,14 +180,14 @@ namespace PCF.SPA.Services
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TransacaoResponse>> TransacoesAllAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TransacaoRequest> TransacoesPOSTAsync(TransacaoRequest body);
+        System.Threading.Tasks.Task<TransacaoResult> TransacoesPOSTAsync(TransacaoRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<TransacaoRequest> TransacoesPOSTAsync(TransacaoRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<TransacaoResult> TransacoesPOSTAsync(TransacaoRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -225,14 +225,14 @@ namespace PCF.SPA.Services
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TransacaoResponse> TransacoesGETAsync(int id, System.Threading.CancellationToken cancellationToken);
 
-        /// <returns>No Content</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task TransacoesPUTAsync(int id, TransacaoRequest body);
+        System.Threading.Tasks.Task<TransacaoResult> TransacoesPUTAsync(int id, TransacaoRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>No Content</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task TransacoesPUTAsync(int id, TransacaoRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<TransacaoResult> TransacoesPUTAsync(int id, TransacaoRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -1763,17 +1763,17 @@ namespace PCF.SPA.Services
             }
         }
 
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<TransacaoRequest> TransacoesPOSTAsync(TransacaoRequest body)
+        public virtual System.Threading.Tasks.Task<TransacaoResult> TransacoesPOSTAsync(TransacaoRequest body)
         {
             return TransacoesPOSTAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<TransacaoRequest> TransacoesPOSTAsync(TransacaoRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<TransacaoResult> TransacoesPOSTAsync(TransacaoRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1826,9 +1826,9 @@ namespace PCF.SPA.Services
                             throw new ApiException<System.Collections.Generic.IEnumerable<string>>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<TransacaoRequest>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<TransacaoResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2195,17 +2195,17 @@ namespace PCF.SPA.Services
             }
         }
 
-        /// <returns>No Content</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task TransacoesPUTAsync(int id, TransacaoRequest body)
+        public virtual System.Threading.Tasks.Task<TransacaoResult> TransacoesPUTAsync(int id, TransacaoRequest body)
         {
             return TransacoesPUTAsync(id, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>No Content</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task TransacoesPUTAsync(int id, TransacaoRequest body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<TransacaoResult> TransacoesPUTAsync(int id, TransacaoRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -2221,6 +2221,7 @@ namespace PCF.SPA.Services
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
@@ -2267,9 +2268,14 @@ namespace PCF.SPA.Services
                             throw new ApiException<System.Collections.Generic.IEnumerable<string>>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 204)
+                        if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<TransacaoResult>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -2749,6 +2755,18 @@ namespace PCF.SPA.Services
         [System.Text.Json.Serialization.JsonPropertyName("tipo")]
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public TipoEnum Tipo { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TransacaoResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int? Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("mensagem")]
+        public string Mensagem { get; set; }
 
     }
 

@@ -54,7 +54,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<TransacaoRequest>>> AddNew(TransacaoRequest Transacao)
+        public async Task<Results<BadRequest<List<string>>, Ok<TransacaoResult>>> AddNew(TransacaoRequest Transacao)
         {
             var result = await TransacaoService.AddAsync(Transacao.Adapt<Transacao>());
 
@@ -63,11 +63,11 @@ namespace PCF.API.Controllers
                 return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
-            return TypedResults.CreatedAtRoute(Transacao, nameof(GetById), new { id = result.Value });
+            return TypedResults.Ok(result.Value);
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, TransacaoRequest Transacao)
+        public async Task<Results<NotFound, BadRequest<List<string>>, Ok<TransacaoResult>>> Edit(int id, TransacaoRequest Transacao)
         {
 
             if (await TransacaoService.GetByIdAsync(id) is null)
@@ -85,7 +85,7 @@ namespace PCF.API.Controllers
                 return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
-            return TypedResults.NoContent();
+            return TypedResults.Ok(result.Value);
         }
 
         [HttpDelete("{id}")]

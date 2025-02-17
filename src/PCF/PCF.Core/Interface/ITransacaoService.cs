@@ -1,4 +1,5 @@
-﻿using PCF.Core.Entities;
+﻿using PCF.Core.Dtos;
+using PCF.Core.Entities;
 using PCF.Core.Enumerables;
 
 namespace PCF.Core.Interface
@@ -17,8 +18,8 @@ namespace PCF.Core.Interface
 
         Task<Result> DeleteAsync(int id);
 
-        Task<Result> UpdateAsync(Transacao transacao);
+        Task<Result<TransacaoResult>> UpdateAsync(Transacao transacao);
 
-        Task<Result<int>> AddAsync(Transacao transacao);
+        Task<Result<TransacaoResult>> AddAsync(Transacao transacao);
     }
 }

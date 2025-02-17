@@ -1,14 +1,11 @@
 ﻿using PCF.Core.Dtos;
 using PCF.Core.Entities;
-using PCF.Core.Extensions;
 using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
     public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository) : IOrcamentoService
     {
-        private string retorno;
-
         public async Task<IEnumerable<Orcamento>> GetAllAsync()
         {
             return await repository.GetAllAsync(appIdentityUser.GetUserId());
@@ -49,11 +46,6 @@ namespace PCF.Core.Services
 
             var result = Result.Ok()
                 .WithSuccess("Orçamento atualizado com sucesso!");
-
-            if (!string.IsNullOrEmpty(retorno))
-            {
-                result.Reasons.Add(new Warning(retorno));
-            }
 
             return result;
         }
