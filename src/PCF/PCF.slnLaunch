@@ -4,11 +4,13 @@
     "Projects": [
       {
         "Path": "PCF.SPA\\PCF.SPA.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "https"
       },
       {
         "Path": "PCF.API\\PCF.API.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "https"
       }
     ]
   }
