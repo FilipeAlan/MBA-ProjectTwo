@@ -12,8 +12,12 @@
     <MudDataGrid T="OrcamentoResponse" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.OrcamentoId" Title="ID" Editable="false" />
-            <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" Editable="true" Required="true" />
-            <PropertyColumn Property="x => x.NomeUsuario" Title="Usuário" Editable="false" />
+            <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" Editable="true" Required="true" Format="C">
+                <EditTemplate>
+                    <br />
+                    <MudTextField @bind-Value="@context.Item.ValorLimite" Label="Valor Limite" Required="true" Format="C" T="double" Validation="@(new Func<double, IEnumerable<string>>(ValidateValor))" />
+                </EditTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="x => x.NomeCategoria" Title="Categoria" Editable="false" Required="false" />
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
@@ -34,6 +38,15 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadOrcamentosAsync();
+    }
+
+    private IEnumerable<string> ValidateValor(double value)
+    {
+        if (value <= 0)
+        {
+            yield return "Valor deve ser maior que zero";
+            yield break;
+        }
     }
 
     private async Task LoadOrcamentosAsync()
@@ -99,7 +112,7 @@
             _loading = false;
         }
     }
-    
+
     private async Task DeleteOrcamento(int id)
     {
         var options = new DialogOptions

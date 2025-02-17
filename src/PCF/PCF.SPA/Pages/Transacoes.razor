@@ -14,7 +14,7 @@
     <MudDataGrid T="TransacaoResponse" Items="_transacoes" Loading="_loading" Hover="true" Bordered="false" Striped="false"
                  Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="true">
         <Columns>
-            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
+            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" Format="C" />
             <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
 
             <!-- Exibir o nome da categoria em vez do ID -->
@@ -24,7 +24,7 @@
                 </CellTemplate>
             </TemplateColumn>
 
-            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
+            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" Format="dd/MM/yyyy"/>
 
             <!-- Exibir TipoEnum corretamente -->
             <TemplateColumn Title="Tipo">
