@@ -164,8 +164,8 @@
 
     private async Task OnDateChanged()
     {
-        graficoEntradas!.Periodo = new DateTime(Ano, Mes, 1);
-        graficoSaidas!.Periodo = new DateTime(Ano, Mes, 1);
+        graficoEntradas!.SetPeriod(new DateTime(Ano, Mes, 1));
+        graficoSaidas!.SetPeriod(new DateTime(Ano, Mes, 1));
 
         try
         {

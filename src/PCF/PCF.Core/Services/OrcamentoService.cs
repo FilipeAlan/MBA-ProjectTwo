@@ -5,7 +5,7 @@ using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
-    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository, ITransacaoRepository transacaoRepository) : IOrcamentoService
+    public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository) : IOrcamentoService
     {
         private string retorno;
 
@@ -61,9 +61,6 @@ namespace PCF.Core.Services
         public async Task<Result<int>> AddAsync(Orcamento orcamento)
         {
             ArgumentNullException.ThrowIfNull(orcamento);
-
-            decimal orcamentoUtilizadoCategoria = 0;
-            decimal orcamentoGeral = await transacaoRepository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
 
             if (orcamento.CategoriaId != null)
             {

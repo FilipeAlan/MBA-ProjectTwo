@@ -20,7 +20,7 @@ namespace PCF.Core.Repository
             return entity;
         }
 
-        public async Task<T> ReadAsync(object id)
+        public async Task<T?> ReadAsync(object id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }

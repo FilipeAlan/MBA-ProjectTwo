@@ -32,7 +32,7 @@ O projeto consiste em:
 - **Frameworks:**
   - ASP.NET Core Web API
   - Entity Framework Core
-- **Banco de Dados:** SQL Server
+- **Banco de Dados:** SQL Server e SQLite
 - **Autenticação e Autorização:**
   - ASP.NET Core Identity
   - JWT (JSON Web Token) para autenticação na API

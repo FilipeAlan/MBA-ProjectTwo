@@ -2,7 +2,8 @@
 
 @if (!_loading)
 {
-    if (Valores.Any()){
+    if (Valores.Any())
+    {
 
         var combinedLabels = Categorias.Zip(Valores, (categoria, valor) => $"{categoria}: {valor:C}").ToArray();
 
@@ -16,7 +17,7 @@
     else
     {
         <MudAlert Severity="Severity.Normal">Sem transações para este período</MudAlert>
-    }    
+    }
 }
 else
 {
@@ -41,6 +42,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadDataAsync();
+    }
+
+    public void SetPeriod(DateTime value)
+    {
+        Periodo = value;
     }
 
     public async Task LoadDataAsync()
