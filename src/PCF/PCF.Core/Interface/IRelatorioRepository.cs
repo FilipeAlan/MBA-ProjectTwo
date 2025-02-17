@@ -1,4 +1,4 @@
-﻿using PCF.Shared.Dtos;
+﻿using PCF.Core.Dtos;
 
 namespace PCF.Core.Interface
 {

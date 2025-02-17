@@ -1,5 +1,5 @@
-﻿using PCF.Core.Entities;
-using PCF.Shared.Dtos;
+﻿using PCF.Core.Dtos;
+using PCF.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

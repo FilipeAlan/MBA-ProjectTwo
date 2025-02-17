@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCF.Core.Context;
+using PCF.Core.Dtos;
 using PCF.Core.Interface;
-using PCF.Shared.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

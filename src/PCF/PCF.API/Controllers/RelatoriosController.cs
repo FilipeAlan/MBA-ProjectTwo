@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.Core.Entities;
+using PCF.Core.Dtos;
 using PCF.Core.Interface;
-using PCF.Core.Services;
-using PCF.Shared.Dtos;
 
 namespace PCF.API.Controllers;
 

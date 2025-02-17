@@ -1,5 +1,5 @@
-﻿using PCF.Core.Interface;
-using PCF.Shared.Dtos;
+﻿using PCF.Core.Dtos;
+using PCF.Core.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
