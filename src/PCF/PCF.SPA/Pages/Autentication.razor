@@ -3,12 +3,12 @@
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
     <MudCardContent>
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Login</MudText>
-        <MudForm Model="@loginResponse" @ref="loginForm" Validated="HandleValidation">
+        <MudForm Model="@loginResponse" @ref="loginForm">
             <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponse.Login" Required="true"
-                          RequiredError="E-mail é obrigatório." Type="email" Placeholder="exemplo@email.com" Immediate="true" />
+                          RequiredError="E-mail é obrigatório." type="email" Placeholder="exemplo@email.com" Immediate="true" />
             <MudTextField Class="mb-4" Label="Senha" @bind-Value="loginResponse.Password" Required="true"
-                          RequiredError="Senha é obrigatória." Type="password" Immediate="true" InputType="InputType.Password" />
-            <MudText Color="Color.Error" Typo="Typo.caption" Style="margin-top: 10px;" Hidden="@string.IsNullOrWhiteSpace(errorMessage)">
+                          RequiredError="Senha é obrigatória." type="password" Immediate="true" InputType="InputType.Password" />
+            <MudText Color="Color.Error" Typo="Typo.caption" Style="margin-top: 10px;" hidden="@string.IsNullOrWhiteSpace(errorMessage)">
                 @errorMessage
             </MudText>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="HandleLogin" Disabled="@isLoading">

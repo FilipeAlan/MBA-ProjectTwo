@@ -97,7 +97,7 @@ namespace PCF.Core.Services
 
         private async Task ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
         {
-            if (TransacaoExistente.CategoriaId != null)
+            if (TransacaoExistente.CategoriaId != default)
             {
                 decimal totalUtilizadoCategoriaMes = 0;
                 decimal totalEntradasMes = await repository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
@@ -122,7 +122,7 @@ namespace PCF.Core.Services
                         {
                             retorno =
                                 $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} já ultrapassa a meta de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria.Nome} " +
+                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
                                 $"saldo no mês corrente.";
                         }
                     }
@@ -145,7 +145,7 @@ namespace PCF.Core.Services
                         {
                             retorno =
                                 $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} ultrapassa o orçamento de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria.Nome} " +
+                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
                                 $"saldo no mês corrente.";
                         }
                     }
@@ -155,7 +155,7 @@ namespace PCF.Core.Services
                         {
                             retorno =
                                 $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoMes)} ultrapassa o orçamento de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} da categoria {categoria.Nome} " +
+                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} da categoria {categoria!.Nome} " +
                                 $"saldo no mês corrente.";
                         }
                     }

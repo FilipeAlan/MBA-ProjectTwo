@@ -39,12 +39,11 @@
                     <MudStack Row>
                         <MudIconButton Icon="@Icons.Material.Outlined.Edit"
                                        OnClick="() => OpenEditTransactionDialog(context.Item)"
-                                       Title="Editar" />
+                                       title="Editar" />
 
                         <MudIconButton Icon="@Icons.Material.Outlined.Delete"
                                        OnClick="() => DeleteTransaction(context.Item.Id)"
-                                       Title="Excluir"
-                                       Color="Color.Error" />
+                                       title="Excluir" />
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

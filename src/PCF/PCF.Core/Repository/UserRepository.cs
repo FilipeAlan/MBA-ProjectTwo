@@ -10,14 +10,14 @@ namespace PCF.Core.Repository
     public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         public UserRepository(PCFDBContext dbContext) : base(dbContext){}
-        public async Task<ApplicationUser> FindByEmailAsync(string email)
+        public async Task<ApplicationUser?> FindByEmailAsync(string email)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
         public Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
         {
             var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash!, password);
             return Task.FromResult(result == PasswordVerificationResult.Success);
         }
         public async Task<ApplicationUser> CreateAsync(ApplicationUser entity, string userName)
