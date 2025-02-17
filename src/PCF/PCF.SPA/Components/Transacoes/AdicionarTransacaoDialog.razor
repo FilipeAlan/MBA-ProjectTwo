@@ -4,7 +4,7 @@
 <EditForm Model="newTransaction" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
     <MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title"
-               ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+    ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
         <DialogContent>
             <MudTextField @bind-Value="newTransaction.Valor" Label="Valor" Required="true" Type="number" />
             <MudTextField @bind-Value="newTransaction.Descricao" Label="Descrição" Required="true" />
@@ -17,7 +17,7 @@
                 }
             </MudSelect>
 
-            <MudDatePicker @bind-Value="newTransaction.DataLancamento" Label="Data de Lançamento" Required="true" />
+            <MudDatePicker @bind-Date="dataLancamentoAux" Label="Data de Lançamento" Required="true" />
 
             <MudSelect T="TipoEnum" @bind-Value="newTransaction.Tipo" Label="Tipo" Required="true">
                 @foreach (var tipo in Enum.GetValues<TipoEnum>())
@@ -47,6 +47,20 @@
     private bool isLoading;
     private TransacaoRequest newTransaction = new();
     private IEnumerable<CategoriaResponse> _categorias = [];
+
+    private DateTime? dataLancamentoAux
+    {
+        get => newTransaction.DataLancamento == default
+            ? (DateTime?)null // Se estiver vazia, retorna null para evitar valores errados
+            : newTransaction.DataLancamento.LocalDateTime;
+        set
+        {
+            if (value.HasValue)
+            {
+                newTransaction.DataLancamento = new DateTimeOffset(value.Value, TimeZoneInfo.Local.GetUtcOffset(value.Value));
+            }
+        }
+    }
 
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = default!;
