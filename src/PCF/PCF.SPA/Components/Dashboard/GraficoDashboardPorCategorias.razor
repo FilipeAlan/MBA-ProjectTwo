@@ -7,11 +7,11 @@
         var combinedLabels = Categorias.Zip(Valores, (categoria, valor) => $"{categoria}: {valor:C}").ToArray();
 
         <MudChart ChartType="ChartType.Pie"
-                  InputLabels="@combinedLabels"
-                  InputData="@Valores!.ToArray()"
-                  Width="300px"
-                  Height="300px"
-                  ChartOptions="@(new() { ChartPalette = @PaletaCores})" />
+        InputLabels="@combinedLabels"
+        InputData="@Valores!.ToArray()"
+        Width="300px"
+        Height="300px"
+        ChartOptions="@(new() { ChartPalette = @PaletaCores})" />
     }
     else
     {
@@ -41,6 +41,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadDataAsync();
+    }
+
+    public void SetPeriod(DateTime value)
+    {
+        Periodo = value;
     }
 
     public async Task LoadDataAsync()

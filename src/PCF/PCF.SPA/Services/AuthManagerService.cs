@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using FluentResults;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -78,23 +79,23 @@ namespace PCF.SPA.Services
             }
         }
 
-        public async Task<string> RegisterAsync(LoginResponse loginResponse)
+        public async Task<Result<string>> RegisterAsync(LoginResponse loginResponse)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("auth/register", loginResponse);
                 if (response.IsSuccessStatusCode)
                 {
-                    return "Registrado com sucesso";
+                    return Result.Ok("Registrado com sucesso");
                 }
 
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                return string.IsNullOrWhiteSpace(errorMessage) ? "Falha ao registrar usuário." : errorMessage;
+                return Result.Fail(string.IsNullOrWhiteSpace(errorMessage) ? "Falha ao registrar usuário." : errorMessage);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao registrar usuário: {ex.Message}");
-                return "Erro ao registrar usuário. Tente novamente mais tarde.";
+                return Result.Fail("Erro ao registrar usuário. Tente novamente mais tarde.");
             }
         }
 

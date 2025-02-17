@@ -13,7 +13,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<AuthManagerService>();
 
 // Cria uma instância temporária de HttpClient para carregar o appsettings.json
