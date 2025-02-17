@@ -1,31 +1,29 @@
-﻿using PCF.Core.Entities;
+﻿using PCF.Core.Dtos;
+using PCF.Core.Entities;
 using PCF.Core.Enumerables;
 using PCF.Core.Globalization;
 using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
-    public class TransacaoService(IAppIdentityUser appIdentityUser, ITransacaoRepository repository, 
+    public class TransacaoService(IAppIdentityUser appIdentityUser, ITransacaoRepository repository,
         IOrcamentoRepository orcamentoRepository, ICategoriaRepository categoriaRepository) : ITransacaoService
     {
-        private string retorno;
-
-        public async Task<Result<int>> AddAsync(Transacao Transacao)
+        public async Task<Result<TransacaoResult>> AddAsync(Transacao transacao)
         {
-            ArgumentNullException.ThrowIfNull(Transacao);
+            ArgumentNullException.ThrowIfNull(transacao);
 
+            transacao.UsuarioId = appIdentityUser.GetUserId();
 
-            Transacao.UsuarioId = appIdentityUser.GetUserId();
-
-            if (!Transacao.Validar())
+            if (!transacao.Validar())
             {
                 return Result.Fail("O valor deve ser maior que zero (0)");
             }
 
-            await ValidaTransacao(Transacao, Transacao.Valor);
+            var result = await ValidaTransacao(transacao, transacao.Valor);
 
-            await repository.CreateAsync(Transacao);
-            return Result.Ok(Transacao.Id);
+            await repository.CreateAsync(transacao);
+            return Result.Ok(new TransacaoResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
         public async Task<Result> DeleteAsync(int id)
@@ -66,43 +64,42 @@ namespace PCF.Core.Services
             return await repository.GetByIdAsync(id, appIdentityUser.GetUserId());
         }
 
-        public async Task<Result> UpdateAsync(Transacao Transacao)
+        public async Task<Result<TransacaoResult>> UpdateAsync(Transacao transacao)
         {
-            ArgumentNullException.ThrowIfNull(Transacao);
+            ArgumentNullException.ThrowIfNull(transacao);
 
-            var TransacaoExistente = await GetByIdAsync(Transacao.Id);
+            var TransacaoExistente = await GetByIdAsync(transacao.Id);
 
             if (TransacaoExistente is null)
             {
                 return Result.Fail("Transação não encontrada");
             }
 
-            if (!Transacao.Validar())
+            if (!transacao.Validar())
             {
                 return Result.Fail("O valor deve ser maior que zero (0)");
             }
 
-            TransacaoExistente.Descricao = Transacao.Descricao;
-            TransacaoExistente.Valor = Transacao.Valor;
-            TransacaoExistente.Tipo = Transacao.Tipo;
+            TransacaoExistente.Descricao = transacao.Descricao;
+            TransacaoExistente.Valor = transacao.Valor;
+            TransacaoExistente.Tipo = transacao.Tipo;
 
-            decimal valorTransacao = Transacao.Valor - TransacaoExistente.Valor;
-            
-            await ValidaTransacao(TransacaoExistente, valorTransacao);
+            decimal valorTransacao = transacao.Valor - TransacaoExistente.Valor;
+
+            var result = await ValidaTransacao(TransacaoExistente, valorTransacao);
 
             await repository.UpdateAsync(TransacaoExistente);
 
-            return Result.Ok();
+            return Result.Ok(new TransacaoResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
-        private async Task ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
+        private async Task<Result> ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
         {
             if (TransacaoExistente.CategoriaId != default)
             {
                 decimal totalUtilizadoCategoriaMes = 0;
-                decimal totalEntradasMes = await repository.CheckTotalBudgetCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
                 decimal totalUtilizadoMes = await repository.CheckAmountUsedCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
-                
+
                 var categoria = await categoriaRepository.GetGeralByIdAsync(TransacaoExistente.CategoriaId);
                 var orcamentoCategoria = await orcamentoRepository.GetByCategoriaAsync(TransacaoExistente.CategoriaId, appIdentityUser.GetUserId());
                 var orcamentoGeral = await orcamentoRepository.GetGeralAsync(appIdentityUser.GetUserId());
@@ -110,7 +107,7 @@ namespace PCF.Core.Services
                 decimal valorOrcamentoCategoria = orcamentoCategoria?.ValorLimite ?? 0;
                 decimal valorOrcamentoGeral = orcamentoGeral?.ValorLimite ?? 0;
 
-                totalUtilizadoCategoriaMes = await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now, 
+                totalUtilizadoCategoriaMes = await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now,
                     TransacaoExistente.CategoriaId);
 
                 //Caso entradas
@@ -120,19 +117,19 @@ namespace PCF.Core.Services
                     {
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
                         {
-                            retorno =
+                            return Result.Fail(
                                 $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} já ultrapassa a meta de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.";
+                                $"saldo no mês corrente.");
                         }
                     }
                     else if (valorOrcamentoGeral > 0)
                     {
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoGeral)
                         {
-                            retorno =
+                            return Result.Fail(
                                 $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} já ultrapassa a meta de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} para o orçamento geral mês corrente.";
+                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} para o orçamento geral mês corrente.");
                         }
                     }
                 }
@@ -143,24 +140,26 @@ namespace PCF.Core.Services
                     {
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
                         {
-                            retorno =
+                            return Result.Fail(
                                 $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} ultrapassa o orçamento de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.";
+                                $"saldo no mês corrente.");
                         }
                     }
                     else if (valorOrcamentoGeral > 0)
                     {
                         if (totalUtilizadoMes + valorMovimentacao > valorOrcamentoGeral)
                         {
-                            retorno =
+                            return Result.Fail(
                                 $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoMes)} ultrapassa o orçamento de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.";
+                                $"saldo no mês corrente.");
                         }
                     }
                 }
             }
+
+            return Result.Ok();
         }
     }
 }
