@@ -122,6 +122,8 @@
 
         try
         {
+            newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
+
             if (IsEditMode)
             {
                 var result = await WebApiClient.TransacoesPUTAsync(Transacao!.Id, newTransaction);
@@ -137,7 +139,6 @@
             }
             else
             {
-                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
                 TransacaoResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
 
                 if (string.IsNullOrEmpty(result.Mensagem))

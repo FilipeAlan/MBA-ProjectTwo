@@ -83,6 +83,7 @@ namespace PCF.Core.Services
             TransacaoExistente.Descricao = transacao.Descricao;
             TransacaoExistente.Valor = transacao.Valor;
             TransacaoExistente.Tipo = transacao.Tipo;
+            TransacaoExistente.DataLancamento = transacao.DataLancamento;
 
             decimal valorTransacao = transacao.Valor - TransacaoExistente.Valor;
 
