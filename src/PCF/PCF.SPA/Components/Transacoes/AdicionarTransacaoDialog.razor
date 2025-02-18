@@ -77,24 +77,24 @@
         if (IsEditMode)
         {
             newTransaction = new TransacaoRequest
-                {
-                    Valor = Transacao!.Valor,
-                    Descricao = Transacao.Descricao,
-                    CategoriaId = Transacao.CategoriaId,
-                    DataLancamento = Transacao.DataLancamento,
-                    Tipo = Transacao.Tipo
-                };
+            {
+                Valor = Transacao!.Valor,
+                Descricao = Transacao.Descricao,
+                CategoriaId = Transacao.CategoriaId,
+                DataLancamento = Transacao.DataLancamento,
+                Tipo = Transacao.Tipo
+            };
         }
         else
         {
             newTransaction = new TransacaoRequest
-                {
-                    Valor = 0,
-                    Descricao = "",
-                    CategoriaId = null,
-                    DataLancamento = DateTime.Now,
-                    Tipo = TipoEnum.Entrada
-                };
+            {
+                Valor = 0,
+                Descricao = "",
+                CategoriaId = null,
+                DataLancamento = DateTime.Now,
+                Tipo = TipoEnum.Entrada
+            };
         }
     }
 
@@ -122,6 +122,8 @@
 
         try
         {
+            newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
+            
             if (IsEditMode)
             {
                 var result = await WebApiClient.TransacoesPUTAsync(Transacao!.Id, newTransaction);
@@ -137,7 +139,6 @@
             }
             else
             {
-                newTransaction.DataLancamento = new DateTimeOffset(dataLancamentoAux!.Value);
                 TransacaoResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
 
                 if (string.IsNullOrEmpty(result.Mensagem))
