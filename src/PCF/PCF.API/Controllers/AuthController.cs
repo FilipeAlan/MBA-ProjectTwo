@@ -35,7 +35,7 @@ namespace PCF.API.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponse loginResponse)
+        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] RegisterResponse loginResponse)
         {
             try
             {
