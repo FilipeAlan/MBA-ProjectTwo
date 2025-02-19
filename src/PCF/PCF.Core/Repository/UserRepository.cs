@@ -28,6 +28,11 @@ namespace PCF.Core.Repository
 
             try
             {
+                if (string.IsNullOrWhiteSpace(userName))
+                {
+                    throw new ArgumentException("O nome de usuário não pode ser vazio.", nameof(userName));
+                }
+
                 // Cria o ApplicationUser
                 var result = await base.CreateAsync(entity);
 
@@ -37,11 +42,6 @@ namespace PCF.Core.Repository
                     Nome = userName!,
                     Id = entity.Id
                 };
-
-                if (string.IsNullOrWhiteSpace(appUser.Nome))
-                {
-                    throw new ArgumentException("O nome de usuário não pode ser vazio.", nameof(appUser.Nome));
-                }
 
                 await _dbContext.Usuarios.AddAsync(appUser);
 
