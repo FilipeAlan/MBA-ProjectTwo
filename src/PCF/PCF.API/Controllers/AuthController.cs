@@ -39,6 +39,11 @@ namespace PCF.API.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(loginResponse.Login))
+                {
+                    throw new ArgumentException("O nome de usuário não pode ser vazio.", nameof(loginResponse.Login));
+                }
+
                 // Verifica se o usuário já existe
                 var user = await userRepository.FindByEmailAsync(loginResponse.Login);
 
