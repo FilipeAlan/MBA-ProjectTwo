@@ -76,15 +76,18 @@ namespace PCF.API.Configuration
             return services;
         }
 
-        public static IServiceCollection SetupWebApi(this IServiceCollection services)
+        public static IServiceCollection SetupWebApi(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedOrigins = configuration.GetRequiredSection("Security:CorsPolicy:AllowedOrigins").Get<List<string>>()!;
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
                 {
-                    builder.AllowAnyOrigin() // Permite qualquer origem (ajuste conforme necessário)
-                           .AllowAnyMethod() // Permite todos os métodos (GET, POST, etc.)
-                           .AllowAnyHeader(); // Permite todos os cabeçalhos
+                    builder.WithOrigins(allowedOrigins.ToArray())
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
             });
 

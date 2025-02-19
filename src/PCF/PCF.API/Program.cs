@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDataDependencies(builder.Configuration, builder.Environment)
                 .AddSwagger()
                 .AddIdentity()
-                .SetupWebApi()
+                .SetupWebApi(builder.Configuration)
                 .AddApplicationServices()
                 .AddRepositories()
                 .AddJwtAuthentication(builder.Configuration);
