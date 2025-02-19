@@ -1,4 +1,4 @@
-﻿namespace PCF.Core.Dtos
+﻿namespace PCF.Core.Dtos.Orcamento
 {
     public class OrcamentoResponse
     {

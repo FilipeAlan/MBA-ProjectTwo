@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCF.Core.Context;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Dashboard;
 using PCF.Core.Enumerables;
 using PCF.Core.Interface;
 

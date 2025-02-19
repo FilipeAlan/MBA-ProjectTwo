@@ -1,6 +1,7 @@
 ﻿@page "/orcamento"
 @inject IWebApiClient WebApiClient
 @inject ISnackbar Snackbar
+@using MudBlazor
 
 <EditForm Model="newOrcamento" OnValidSubmit="Submit">
     <DataAnnotationsValidator />
@@ -16,6 +17,14 @@
                     <MudSelectItem T="int?" Value="@categoria.Id">@categoria.Nome</MudSelectItem>
                 }
             </MudSelect>
+            
+            @if (newOrcamento.CategoriaId is null)
+            {
+                <MudAlert Severity="Severity.Warning">
+                    Se a categoria for deixada em branco, o orçamento será criado como "Geral".
+                </MudAlert>
+            }
+
         </DialogContent>
         <DialogActions>
             <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Disabled="@isLoading">

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Login;
 using PCF.Core.Identity;
 using PCF.Core.Interface;
 
@@ -56,7 +56,7 @@ namespace PCF.API.Controllers
                     newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponse.Password);
 
                     // Salva o usuário no banco
-                    await userRepository.CreateAsync(newUser, loginResponse.Name!);
+                    await userRepository.CreateAsync(newUser, loginResponse.Name);
 
                     return TypedResults.Ok();
                 }

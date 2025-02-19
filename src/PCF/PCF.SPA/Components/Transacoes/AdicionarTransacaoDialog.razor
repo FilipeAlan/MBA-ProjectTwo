@@ -139,7 +139,7 @@
             }
             else
             {
-                TransacaoResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
+                GlobalResult result = await WebApiClient.TransacoesPOSTAsync(newTransaction);
 
                 if (string.IsNullOrEmpty(result.Mensagem))
                 {

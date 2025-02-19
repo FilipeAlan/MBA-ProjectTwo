@@ -1,4 +1,4 @@
-﻿using PCF.Core.Dtos;
+﻿using PCF.Core.Dtos.Dashboard;
 using PCF.Core.Interface;
 
 namespace PCF.Core.Services

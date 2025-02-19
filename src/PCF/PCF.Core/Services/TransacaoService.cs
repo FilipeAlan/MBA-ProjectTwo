@@ -9,7 +9,7 @@ namespace PCF.Core.Services
     public class TransacaoService(IAppIdentityUser appIdentityUser, ITransacaoRepository repository,
         IOrcamentoRepository orcamentoRepository, ICategoriaRepository categoriaRepository) : ITransacaoService
     {
-        public async Task<Result<TransacaoResult>> AddAsync(Transacao transacao)
+        public async Task<Result<GlobalResult>> AddAsync(Transacao transacao)
         {
             ArgumentNullException.ThrowIfNull(transacao);
 
@@ -23,7 +23,7 @@ namespace PCF.Core.Services
             var result = await ValidaTransacao(transacao, transacao.Valor);
 
             await repository.CreateAsync(transacao);
-            return Result.Ok(new TransacaoResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
+            return Result.Ok(new GlobalResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
         public async Task<Result> DeleteAsync(int id)
@@ -64,7 +64,7 @@ namespace PCF.Core.Services
             return await repository.GetByIdAsync(id, appIdentityUser.GetUserId());
         }
 
-        public async Task<Result<TransacaoResult>> UpdateAsync(Transacao transacao)
+        public async Task<Result<GlobalResult>> UpdateAsync(Transacao transacao)
         {
             ArgumentNullException.ThrowIfNull(transacao);
 
@@ -80,18 +80,18 @@ namespace PCF.Core.Services
                 return Result.Fail("O valor deve ser maior que zero (0)");
             }
 
+            decimal valorTransacao = transacao.Valor - TransacaoExistente.Valor;
+
             TransacaoExistente.Descricao = transacao.Descricao;
             TransacaoExistente.Valor = transacao.Valor;
             TransacaoExistente.Tipo = transacao.Tipo;
             TransacaoExistente.DataLancamento = transacao.DataLancamento;
 
-            decimal valorTransacao = transacao.Valor - TransacaoExistente.Valor;
-
             var result = await ValidaTransacao(TransacaoExistente, valorTransacao);
 
             await repository.UpdateAsync(TransacaoExistente);
 
-            return Result.Ok(new TransacaoResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
+            return Result.Ok(new GlobalResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
         private async Task<Result> ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
@@ -119,7 +119,7 @@ namespace PCF.Core.Services
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
                         {
                             return Result.Fail(
-                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} já ultrapassa a meta de " +
+                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} já ultrapassa a meta de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
                                 $"saldo no mês corrente.");
                         }
@@ -129,7 +129,7 @@ namespace PCF.Core.Services
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoGeral)
                         {
                             return Result.Fail(
-                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} já ultrapassa a meta de " +
+                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} já ultrapassa a meta de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} para o orçamento geral mês corrente.");
                         }
                     }
@@ -142,7 +142,7 @@ namespace PCF.Core.Services
                         if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
                         {
                             return Result.Fail(
-                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes)} ultrapassa o orçamento de " +
+                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} ultrapassa o orçamento de " +
                                 $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
                                 $"saldo no mês corrente.");
                         }
@@ -152,9 +152,8 @@ namespace PCF.Core.Services
                         if (totalUtilizadoMes + valorMovimentacao > valorOrcamentoGeral)
                         {
                             return Result.Fail(
-                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoMes)} ultrapassa o orçamento de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.");
+                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoMes + valorMovimentacao)} ultrapassa o orçamento de " +
+                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} do orçamento geral no mês corrente.");
                         }
                     }
                 }
