@@ -1,4 +1,4 @@
-﻿using PCF.Core.Dtos;
+﻿using PCF.Core.Dtos.Global;
 using PCF.Core.Entities;
 using PCF.Core.Enumerables;
 using PCF.Core.Globalization;

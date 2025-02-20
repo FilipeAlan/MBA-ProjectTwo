@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Global;
 using PCF.Core.Dtos.Transacao;
 using PCF.Core.Entities;
 using PCF.Core.Enumerables;

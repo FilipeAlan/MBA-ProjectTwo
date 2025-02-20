@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace MyBlog.Tests.Integration.WebApiTests
+namespace PCF.API.Tests.IntegrationTests
 {
     public class PcfWebApiTests : IClassFixture<WebApplicationFactory<Program>>
     {
