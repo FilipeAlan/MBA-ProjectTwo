@@ -98,7 +98,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Categoria informada é inválida.");
+            result.Errors.Should().Contain(x => x.Message == "Categoria informada Ã© invÃ¡lida.");
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Já existe um orçamento para essa categoria lançado");
+            result.Errors.Should().Contain(x => x.Message == "JÃ¡ existe um orÃ§amento para essa categoria lanÃ§ado");
         }
 
         [Fact]
@@ -155,7 +155,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Orçamento inexistente");
+            result.Errors.Should().Contain(x => x.Message == "OrÃ§amento inexistente");
         }
 
         [Fact]
@@ -190,7 +190,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Orçamento inexistente");
+            result.Errors.Should().Contain(x => x.Message == "OrÃ§amento inexistente");
         }
 
         [Fact]

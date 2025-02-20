@@ -25,4 +25,4 @@ jobs:
     - name: Build
       run: dotnet build src/PCF/PCF.sln --no-restore -WarnAsError
     - name: Test
-      run: dotnet test src/PCF/PCF.sln --no-build --verbosity normal --environment=Development
+      run: dotnet test src/PCF/PCF.sln --no-build --verbosity detailed --environment=Development

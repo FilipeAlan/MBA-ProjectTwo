@@ -38,12 +38,12 @@ namespace PCF.Core.Tests.UnitTests
                     TipoLancamento = "Entrada",
                     Valor = 1000,
                     ValorLimite = 2000,
-                    Descricao = "Sal·rio",
+                    Descricao = "Sal√°rio",
                     CategoriaId = 1,
                     Categoria = "Renda",
                     Tipo = "Entrada",
                     UsuarioId = userId,
-                    Usuario = "Usu·rio 1"
+                    Usuario = "Usu√°rio 1"
                 }
             };
 

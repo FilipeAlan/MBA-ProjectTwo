@@ -168,7 +168,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Transação não encontrada");
+            result.Errors.Should().Contain(x => x.Message == "TransaÃ§Ã£o nÃ£o encontrada");
         }
 
         [Fact]

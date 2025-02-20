@@ -72,7 +72,7 @@ namespace PCF.Core.Tests.UnitTests
             (
                 Categorias:
                 [
-                    new DashboardTransacaoAgrupadaPorCategoria ( NomeCategoria : "Alimentação", Valor : 500 )
+                    new DashboardTransacaoAgrupadaPorCategoria ( NomeCategoria : "AlimentaÃ§Ã£o", Valor : 500 )
                 ]
             );
 
