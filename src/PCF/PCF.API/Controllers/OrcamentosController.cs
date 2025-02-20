@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
 using PCF.Core.Dtos;
+using PCF.Core.Dtos.Orcamento;
 using PCF.Core.Entities;
 using PCF.Core.Extensions;
 using PCF.Core.Interface;
@@ -32,7 +33,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<string>>, NoContent>> Edit(int id, OrcamentoRequest orcamento)
+        public async Task<Results<NotFound, BadRequest<List<string>>, Ok<GlobalResult>>> Edit(int id, OrcamentoRequest orcamento)
         {
 
             if (await orcamentoService.GetByIdAsync(id) is null)
@@ -50,11 +51,11 @@ namespace PCF.API.Controllers
                 return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
-            return TypedResults.NoContent();
+            return TypedResults.Ok(result.Value);
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<string>>, CreatedAtRoute<OrcamentoRequest>>> AddNew(OrcamentoRequest orcamento)
+        public async Task<Results<BadRequest<List<string>>, Ok<GlobalResult>>> AddNew(OrcamentoRequest orcamento)
         {
             var result = await orcamentoService.AddAsync(orcamento.Adapt<Orcamento>());
 
@@ -63,7 +64,7 @@ namespace PCF.API.Controllers
                 return TypedResults.BadRequest(result.Errors.AsErrorList());
             }
 
-            return TypedResults.CreatedAtRoute(orcamento, nameof(GetById), new { id = result.Value });
+            return TypedResults.Ok(result.Value);
         }
 
         [HttpDelete("{id}")]

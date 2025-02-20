@@ -1,4 +1,4 @@
-﻿using PCF.Core.Dtos;
+﻿using PCF.Core.Dtos.Relatorio;
 using PCF.Core.Entities;
 using System;
 using System.Collections.Generic;

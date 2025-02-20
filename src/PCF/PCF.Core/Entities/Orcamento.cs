@@ -9,5 +9,14 @@ namespace PCF.Core.Entities
         public virtual required Usuario Usuario { get; set; }
         public int? CategoriaId { get; set; }
         public virtual Categoria? Categoria { get; set; }
+
+        public Boolean Validar()
+        {
+            if (ValorLimite <= 0)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

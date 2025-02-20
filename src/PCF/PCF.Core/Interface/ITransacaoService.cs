@@ -18,8 +18,8 @@ namespace PCF.Core.Interface
 
         Task<Result> DeleteAsync(int id);
 
-        Task<Result<TransacaoResult>> UpdateAsync(Transacao transacao);
+        Task<Result<GlobalResult>> UpdateAsync(Transacao transacao);
 
-        Task<Result<TransacaoResult>> AddAsync(Transacao transacao);
+        Task<Result<GlobalResult>> AddAsync(Transacao transacao);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Dashboard;
 using PCF.Core.Interface;
 
 namespace PCF.API.Controllers

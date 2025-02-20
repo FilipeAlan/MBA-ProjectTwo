@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PCF.Core.Context;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Relatorio;
 using PCF.Core.Interface;
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
-using PCF.Core.Dtos;
+using PCF.Core.Dtos.Login;
 using PCF.Core.Identity;
 using PCF.Core.Interface;
 
@@ -35,10 +35,15 @@ namespace PCF.API.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] LoginResponse loginResponse)
+        public async Task<Results<Ok,Conflict,StatusCodeHttpResult>> Register([FromBody] RegisterResponse loginResponse)
         {
             try
             {
+                if (string.IsNullOrEmpty(loginResponse.Login))
+                {
+                    throw new ArgumentException("O nome de usuário não pode ser vazio.", nameof(loginResponse.Login));
+                }
+
                 // Verifica se o usuário já existe
                 var user = await userRepository.FindByEmailAsync(loginResponse.Login);
 
@@ -56,7 +61,7 @@ namespace PCF.API.Controllers
                     newUser.PasswordHash = passwordHasher.HashPassword(newUser, loginResponse.Password);
 
                     // Salva o usuário no banco
-                    await userRepository.CreateAsync(newUser, loginResponse.Name!);
+                    await userRepository.CreateAsync(newUser, loginResponse.Name);
 
                     return TypedResults.Ok();
                 }

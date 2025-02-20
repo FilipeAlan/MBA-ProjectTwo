@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PCF.Core.Dtos
+namespace PCF.Core.Dtos.Categoria
 {
     public class CategoriaRequest
     {

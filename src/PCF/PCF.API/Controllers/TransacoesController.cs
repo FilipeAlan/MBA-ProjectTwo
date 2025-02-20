@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PCF.API.Controllers.Base;
 using PCF.Core.Dtos;
+using PCF.Core.Dtos.Transacao;
 using PCF.Core.Entities;
 using PCF.Core.Enumerables;
 using PCF.Core.Extensions;
@@ -54,7 +55,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPost]
-        public async Task<Results<BadRequest<List<string>>, Ok<TransacaoResult>>> AddNew(TransacaoRequest Transacao)
+        public async Task<Results<BadRequest<List<string>>, Ok<GlobalResult>>> AddNew(TransacaoRequest Transacao)
         {
             var result = await TransacaoService.AddAsync(Transacao.Adapt<Transacao>());
 
@@ -67,7 +68,7 @@ namespace PCF.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<Results<NotFound, BadRequest<List<string>>, Ok<TransacaoResult>>> Edit(int id, TransacaoRequest Transacao)
+        public async Task<Results<NotFound, BadRequest<List<string>>, Ok<GlobalResult>>> Edit(int id, TransacaoRequest Transacao)
         {
 
             if (await TransacaoService.GetByIdAsync(id) is null)

@@ -1,4 +1,4 @@
-﻿using PCF.Core.Dtos;
+﻿using PCF.Core.Dtos.Relatorio;
 
 namespace PCF.Core.Interface
 {
