@@ -93,7 +93,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Já existe uma categoria com este nome");
+            result.Errors.Should().Contain(x => x.Message == "JÃ¡ existe uma categoria com este nome");
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Categoria possui transações. Para removê-la, primeiro altere as categorias das transações existentes.");
+            result.Errors.Should().Contain(x => x.Message == "Categoria possui transaÃ§Ãµes. Para removÃª-la, primeiro altere as categorias das transaÃ§Ãµes existentes.");
         }
 
         [Fact]
@@ -202,7 +202,7 @@ namespace PCF.Core.Tests.UnitTests
 
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Errors.Should().Contain(x => x.Message == "Já existe uma categoria com este nome");
+            result.Errors.Should().Contain(x => x.Message == "JÃ¡ existe uma categoria com este nome");
         }
 
         [Fact]
