@@ -1,3 +1,5 @@
+[![.NET](https://github.com/FilipeAlan/MBA-ProjectTwo/actions/workflows/dotnet.yml/badge.svg)](https://github.com/FilipeAlan/MBA-ProjectTwo/actions/workflows/dotnet.yml)
+
 # **MBA-ProjectTwo - Plataforma de Controle Financeiro Pessoal**
 
 ## **1. Apresentação**
