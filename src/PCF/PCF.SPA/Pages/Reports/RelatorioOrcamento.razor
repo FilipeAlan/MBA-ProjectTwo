@@ -1,28 +1,47 @@
 ﻿@page "/reports/orcamentos"
 @attribute [Authorize]
 
-<PageTitle>Acompanhamento do Orçamento Realizado</PageTitle>
-<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
- <MudDatePicker Label="Data Inicial" @bind-Date="_dataInicial" DateFormat="dd/MM/yyyy" />
- </div>
-<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
- <MudDatePicker Label="Data Final" @bind-Date="_dataFinal" DateFormat="dd/MM/yyyy" />
-</div>
+<PageTitle>Relatório</PageTitle>
+<br />
+
+
+<MudContainer>
+<MudStack>
+    <MudDateRangePicker @ref="_picker" Label="Selecione o período do relatório" @bind-DateRange="_dateRange" AutoClose="@_autoClose" PickerVariant="PickerVariant.Dialog">
+        <PickerActions>
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+        </PickerActions>
+    </MudDateRangePicker>
+    <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
+</MudStack>
+
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
 
-<MudContainer>
     <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Título do Relatório</MudText>
+        </ToolBarContent>
         <Columns>
-            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
-            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
+            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" Format="dd/MM/yyyy" />
+            <PropertyColumn Property="x => x.Valor" Style="right" Format="C" Title="Valor" Editable="false" />
             <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
             <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
             <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
+            <PropertyColumn Property="x => x.ValorLimite" Title="Limite da Categoria" Format="C" Editable="false" />
             <PropertyColumn Property="x => x.Usuario" Title="Usuário" Editable="false" />
-
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="RelatorioOrcamentoResponse" />
+        </PagerContent>
     </MudDataGrid>
+    <MudTextField ShrinkLabel @bind-Value="_orcamento" Format="C" Label="Valor orçamento " Variant="Variant.Outlined"></MudTextField>
+    <MudTextField ShrinkLabel @bind-Value="_orcamento" Format="C" Label="Valor orçamento 2" Variant="Variant.Outlined"></MudTextField>
+    <MudTextField ShrinkLabel @bind-Value="_orcamento" Format="C" Label="Valor orçamento 3" Variant="Variant.Outlined"></MudTextField>
+
 </MudContainer>
+
 
 
