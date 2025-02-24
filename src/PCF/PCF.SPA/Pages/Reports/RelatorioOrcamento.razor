@@ -31,29 +31,6 @@
             </MudGrid>
 
             @* Tabela com os dados *@
-            <MudTable Items="_relatorioOrcamento">
-                <MudTableHeader>
-                    <MudTh>DataLancamento</MudTh>
-                    <MudTh>Valor</MudTh>
-                    <MudTh>Descricao</MudTh>
-                    <MudTh>Categoria</MudTh>
-                    <MudTh>Tipo</MudTh>
-                    <MudTh>Usuario</MudTh>
-                </MudTableHeader>
-                <MudTableBody>
-                    @foreach (var item in _relatorioOrcamento)
-                    {
-                        <MudTr>
-                            <MudTd>@item.DataLancamento.ToString("dd/MM/yyyy")</MudTd>
-                            <MudTd>@item.Valor</MudTd>
-                            <MudTd>@item.Descricao</MudTd>
-                            <MudTd>@item.Categoria</MudTd>
-                            <MudTd>@item.Tipo</MudTd>
-                            <MudTd>@item.Usuario</MudTd>
-                        </MudTr>
-                    }
-                </MudTableBody>
-            </MudTable>
             <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
                 <Columns>
                     <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
