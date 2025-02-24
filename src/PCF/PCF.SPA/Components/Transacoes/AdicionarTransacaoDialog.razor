@@ -17,7 +17,7 @@
                 }
             </MudSelect>
 
-            <MudDatePicker @bind-Date="dataLancamentoAux" Label="Data de Lançamento" Required="true" />
+            <MudDatePicker @bind-Date="dataLancamentoAux" Label="Data de Lançamento" Required="true" MaxDate="@DateTime.Now" />
 
             <MudSelect T="TipoEnum" @bind-Value="newTransaction.Tipo" Label="Tipo" Required="true">
                 @foreach (var tipo in Enum.GetValues<TipoEnum>())

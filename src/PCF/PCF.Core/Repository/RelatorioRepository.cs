@@ -12,20 +12,17 @@ namespace PCF.Core.Repository
 {
     public class RelatorioRepository(PCFDBContext _dbContext) : IRelatorioRepository
     {
-        public async Task<List<RelatorioOrcamentoResponse>> GetOrcamentoRealizadoAsync(DateTime dataInicial, DateTime dataFinal,int usarioId)
+        public async Task<List<RelatorioOrcamentoResponse>> GetOrcamentoRealizadoAsync(DateTime dataInicial, DateTime dataFinal,int usuarioId)
         {
             if (dataInicial > dataFinal)
             {
                 throw new ArgumentException("A data inicial não pode ser maior que a data final.");
             }
 
-            // todo incluir o filtro de usuario
-            // como saber o usuarioId logado?
-
             var query = _dbContext.Transacoes
-                .Include(x => x.Categoria)
-                .Include(x => x.Usuario)
-                .Where(x => x.DataLancamento >= dataInicial && x.DataLancamento <= dataFinal && x.UsuarioId==usarioId );
+                .Include(t => t.Categoria)
+                .Include(u => u.Usuario)
+                .Where(x => x.DataLancamento >= dataInicial && x.DataLancamento <= dataFinal && x.UsuarioId==usuarioId );
 
             var transacoes = await query.ToListAsync();
 
@@ -41,7 +38,7 @@ namespace PCF.Core.Repository
                 UsuarioId = t.UsuarioId,
                 Usuario = t.Usuario.Nome,
                 TipoLancamento = t.Tipo == 0 ? "Entrada" : "Saída"
-            }).ToList();
+            }).OrderBy(o=>o.DataLancamento).ToList();
 
             return listaOrcamento;
         }

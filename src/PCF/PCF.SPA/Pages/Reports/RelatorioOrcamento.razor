@@ -1,48 +1,61 @@
 ﻿@page "/reports/orcamentos"
 @attribute [Authorize]
+<style>
+.text-right {
+    text-align: right;
+}
 @inject HttpClient Http
 @inject IJSRuntime JS
 <script src="javascript/download.js"></script>
+.text-center {
+    text-align: center;
+}
+</style>
+<PageTitle>Relatório</PageTitle>
+<br />
 
-<PageTitle>Acompanhamento do Orçamento Realizado</PageTitle>
+<MudContainer>
+<MudStack Row="true">
+    <MudDateRangePicker @ref="_picker" Label="Selecione o período do relatório" @bind-DateRange="_dateRange" AutoClose="@_autoClose" PickerVariant="PickerVariant.Dialog">
+        <PickerActions>
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+        </PickerActions>
+    </MudDateRangePicker>
+@*     <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch> *@
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
+     @if (_relatorioOrcamento?.Any() == true)
+     {
+        <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
+        <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
+     }
+</MudStack>
 
-<MudContainer Class="mt-4">
-    <MudCard>
-        <MudCardContent>
-            <!-- Filtros de Data -->
-            <MudGrid Spacing="3">
-                <MudItem xs="12" sm="6" md="3">
-                    <MudDatePicker Label="Data Inicial" @bind-Date="_dataInicial" DateFormat="dd/MM/yyyy" />
-                </MudItem>
-                <MudItem xs="12" sm="6" md="3">
-                    <MudDatePicker Label="Data Final" @bind-Date="_dataFinal" DateFormat="dd/MM/yyyy" />
-                </MudItem>
-                <MudItem xs="12" sm="6" md="6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">
-                        Gerar Relatório
-                    </MudButton>
-                    <!-- Botões de Exportação -->
-                    @if (_relatorioOrcamento?.Any() == true)
-                    {
-                        <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
-                        <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
-                    }
-                </MudItem>
-            </MudGrid>
 
-            @* Tabela com os dados *@
-            <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
-                <Columns>
-                    <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
-                    <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
-                    <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
-                    <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
-                    <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
-                    <PropertyColumn Property="x => x.Usuario" Title="Usuário" Editable="false" />
-                </Columns>
-            </MudDataGrid>
-        </MudCardContent>
-    </MudCard>
+    <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Dense="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Extrato de lançamentos</MudText>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" Format="dd/MM/yyyy" />
+            <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
+            <PropertyColumn Property="x => x.Valor" Style="right" Format="C" Title="Valor" Editable="false" />
+            <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
+            <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
+            <PropertyColumn Property="x => x.ValorLimite" Title="Limite da Categoria" Format="C" Editable="false" />
+
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="RelatorioOrcamentoResponse" PageSizeOptions="new[] {5,10,15}" />
+        </PagerContent>
+    </MudDataGrid>
+    <MudStack Row="true" Spacing="2">
+        <MudTextField ShrinkLabel @bind-Value="_valorEntrada" Format="C" Label="Valor das Entradas" Variant="Variant.Outlined" Class="text-right"></MudTextField>
+        <MudTextField ShrinkLabel @bind-Value="_valorSaida" Format="C" Label="Valor das Saídas" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField ShrinkLabel @bind-Value="_saldo" Format="C" Label="Valor do Saldo" Variant="Variant.Outlined"></MudTextField>
+    </MudStack>
+
 </MudContainer>
 
 @code {
@@ -73,4 +86,4 @@
     }
 
 
-}
+
