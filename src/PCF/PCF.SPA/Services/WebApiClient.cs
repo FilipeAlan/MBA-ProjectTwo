@@ -29,21 +29,21 @@ namespace PCF.SPA.Services
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body);
+        System.Threading.Tasks.Task<string> LoginAsync(LoginRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<string> LoginAsync(LoginRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(LoginResponse body);
+        System.Threading.Tasks.Task RegisterAsync(RegisterRequest body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task RegisterAsync(RegisterRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -293,7 +293,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body)
+        public virtual System.Threading.Tasks.Task<string> LoginAsync(LoginRequest body)
         {
             return LoginAsync(body, System.Threading.CancellationToken.None);
         }
@@ -301,7 +301,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<string> LoginAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<string> LoginAsync(LoginRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -375,7 +375,7 @@ namespace PCF.SPA.Services
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task RegisterAsync(LoginResponse body)
+        public virtual System.Threading.Tasks.Task RegisterAsync(RegisterRequest body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -383,7 +383,7 @@ namespace PCF.SPA.Services
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task RegisterAsync(LoginResponse body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task RegisterAsync(RegisterRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -2614,20 +2614,16 @@ namespace PCF.SPA.Services
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LoginResponse
+    public partial class LoginRequest
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("login")]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Login { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("password")]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Password { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("confirmedPassword")]
-        public string ConfirmedPassword { get; set; }
 
     }
 
@@ -2664,6 +2660,24 @@ namespace PCF.SPA.Services
 
         [System.Text.Json.Serialization.JsonPropertyName("nomeCategoria")]
         public string NomeCategoria { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RegisterRequest
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("login")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Login { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Password { get; set; }
 
     }
 

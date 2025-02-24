@@ -1,3 +1,5 @@
+[![.NET](https://github.com/FilipeAlan/MBA-ProjectTwo/actions/workflows/dotnet.yml/badge.svg)](https://github.com/FilipeAlan/MBA-ProjectTwo/actions/workflows/dotnet.yml)
+
 # **MBA-ProjectTwo - Plataforma de Controle Financeiro Pessoal**
 
 ## **1. Apresentação**
@@ -63,6 +65,7 @@ A estrutura do projeto é organizada da seguinte forma:
 - **Autenticação e Autorização:** Permitir registro de novos usuários com dados como nome, e-mail e senha.
 - **API RESTful:** Exposição de endpoints para operações CRUD via API.
 - **Documentação da API:** Documentação automática dos endpoints da API utilizando Swagger.
+- **Testes:** Unitários e de integração, validando os endpoints principais e regras de negócios.
 
 ## **6. Como Executar o Projeto**
 

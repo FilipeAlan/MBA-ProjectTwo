@@ -6,20 +6,20 @@
 <MudCard Style="max-width: 400px; margin: auto; margin-top: 50px;">
     <MudCardContent>
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Registro</MudText>
-        <MudForm Model="@loginResponse" @ref="registerForm" >
-            <MudTextField Class="mb-3" Label="Nome" @bind-Value="loginResponse.Name" Required="true"
+        <MudForm Model="@registerRequest" @ref="registerForm" >
+            <MudTextField Class="mb-3" Label="Nome" @bind-Value="registerRequest.Name" Required="true"
                           RequiredError="Nome é obrigatório." />
 
-            <MudTextField Class="mb-3" Label="E-mail" @bind-Value="loginResponse.Login" Required="true"
+            <MudTextField Class="mb-3" Label="E-mail" @bind-Value="registerRequest.Login" Required="true"
                           RequiredError="E-mail é obrigatório." type="email" Placeholder="exemplo@email.com" />
 
             <!-- Campo de Senha -->
-            <MudTextField Class="mb-3" Label="Senha" @bind-Value="loginResponse.Password" Required="true"
+            <MudTextField Class="mb-3" Label="Senha" @bind-Value="registerRequest.Password" Required="true"
                           RequiredError="Senha é obrigatória." type="password" InputType="InputType.Password"
                           Immediate="true" Validation="(string senha) => ValidarSenha(senha)" />
 
             <!-- Confirmação de Senha -->
-            <MudTextField Class="mb-3" Label="Confirme a Senha" @bind-Value="loginResponse.ConfirmedPassword" Required="true"
+            <MudTextField Class="mb-3" Label="Confirme a Senha" T="string" Required="true"
                           RequiredError="Confirmação de senha é obrigatória." type="password" InputType="InputType.Password"
                           Immediate="true" Validation="(string confSenha) => ValidarConfirmacaoSenha(confSenha)" />
 
@@ -39,7 +39,7 @@
 
 @code {
     private MudForm? registerForm;
-    private LoginResponse loginResponse = new();
+    private RegisterRequest registerRequest = new();
 
     private void IrParaLogin()
     {
@@ -56,7 +56,7 @@
         }
 
         // Chamada correta para RegisterAsync
-        var resultado = await AuthManagerService.RegisterAsync(loginResponse);
+        var resultado = await AuthManagerService.RegisterAsync(registerRequest);
 
         if (resultado.IsSuccess )
         {
@@ -93,7 +93,7 @@
 
     private string? ValidarConfirmacaoSenha(string confSenha)
     {
-        if (confSenha != loginResponse.Password)
+        if (confSenha != registerRequest.Password)
             return "As senhas não coincidem.";
 
         return null; // Confirmação válida
