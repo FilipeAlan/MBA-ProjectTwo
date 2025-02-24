@@ -107,7 +107,7 @@ namespace PCF.Core.Tests.UnitTests
         {
             // Arrange
             var userId = 1;
-            var transacao = new Transacao { Valor = 100, UsuarioId = userId, Categoria = null!, Usuario = null! };
+            var transacao = new Transacao { Valor = 100, UsuarioId = userId, Categoria = null!, Usuario = null!, CategoriaId=1 };
 
             _mockAppIdentityUser.Setup(x => x.GetUserId()).Returns(userId);
             _mockTransacaoRepository.Setup(x => x.CreateAsync(transacao)).ReturnsAsync(transacao);
@@ -176,8 +176,8 @@ namespace PCF.Core.Tests.UnitTests
         {
             // Arrange
             var userId = 1;
-            var transacao = new Transacao { Id = 1, Valor = 100, Categoria = null!, Usuario = null! };
-            var transacaoExistente = new Transacao { Id = 1, Valor = 50, UsuarioId = userId, Categoria = null!, Usuario = null! };
+            var transacao = new Transacao { Id = 1, Valor = 100, Categoria = null!, Usuario = null!,CategoriaId=1 };
+            var transacaoExistente = new Transacao { Id = 1, Valor = 50, UsuarioId = userId, Categoria = null!, Usuario = null!,CategoriaId=1 };
 
             _mockAppIdentityUser.Setup(x => x.GetUserId()).Returns(userId);
             _mockTransacaoRepository.Setup(x => x.GetByIdAsync(transacao.Id, userId)).ReturnsAsync(transacaoExistente);
