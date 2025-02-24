@@ -1,0 +1,70 @@
+﻿@* @page "/extract"
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<MudCard>
+    <MudCardContent>
+        <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
+        <MudButton OnClick="ExportExcel" Color="Color.Primary">Exportar Excel</MudButton>
+
+        <MudTable Items="dados">
+            <MudTableHeader>
+                <MudTh>DataLancamento</MudTh>
+                <MudTh>Valor</MudTh>
+                <MudTh>Descricao</MudTh>
+                <MudTh>Categoria</MudTh>
+                <MudTh>Tipo</MudTh>
+                <MudTh>Usuario</MudTh>
+            </MudTableHeader>
+            <MudTableBody>
+                @foreach (var item in dados)
+                {
+                    <MudTr>
+                        <MudTd>@item.DataLancamento</MudTd>
+                        <MudTd>@item.Valor</MudTd>
+                        <MudTd>@item.Descricao</MudTd>
+                        <MudTd>@item.Categoria</MudTd>
+                        <MudTd>@item.Tipo</MudTd>
+                        <MudTd>@item.Usuario</MudTd>
+                    </MudTr>
+                }
+            </MudTableBody>
+        </MudTable>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    // private List<> dados = new()
+    // {
+    //     new Pessoa { Id = 1, Nome = "João", Idade = 30 },
+    //     new Pessoa { Id = 2, Nome = "Maria", Idade = 25 },
+    //     new Pessoa { Id = 3, Nome = "Carlos", Idade = 35 }
+    // };
+
+    private async Task ExportExcel()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/excel/generate", dados);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var excelBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
+            
+            await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
+        }
+    }
+
+    private async Task ExportPdf()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/pdf/generate", dados);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+            
+            await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
+        }
+    }
+}
+ *@

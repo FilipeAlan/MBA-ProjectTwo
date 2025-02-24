@@ -1,28 +1,99 @@
 ﻿@page "/reports/orcamentos"
 @attribute [Authorize]
+@inject HttpClient Http
+@inject IJSRuntime JS
+<script src="javascript/download.js"></script>
 
 <PageTitle>Acompanhamento do Orçamento Realizado</PageTitle>
-<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
- <MudDatePicker Label="Data Inicial" @bind-Date="_dataInicial" DateFormat="dd/MM/yyyy" />
- </div>
-<div class="d-flex justify-end" style="border: 1px solid #ccc; padding: 10px;">
- <MudDatePicker Label="Data Final" @bind-Date="_dataFinal" DateFormat="dd/MM/yyyy" />
-</div>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
+<MudContainer Class="mt-4">
+    <MudCard>
+        <MudCardContent>
+            <!-- Filtros de Data -->
+            <MudGrid Spacing="3">
+                <MudItem xs="12" sm="6" md="3">
+                    <MudDatePicker Label="Data Inicial" @bind-Date="_dataInicial" DateFormat="dd/MM/yyyy" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="3">
+                    <MudDatePicker Label="Data Final" @bind-Date="_dataFinal" DateFormat="dd/MM/yyyy" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">
+                        Gerar Relatório
+                    </MudButton>
+                    <!-- Botões de Exportação -->
+                    @if (_relatorioOrcamento?.Any() == true)
+                    {
+                        <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
+                        <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
 
-<MudContainer>
-    <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
-        <Columns>
-            <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
-            <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
-            <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
-            <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
-            <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
-            <PropertyColumn Property="x => x.Usuario" Title="Usuário" Editable="false" />
-
-        </Columns>
-    </MudDataGrid>
+            @* Tabela com os dados *@
+            <MudTable Items="_relatorioOrcamento">
+                <MudTableHeader>
+                    <MudTh>DataLancamento</MudTh>
+                    <MudTh>Valor</MudTh>
+                    <MudTh>Descricao</MudTh>
+                    <MudTh>Categoria</MudTh>
+                    <MudTh>Tipo</MudTh>
+                    <MudTh>Usuario</MudTh>
+                </MudTableHeader>
+                <MudTableBody>
+                    @foreach (var item in _relatorioOrcamento)
+                    {
+                        <MudTr>
+                            <MudTd>@item.DataLancamento.ToString("dd/MM/yyyy")</MudTd>
+                            <MudTd>@item.Valor</MudTd>
+                            <MudTd>@item.Descricao</MudTd>
+                            <MudTd>@item.Categoria</MudTd>
+                            <MudTd>@item.Tipo</MudTd>
+                            <MudTd>@item.Usuario</MudTd>
+                        </MudTr>
+                    }
+                </MudTableBody>
+            </MudTable>
+            <MudDataGrid T="RelatorioOrcamentoResponse" Items="_relatorioOrcamento" Loading="_loading" Hover="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
+                <Columns>
+                    <PropertyColumn Property="x => x.DataLancamento" Title="Data" Editable="false" />
+                    <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" />
+                    <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
+                    <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
+                    <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
+                    <PropertyColumn Property="x => x.Usuario" Title="Usuário" Editable="false" />
+                </Columns>
+            </MudDataGrid>
+        </MudCardContent>
+    </MudCard>
 </MudContainer>
 
+@code {
+    private async Task ExportExcel()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/excel/generate", _relatorioOrcamento);
 
+        if (response.IsSuccessStatusCode)
+        {
+            var excelBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
+
+            await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
+        }
+    }
+
+    private async Task ExportPdf()
+    {
+        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/pdf/generate", _relatorioOrcamento);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+            var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+
+            await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
+        }
+    }
+
+
+}
