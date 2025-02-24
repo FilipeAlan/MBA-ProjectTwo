@@ -96,77 +96,6 @@ namespace PCF.Core.Services
             return Result.Ok(new GlobalResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
-        private async Task<Result> ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
-        {
-            if (TransacaoExistente.CategoriaId != default)
-            {
-                decimal totalUtilizadoCategoriaMes = 0;
-                decimal totalUtilizadoMes = await repository.CheckAmountUsedCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now);
-
-                // var categoria = await categoriaRepository.GetGeralByIdAsync(TransacaoExistente.CategoriaId); // retornava null quando a categoria não era padrão.
-                var categoria = await categoriaRepository.GetByIdAsync(TransacaoExistente.CategoriaId, appIdentityUser.GetUserId());
-                var orcamentoCategoria = await orcamentoRepository.GetByCategoriaAsync(TransacaoExistente.CategoriaId, appIdentityUser.GetUserId());
-                var orcamentoGeral = await orcamentoRepository.GetGeralAsync(appIdentityUser.GetUserId());
-
-                decimal valorOrcamentoCategoria = orcamentoCategoria?.ValorLimite ?? 0;
-                decimal valorOrcamentoGeral = orcamentoGeral?.ValorLimite ?? 0;
-
-                totalUtilizadoCategoriaMes = await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(appIdentityUser.GetUserId(), DateTime.Now,
-                    TransacaoExistente.CategoriaId);
-
-                //Caso entradas
-                // É requisito validar entradas ?
-                if (TransacaoExistente.Tipo == 0)
-                {
-                    if (valorOrcamentoCategoria > 0)
-                    {
-                        if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
-                        {
-                            return Result.Fail(
-                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} já ultrapassa a meta de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.");
-                        }
-                    }
-                    else if (valorOrcamentoGeral >= 0)
-                    {
-                        if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoGeral)
-                        {
-                            return Result.Fail(
-                                $"O total de entradas {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} já ultrapassa a meta de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} para o orçamento geral mês corrente.");
-                        }
-                    }
-                }
-                //Caso saídas
-                else
-                {
-                    if (valorOrcamentoCategoria > 0)
-                    {
-                        if (totalUtilizadoCategoriaMes + valorMovimentacao > valorOrcamentoCategoria)
-                        {
-                            return Result.Fail(
-                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoCategoriaMes + valorMovimentacao)} ultrapassa o orçamento de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {categoria!.Nome} " +
-                                $"saldo no mês corrente.");
-                        }
-                    }
-                    else if (valorOrcamentoGeral >= 0)
-                    {
-                        if (totalUtilizadoMes + valorMovimentacao > valorOrcamentoGeral)
-                        {
-                            return Result.Fail(
-                                $"O total de gastos {FormatoMoeda.ParaReal(totalUtilizadoMes + valorMovimentacao)} ultrapassa o orçamento de " +
-                                $"{FormatoMoeda.ParaReal(valorOrcamentoGeral)} do orçamento geral no mês corrente.");
-                        }
-                    }
-                }
-            }
-
-            return Result.Ok();
-        }
-
-
         private async Task<Result> ValidaTransacaoV2(Transacao TransacaoExistente, decimal valorMovimentacao)
         {
             if (TransacaoExistente.CategoriaId == default) return Result.Fail("A transação deve ter sempre uma categoria ");
@@ -190,11 +119,11 @@ namespace PCF.Core.Services
             var totalUtilizadoCategoriaMes = await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(usuarioId, DateTime.Now, TransacaoExistente.CategoriaId);
             var totalUtilizadoMes = await repository.CheckAmountUsedCurrentMonthAsync(usuarioId, DateTime.Now);
 
-            return ValidarOrcamento(totalUtilizadoMes, totalUtilizadoCategoriaMes, valorMovimentacao, valorOrcamentoCategoria, valorOrcamentoGeral, valorReceitaMes,categoria.Nome,usuarioId);
+            return ValidarOrcamento(totalUtilizadoMes, totalUtilizadoCategoriaMes, valorMovimentacao, valorOrcamentoCategoria, valorOrcamentoGeral, valorReceitaMes,categoria.Nome);
 
         }
 
-        private Result ValidarOrcamento(decimal totalUtilizado,decimal totalGastoCategoriaMes, decimal valorMovimentacao, decimal valorOrcamentoCategoria, decimal valorOrcamentoGeral, decimal valorEntradas, string nomeCategoria, int usuarioId)
+        private static Result ValidarOrcamento(decimal totalUtilizado,decimal totalGastoCategoriaMes, decimal valorMovimentacao, decimal valorOrcamentoCategoria, decimal valorOrcamentoGeral, decimal valorEntradas, string nomeCategoria)
         {
             var totalComMovimentacao = totalUtilizado + valorMovimentacao;
             var totalCategoriaComMovimentacao = totalGastoCategoriaMes + valorMovimentacao;
