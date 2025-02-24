@@ -1,12 +1,13 @@
 ﻿@page "/reports/orcamentos"
 @attribute [Authorize]
+@inject HttpClient Http
+@inject IJSRuntime JS
+<script src="javascript/download.js"></script>
 <style>
 .text-right {
     text-align: right;
 }
-@inject HttpClient Http
-@inject IJSRuntime JS
-<script src="javascript/download.js"></script>
+
 .text-center {
     text-align: center;
 }
@@ -84,6 +85,6 @@
             await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
         }
     }
-
+}
 
 
