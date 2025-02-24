@@ -8,7 +8,7 @@ namespace PCF.SPA.Pages.Reports
         private IEnumerable<RelatorioOrcamentoResponse> _relatorioOrcamento = new List<RelatorioOrcamentoResponse>(); // Initialize the list
                                                                                                                       // private IEnumerable<TransacaoResponse> _transacao = new List<TransacaoResponse>(); // Initialize the list
         private bool _loading = false;
-        private MudDateRangePicker _picker;
+        private MudDateRangePicker _picker = default!;
         private DateRange _dateRange = new DateRange(
             new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, DateTimeKind.Local),
             DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)
