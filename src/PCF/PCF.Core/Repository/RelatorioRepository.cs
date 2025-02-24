@@ -38,7 +38,7 @@ namespace PCF.Core.Repository
                 UsuarioId = t.UsuarioId,
                 Usuario = t.Usuario.Nome,
                 TipoLancamento = t.Tipo == 0 ? "Entrada" : "Saída"
-            }).ToList();
+            }).OrderBy(o=>o.DataLancamento).ToList();
 
             return listaOrcamento;
         }

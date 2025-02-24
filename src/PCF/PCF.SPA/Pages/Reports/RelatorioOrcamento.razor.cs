@@ -13,8 +13,12 @@ namespace PCF.SPA.Pages.Reports
             new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1, 0, 0, 0, DateTimeKind.Local),
             DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)
         );
-        private bool _autoClose;
-        private decimal _orcamento = 1000;
+        private bool _autoClose= false;
+        private decimal _saldo = 0;
+        private decimal _valorEntrada = 0;
+        private decimal _valorSaida = 0;
+
+
 
         [Inject] private IWebApiClient WebApiClient { get; set; } = default!;
         [Inject] private IDialogService DialogService { get; set; } = default!;
@@ -36,6 +40,9 @@ namespace PCF.SPA.Pages.Reports
                 if (dataInicial.HasValue && dataFinal.HasValue)
                 {
                     _relatorioOrcamento = await WebApiClient.RelatoriosAsync(dataInicial.Value, dataFinal.Value);
+                    _valorEntrada = (decimal) _relatorioOrcamento.Where(t=>t.TipoLancamento=="Entrada").Sum(x => x.Valor );
+                    _valorSaida = (decimal)_relatorioOrcamento.Where(t => t.TipoLancamento != "Entrada").Sum(x => x.Valor);
+                    _saldo = _valorEntrada - _valorSaida;
                 }
             }
             catch (Exception ex)

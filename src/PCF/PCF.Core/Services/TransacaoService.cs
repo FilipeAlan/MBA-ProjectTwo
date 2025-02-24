@@ -202,16 +202,16 @@ namespace PCF.Core.Services
 
             if (valorOrcamentoCategoria > 0 && totalCategoriaComMovimentacao > valorOrcamentoCategoria)
             {
-                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {nomeCategoria} no mês corrente.");
+                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {nomeCategoria} no mês corrente.\n");
             }
 
             if (valorOrcamentoGeral > 0 && totalComMovimentacao > valorOrcamentoGeral)
             {
-                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento geral de {FormatoMoeda.ParaReal(valorOrcamentoGeral)} no mês corrente.");
+                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento geral de {FormatoMoeda.ParaReal(valorOrcamentoGeral)} no mês corrente.\n");
             }
             if (valorEntradas < totalComMovimentacao)
             {
-                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o total de receitas {FormatoMoeda.ParaReal(valorEntradas)} no mês corrente.");
+                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o total de receitas {FormatoMoeda.ParaReal(valorEntradas)} no mês corrente.\n");
             }
 
             if (mensagem.Length > 0)  return Result.Fail(mensagem.ToString());
