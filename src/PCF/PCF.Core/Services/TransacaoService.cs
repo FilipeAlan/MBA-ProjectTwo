@@ -22,7 +22,7 @@ namespace PCF.Core.Services
                 return Result.Fail("O valor deve ser maior que zero (0)");
             }
 
-            var result = await ValidaTransacaoV2(transacao, transacao.Valor);
+            var result = await ValidaTransacao(transacao, transacao.Valor);
 
             await repository.CreateAsync(transacao);
             return Result.Ok(new GlobalResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
@@ -89,14 +89,14 @@ namespace PCF.Core.Services
             TransacaoExistente.Tipo = transacao.Tipo;
             TransacaoExistente.DataLancamento = transacao.DataLancamento;
 
-            var result = await ValidaTransacaoV2(TransacaoExistente, valorTransacao);
+            var result = await ValidaTransacao(TransacaoExistente, valorTransacao);
 
             await repository.UpdateAsync(TransacaoExistente);
 
             return Result.Ok(new GlobalResult(default, string.Join(", ", result.Errors.Select(e => e.Message))));
         }
 
-        private async Task<Result> ValidaTransacaoV2(Transacao TransacaoExistente, decimal valorMovimentacao)
+        private async Task<Result> ValidaTransacao(Transacao TransacaoExistente, decimal valorMovimentacao)
         {
             if (TransacaoExistente.CategoriaId == default) return Result.Fail("A transação deve ter sempre uma categoria ");
             if (TransacaoExistente.Tipo == 0) return Result.Ok();
