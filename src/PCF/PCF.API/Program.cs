@@ -1,4 +1,5 @@
 using PCF.API.Configuration;
+using PCF.API.Services;
 using PCF.Core.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,12 @@ builder.Services.AddDataDependencies(builder.Configuration, builder.Environment)
                 .AddApplicationServices()
                 .AddRepositories()
                 .AddJwtAuthentication(builder.Configuration);
+
+//PDF Service
+builder.Services.AddScoped<PdfExportService>();
+//Excel Service
+builder.Services.AddScoped<ExcelExportService>();
+
 
 var app = builder.Build();
 
