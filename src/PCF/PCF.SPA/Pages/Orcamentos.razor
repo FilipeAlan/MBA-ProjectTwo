@@ -9,7 +9,9 @@
 
 <MudContainer>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddOrcamentoDialog">Adicionar orçamento</MudButton>
-    <MudDataGrid T="OrcamentoResponse" Items="_orcamentos" Loading="_loading" Hover="true" Bordered="false" Striped="false" Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
+    <MudDataGrid T="OrcamentoResponse" Items="_orcamentos" Loading="_loading" Hover="true" 
+        Dense="true" Bordered="true" SortMode="SortMode.Single" Striped="true" Filterable="true" 
+        EditMode="DataGridEditMode.Form" ReadOnly="false" CommittedItemChanges="@CommitEdit">
         <Columns>
             <PropertyColumn Property="x => x.OrcamentoId" Title="ID" Editable="false" />
             <PropertyColumn Property="x => x.ValorLimite" Title="Valor Limite" Editable="true" Required="true" Format="C">
@@ -22,12 +24,15 @@
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
-                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" />
-                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteOrcamento(context.Item.OrcamentoId)" title="Excluir" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@context.Actions.StartEditingItemAsync" title="Editar" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small"  OnClick="() => DeleteOrcamento(context.Item.OrcamentoId)" title="Excluir" />
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="RelatorioOrcamentoResponse" PageSizeOptions="new[] {5,10,15}" />
+        </PagerContent>
     </MudDataGrid>
 </MudContainer>
 
