@@ -11,8 +11,9 @@
         Nova Transação
     </MudButton>
 
-    <MudDataGrid T="TransacaoResponse" Items="_transacoes" Loading="_loading" Hover="true" Bordered="false" Striped="false"
-                 Filterable="false" EditMode="DataGridEditMode.Form" ReadOnly="true">
+    <MudDataGrid T="TransacaoResponse" Items="_transacoes" Loading="_loading" 
+        Hover="true" Dense="true" Bordered="true" SortMode="SortMode.Single" 
+        Striped="true" Filterable="true" EditMode="DataGridEditMode.Form" ReadOnly="false">
         <Columns>
             <PropertyColumn Property="x => x.Valor" Title="Valor" Editable="false" Format="C" />
             <PropertyColumn Property="x => x.Descricao" Title="Descrição" Editable="false" />
@@ -37,17 +38,20 @@
             <TemplateColumn Title="Ações" CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudStack Row>
-                        <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" size="Size.Small"
                                        OnClick="() => OpenEditTransactionDialog(context.Item)"
                                        title="Editar" />
 
-                        <MudIconButton Icon="@Icons.Material.Outlined.Delete"
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" size="Size.Small"
                                        OnClick="() => DeleteTransaction(context.Item.Id)"
                                        title="Excluir" />
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager T="RelatorioOrcamentoResponse" PageSizeOptions="new[] {5,10,15}" />
+        </PagerContent>
     </MudDataGrid>
 </MudContainer>
 
