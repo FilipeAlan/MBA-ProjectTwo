@@ -35,5 +35,11 @@ namespace PCF.Core.Repository
             return await _dbContext.Categorias
                 .AnyAsync(c => c.Nome == nome && c.UsuarioId == usuarioId && c.Id != currentId);
         }
+
+        public async Task<bool> HasBudgetAssociationAsync(Categoria categoria)
+        {
+            return await _dbContext.Orcamentos
+                .AnyAsync(o => o.CategoriaId == categoria.Id);
+        }
     }
 }
