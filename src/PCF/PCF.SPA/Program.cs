@@ -23,6 +23,10 @@ var appSettingsJson = await httpClient.GetStringAsync("appsettings.json");
 using var memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(appSettingsJson));
 builder.Configuration.AddJsonStream(memoryStream);
 
+// Adiciona os serviços de exportação de PDF e Excel
+builder.Services.AddScoped<ExcelExportService>();
+builder.Services.AddScoped<PdfExportService>();
+
 // Obtém o valor de ApiUrl
 var apiUrl = builder.Configuration["ApiUrl"] ?? builder.HostEnvironment.BaseAddress;
 

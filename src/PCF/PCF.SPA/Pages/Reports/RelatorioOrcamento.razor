@@ -2,7 +2,10 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject IJSRuntime JS
+@inject ExcelExportService ExcelExportService
+@inject PdfExportService PdfExportService
 <script src="javascript/download.js"></script>
+
 <style>
 .text-right {
     text-align: right;
@@ -62,29 +65,26 @@
 @code {
     private async Task ExportExcel()
     {
-        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/excel/generate", _relatorioOrcamento);
+        var excelBytes = await ExcelExportService.ExportToExcelAsync(_relatorioOrcamento.ToList());
 
-        if (response.IsSuccessStatusCode)
+        if (excelBytes != null)
         {
-            var excelBytes = await response.Content.ReadAsByteArrayAsync();
             var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
-
             await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
         }
     }
 
     private async Task ExportPdf()
     {
-        var response = await Http.PostAsJsonAsync("https://localhost:7113/api/pdf/generate", _relatorioOrcamento);
+        var pdfBytes = await PdfExportService.ExportToPdfAsync(_relatorioOrcamento.ToList());
 
-        if (response.IsSuccessStatusCode)
+        if (pdfBytes != null)
         {
-            var pdfBytes = await response.Content.ReadAsByteArrayAsync();
             var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-
             await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
         }
     }
+
 }
 
 
