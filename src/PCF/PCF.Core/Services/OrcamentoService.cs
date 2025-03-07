@@ -2,12 +2,14 @@
 using PCF.Core.Dtos.Global;
 using PCF.Core.Dtos.Orcamento;
 using PCF.Core.Entities;
+using PCF.Core.Globalization;
 using PCF.Core.Interface;
 
 namespace PCF.Core.Services
 {
     public class OrcamentoService(IAppIdentityUser appIdentityUser, IOrcamentoRepository repository, ICategoriaRepository categotiaRepository) : IOrcamentoService
     {
+        private string mensagemErro = string.Empty;
         public async Task<IEnumerable<Orcamento>> GetAllAsync()
         {
             return await repository.GetAllAsync(appIdentityUser.GetUserId());
@@ -45,6 +47,11 @@ namespace PCF.Core.Services
             if (!orcamentoExistente.Validar())
             {
                 return Result.Fail("O valor deve ser maior que zero (0)");
+            }
+            var isValorValido = await ValidaSomaOrcamentoAsync(orcamento.ValorLimite, orcamentoExistente.ValorLimite,orcamento.CategoriaId);
+            if (!isValorValido)
+            {
+                return Result.Fail(mensagemErro);
             }
 
             orcamentoExistente.ValorLimite = orcamento.ValorLimite;
@@ -93,9 +100,16 @@ namespace PCF.Core.Services
                 return Result.Fail("O valor deve ser maior que zero (0)");
             }
 
-            orcamento.ValorLimite = orcamento.ValorLimite;
+            var isValorValido = await ValidaSomaOrcamentoAsync(orcamento.ValorLimite, 0,orcamento.CategoriaId);
+            if (!isValorValido)
+            {
+                return Result.Fail(mensagemErro);
+            }
+
+
+           // orcamento.ValorLimite = orcamento.ValorLimite;
             orcamento.UsuarioId = appIdentityUser.GetUserId();
-            orcamento.CategoriaId = orcamento.CategoriaId;
+           // orcamento.CategoriaId = orcamento.CategoriaId;
 
             await repository.CreateAsync(orcamento);
 
@@ -108,6 +122,32 @@ namespace PCF.Core.Services
         public async Task<IEnumerable<OrcamentoResponse>> GetAllWithDescriptionAsync()
         {
             return await repository.GetOrcamentoWithCategoriaAsync(appIdentityUser.GetUserId());
+        }
+
+        public async Task<bool> ValidaSomaOrcamentoAsync(decimal valorNovo,decimal valorAntigo, int? categoriaId)
+        {
+            mensagemErro = string.Empty;
+            var orcamentoGeral = await repository.GetGeralAsync(appIdentityUser.GetUserId());
+            var valorOrcamentoGeral = orcamentoGeral?.ValorLimite??0;
+            var orcamentos = await GetAllAsync();
+            var totalOrcamentoCategoria = orcamentos.Where(x=>x.CategoriaId!=null).Sum(o => o.ValorLimite);
+            
+            if (categoriaId == null)
+            {
+                valorOrcamentoGeral= valorOrcamentoGeral + valorNovo - valorAntigo;
+            }
+            else
+            {
+                totalOrcamentoCategoria = totalOrcamentoCategoria + valorNovo - valorAntigo;
+            }
+
+
+            if (valorOrcamentoGeral > 0 && totalOrcamentoCategoria > valorOrcamentoGeral)
+            {
+                mensagemErro = $"A soma dos orçamentos das categorias é de {FormatoMoeda.ParaReal(totalOrcamentoCategoria)} está superior que o orçamento Geral {FormatoMoeda.ParaReal(valorOrcamentoGeral)}";
+                return false;
+            }
+            return true;
         }
     }
 }
