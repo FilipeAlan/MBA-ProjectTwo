@@ -49,6 +49,11 @@ namespace PCF.Core.Services
             return await repository.GetByIdAsync(id, appIdentityUser.GetUserId());
         }
 
+        public async Task<bool> HasBudgetAssociationAsync(Categoria categoria)
+        {
+           return await repository.HasBudgetAssociationAsync(categoria);
+        }
+
         public async Task<Result> UpdateAsync(Categoria categoria)
         {
             ArgumentNullException.ThrowIfNull(categoria);

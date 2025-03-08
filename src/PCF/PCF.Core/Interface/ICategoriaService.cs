@@ -11,6 +11,7 @@ namespace PCF.Core.Interface
         Task<Result> DeleteAsync(int id);
 
         Task<Result> UpdateAsync(Categoria categoria);
+        Task<bool> HasBudgetAssociationAsync(Categoria categoria);
 
         Task<Result<int>> AddAsync(Categoria categoria);
     }
