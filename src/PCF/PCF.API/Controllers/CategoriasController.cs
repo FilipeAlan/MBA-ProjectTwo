@@ -74,6 +74,11 @@ namespace PCF.API.Controllers
             if (categoria is null)
             {
                 return TypedResults.NotFound();
+            } 
+
+            if (await categoriaService.HasBudgetAssociationAsync(categoria))
+            {
+                return TypedResults.BadRequest(new List<string> { "Categoria possui orçamentos associados e não pode ser excluida." });
             }
 
             var result = await categoriaService.DeleteAsync(id);
