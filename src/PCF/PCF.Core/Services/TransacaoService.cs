@@ -115,32 +115,32 @@ namespace PCF.Core.Services
             var valorOrcamentoCategoria = orcamentoCategoria?.ValorLimite ?? 0;
             var valorOrcamentoGeral = orcamentoGeral?.ValorLimite ?? 0;
             
-            var valorReceitaMes = await repository.CheckTotalBudgetCurrentMonthAsync(usuarioId, DateTime.Now);
             var totalUtilizadoCategoriaMes = await repository.CheckAmountUsedByCategoriaCurrentMonthAsync(usuarioId, DateTime.Now, TransacaoExistente.CategoriaId);
             var totalUtilizadoMes = await repository.CheckAmountUsedCurrentMonthAsync(usuarioId, DateTime.Now);
 
-            return ValidarOrcamento(totalUtilizadoMes, totalUtilizadoCategoriaMes, valorMovimentacao, valorOrcamentoCategoria, valorOrcamentoGeral, valorReceitaMes,categoria.Nome);
+            return ValidarOrcamento(totalUtilizadoMes, totalUtilizadoCategoriaMes, valorMovimentacao, valorOrcamentoCategoria, valorOrcamentoGeral, categoria.Nome);
 
         }
 
-        private static Result ValidarOrcamento(decimal totalUtilizado,decimal totalGastoCategoriaMes, decimal valorMovimentacao, decimal valorOrcamentoCategoria, decimal valorOrcamentoGeral, decimal valorEntradas, string nomeCategoria)
+        private static Result ValidarOrcamento(decimal totalUtilizado,decimal totalGastoCategoriaMes, decimal valorMovimentacao, decimal valorOrcamentoCategoria, decimal valorOrcamentoGeral, string nomeCategoria)
         {
             var totalComMovimentacao = totalUtilizado + valorMovimentacao;
             var totalCategoriaComMovimentacao = totalGastoCategoriaMes + valorMovimentacao;
             var mensagem = new StringBuilder();
 
+            if (valorOrcamentoGeral == 0 && valorOrcamentoCategoria == 0)
+            {
+                mensagem.Append($"Não existe um orçamento Geral cadastrado e a categoria {nomeCategoria} não possui orçamento para validação.");
+            }
+
             if (valorOrcamentoCategoria > 0 && totalCategoriaComMovimentacao > valorOrcamentoCategoria)
             {
-                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {nomeCategoria} no mês corrente.\n");
+                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalCategoriaComMovimentacao)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {nomeCategoria} no mês corrente.\n");
             }
 
             if (valorOrcamentoGeral > 0 && totalComMovimentacao > valorOrcamentoGeral)
             {
                 mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o orçamento geral de {FormatoMoeda.ParaReal(valorOrcamentoGeral)} no mês corrente.\n");
-            }
-            if (valorEntradas < totalComMovimentacao)
-            {
-                mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalComMovimentacao)} ultrapassa o total de receitas {FormatoMoeda.ParaReal(valorEntradas)} no mês corrente.\n");
             }
 
             if (mensagem.Length > 0)  return Result.Fail(mensagem.ToString());

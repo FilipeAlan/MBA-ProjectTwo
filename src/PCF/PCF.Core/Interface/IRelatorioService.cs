@@ -10,6 +10,7 @@ namespace PCF.Core.Interface
 {
     public interface IRelatorioService
     {
+        Task<IEnumerable<RelatorioGastoPorCategoriaResponse>> GetGastoPorCategoria(DateTime dataIncial, DateTime dataFinal);
         Task<IEnumerable<RelatorioOrcamentoResponse>> GetOrcamentoRealizado(DateTime dataIncial, DateTime dataFinal);
     }
 }
