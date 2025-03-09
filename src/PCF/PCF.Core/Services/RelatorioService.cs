@@ -25,5 +25,12 @@ namespace PCF.Core.Services
             var result = await _relatorioRepository.GetOrcamentoRealizadoAsync(dataIncial, dataFinal,userId);
             return result;
         }
+
+        public async Task<IEnumerable<RelatorioGastoPorCategoriaResponse>> GetGastoPorCategoria(DateTime dataIncial, DateTime dataFinal)
+        { 
+            var userId = _appIdentityUser.GetUserId();
+            var result = await _relatorioRepository.GetGastoPorCategoriaAsync(dataIncial, dataFinal, userId);
+            return result;
+        }
     }
 }

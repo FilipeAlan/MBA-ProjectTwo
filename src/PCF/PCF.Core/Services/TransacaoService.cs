@@ -128,6 +128,11 @@ namespace PCF.Core.Services
             var totalCategoriaComMovimentacao = totalGastoCategoriaMes + valorMovimentacao;
             var mensagem = new StringBuilder();
 
+            if (valorOrcamentoGeral == 0 && valorOrcamentoCategoria == 0)
+            {
+                mensagem.Append($"Não existe um orçamento Geral cadastrado e a categoria {nomeCategoria} não possui orçamento para validação.");
+            }
+
             if (valorOrcamentoCategoria > 0 && totalCategoriaComMovimentacao > valorOrcamentoCategoria)
             {
                 mensagem.Append($"O total de gastos {FormatoMoeda.ParaReal(totalCategoriaComMovimentacao)} ultrapassa o orçamento de {FormatoMoeda.ParaReal(valorOrcamentoCategoria)} da categoria {nomeCategoria} no mês corrente.\n");

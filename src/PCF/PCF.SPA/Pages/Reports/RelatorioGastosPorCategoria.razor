@@ -1,0 +1,63 @@
+﻿@page "/reports/gastosporcategoria"
+@attribute [Authorize]
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+
+@inject ExcelExportService ExcelExportService
+@inject PdfExportService PdfExportService
+<script src="javascript/download.js"></script>
+<PageTitle>Relatório de gastos</PageTitle>
+
+<h3>Relatorio de Gastos Por Categoria</h3>
+<br />
+
+<MudContainer>
+    <MudStack Row="true">
+        <MudDateRangePicker @ref="_picker" Label="Selecione o período do relatório" @bind-DateRange="_dateRange" AutoClose="@_autoClose" PickerVariant="PickerVariant.Dialog">
+            <PickerActions>
+                <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+                <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+                <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+            </PickerActions>
+        </MudDateRangePicker>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
+        
+@*         @if (_relatorioGastoPorCategoria?.Any() == true)
+         {
+            <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
+            <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
+         } *@
+
+    </MudStack>
+
+    <MudDataGrid T="RelatorioGastoPorCategoriaResponse"
+                 Items="_relatorioGastoPorCategoria"
+                 Loading="_loading"
+                 Hover="true"
+                 Dense="true"
+                 Bordered="true"
+                 SortMode="SortMode.Single"
+                 Striped="true"
+                 Filterable="true"
+                 EditMode="DataGridEditMode.Form"
+                 ReadOnly="false"
+                 RowStyleFunc="@LinhaEstilo">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Gastos por Categoria</MudText>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
+            <PropertyColumn Property="x => x.ValorLimite" Title="Limite da Categoria" Format="C" Editable="false" />
+            <PropertyColumn Property="x => x.ValorTotal" Style="right" Format="C" Title="Total da Categoria" Editable="false" />
+        </Columns>
+    </MudDataGrid>
+
+    <MudStack Row="true" Spacing="2">
+        <MudTextField ShrinkLabel @bind-Value="_valorLimite" Format="C" Label="Valor Limite da Categoria" Variant="Variant.Outlined" Class="text-right"></MudTextField>
+        <MudTextField ShrinkLabel @bind-Value="_valorGasto" Format="C" Label="Valor Gasto" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField ShrinkLabel @bind-Value="_saldo" Format="C" Label="Valor do Saldo do orçamento" Variant="Variant.Outlined"></MudTextField>
+    </MudStack>
+</MudContainer>
+
