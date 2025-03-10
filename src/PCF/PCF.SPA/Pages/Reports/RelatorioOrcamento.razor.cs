@@ -1,6 +1,6 @@
-﻿using PCF.SPA.Services;
-using PCF.SPA.Components.Orcamento;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using PCF.SPA.Services;
 namespace PCF.SPA.Pages.Reports
 {
     public partial class RelatorioOrcamento
@@ -28,7 +28,27 @@ namespace PCF.SPA.Pages.Reports
         {
             await LoadOrcamentosAsync();
         }
+        private async Task ExportExcel()
+        {
+            var excelBytes = await ExcelExportService.ExportToExcelAsync(_relatorioOrcamento.ToList());
 
+            if (excelBytes != null)
+            {
+                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
+                await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
+            }
+        }
+
+        private async Task ExportPdf()
+        {
+            var pdfBytes = await PdfExportService.ExportToPdfAsync(_relatorioOrcamento.ToList());
+
+            if (pdfBytes != null)
+            {
+                var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+                await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
+            }
+        }
         private async Task LoadOrcamentosAsync()
         {
             _loading = true;

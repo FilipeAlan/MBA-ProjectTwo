@@ -24,11 +24,11 @@
 
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
         
-@*         @if (_relatorioGastoPorCategoria?.Any() == true)
+        @if (_relatorioGastoPorCategoria?.Any() == true)
          {
             <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
             <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
-         } *@
+         }
 
     </MudStack>
 
@@ -53,7 +53,10 @@
             <PropertyColumn Property="x => x.ValorTotal" Style="right" Format="C" Title="Total da Categoria" Editable="false" />
         </Columns>
     </MudDataGrid>
-
+    @if (_relatorioGastoPorCategoria?.Any() == false)
+    {
+        <MudText Color="Color.Warning">Nenhum dado para este período do relatório</MudText>
+    }
     <MudStack Row="true" Spacing="2">
         <MudTextField ShrinkLabel @bind-Value="_valorLimite" Format="C" Label="Valor Limite da Categoria" Variant="Variant.Outlined" Class="text-right"></MudTextField>
         <MudTextField ShrinkLabel @bind-Value="_valorGasto" Format="C" Label="Valor Gasto" Variant="Variant.Outlined"></MudTextField>

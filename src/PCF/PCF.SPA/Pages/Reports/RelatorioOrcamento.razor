@@ -26,14 +26,13 @@
                 <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
             </PickerActions>
-        </MudDateRangePicker>
-    @*     <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch> *@
+        </MudDateRangePicker>    
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadOrcamentosAsync">Gerar Relatório</MudButton>
          @if (_relatorioOrcamento?.Any() == true)
-         {
+        {
             <MudButton OnClick="ExportPdf" Color="Color.Primary">Exportar PDF</MudButton>
             <MudButton OnClick="ExportExcel" Color="Color.Secondary">Exportar Excel</MudButton>
-         }
+        }
     </MudStack>
 
 
@@ -47,13 +46,15 @@
             <PropertyColumn Property="x => x.Valor" Style="right" Format="C" Title="Valor" Editable="false" />
             <PropertyColumn Property="x => x.Tipo" Title="Tipo" Editable="false" />
             <PropertyColumn Property="x => x.Categoria" Title="Categoria" Editable="false" />
-@*             <PropertyColumn Property="x => x.ValorLimite" Title="Limite da Categoria" Format="C" Editable="false" /> *@
-
         </Columns>
         <PagerContent>
             <MudDataGridPager T="RelatorioOrcamentoResponse" PageSizeOptions="new[] {5,10,15}" />
         </PagerContent>
     </MudDataGrid>
+    @if (_relatorioOrcamento?.Any()==false)
+    {        
+        <MudText Color="Color.Warning">Nenhum dado para este período do relatório</MudText>
+    }
     <MudStack Row="true" Spacing="2">
         <MudTextField ShrinkLabel @bind-Value="_valorEntrada" Format="C" Label="Valor das Entradas" Variant="Variant.Outlined" Class="text-right"></MudTextField>
         <MudTextField ShrinkLabel @bind-Value="_valorSaida" Format="C" Label="Valor das Saídas" Variant="Variant.Outlined"></MudTextField>
@@ -61,30 +62,3 @@
     </MudStack>
 
 </MudContainer>
-
-@code {
-    private async Task ExportExcel()
-    {
-        var excelBytes = await ExcelExportService.ExportToExcelAsync(_relatorioOrcamento.ToList());
-
-        if (excelBytes != null)
-        {
-            var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
-            await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
-        }
-    }
-
-    private async Task ExportPdf()
-    {
-        var pdfBytes = await PdfExportService.ExportToPdfAsync(_relatorioOrcamento.ToList());
-
-        if (pdfBytes != null)
-        {
-            var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
-            await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
-        }
-    }
-
-}
-
-
