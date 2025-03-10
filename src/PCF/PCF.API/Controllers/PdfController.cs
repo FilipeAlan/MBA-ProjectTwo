@@ -16,7 +16,7 @@ namespace PCF.API.Controllers
             _pdfService = pdfService;
         }
 
-        [HttpPost("generate")]
+        [HttpPost("generateOrcamento")]
         public IActionResult GeneratePdf([FromBody] List<RelatorioOrcamentoResponse> _relatorioOrcamento)
         {
             var formattedList = _relatorioOrcamento
@@ -36,9 +36,26 @@ namespace PCF.API.Controllers
                 })
                 .ToList();
 
-            var pdfBytes = _pdfService.GeneratePdfFromTable(formattedList, "Relatório PDF");
+            var pdfBytes = _pdfService.GeneratePdfFromTable(formattedList, "Relatório Orcamento");
 
-            return File(pdfBytes, "application/pdf", "relatorio.pdf");
+            return File(pdfBytes, "application/pdf", "relatorioOrcamento.pdf");
+        }
+        [HttpPost("generateGastoPorCategoria")]
+        public IActionResult GeneratePdf([FromBody] List<RelatorioGastoPorCategoriaResponse> _relatorioGastoPorCategoria)
+        {
+            var formattedList = _relatorioGastoPorCategoria
+                .Select(r => new
+                {
+                    r.CategoriaId,
+
+                    r.Categoria,
+                    r.ValorLimite,
+                    r.ValorTotal                    
+                }).ToList();
+
+            var pdfBytes = _pdfService.GeneratePdfFromTable(formattedList, "Relatório Gastos Por Categoria");
+
+            return File(pdfBytes, "application/pdf", "relatorioGastoPorCategoria.pdf");
         }
     }
 }

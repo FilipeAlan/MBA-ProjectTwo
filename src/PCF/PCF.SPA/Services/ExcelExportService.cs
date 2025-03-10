@@ -14,7 +14,17 @@ namespace PCF.SPA.Services
 
         public async Task<byte[]?> ExportToExcelAsync(List<RelatorioOrcamentoResponse> relatorioOrcamento)
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/excel/generate", relatorioOrcamento);
+            var response = await _httpClient.PostAsJsonAsync("/api/excel/generateOrcamento", relatorioOrcamento);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            return null;
+        }
+        public async Task<byte[]?> ExportToExcelAsync(List<RelatorioGastoPorCategoriaResponse> relatorioGastoPorCategoriaResponse)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/excel/generateGastoPorCategoria", relatorioGastoPorCategoriaResponse);
 
             if (response.IsSuccessStatusCode)
             {

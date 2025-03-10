@@ -16,7 +16,17 @@ namespace PCF.SPA.Services
 
         public async Task<byte[]?> ExportToPdfAsync(List<RelatorioOrcamentoResponse> relatorioOrcamento)
         {
-            var response = await _httpClient.PostAsJsonAsync("/api/pdf/generate", relatorioOrcamento);
+            var response = await _httpClient.PostAsJsonAsync("/api/pdf/generateOrcamento", relatorioOrcamento);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            return null;
+        }
+        public async Task<byte[]?> ExportToPdfAsync(List<RelatorioGastoPorCategoriaResponse> relatorioGastoPorCategoriaResponse)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/pdf/generateGastoPorCategoria", relatorioGastoPorCategoriaResponse);
 
             if (response.IsSuccessStatusCode)
             {

@@ -51,6 +51,27 @@ namespace PCF.SPA.Pages.Reports
                 _loading = false;
             }
         }
+        private async Task ExportExcel()
+        {
+            var excelBytes = await ExcelExportService.ExportToExcelAsync(_relatorioGastoPorCategoria.ToList());
+
+            if (excelBytes != null)
+            {
+                var fileUrl = $"data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{Convert.ToBase64String(excelBytes)}";
+                await JS.InvokeVoidAsync("downloadFile", "relatorio.xlsx", fileUrl);
+            }
+        }
+
+        private async Task ExportPdf()
+        {
+            var pdfBytes = await PdfExportService.ExportToPdfAsync(_relatorioGastoPorCategoria.ToList());
+
+            if (pdfBytes != null)
+            {
+                var fileUrl = $"data:application/pdf;base64,{Convert.ToBase64String(pdfBytes)}";
+                await JS.InvokeVoidAsync("downloadFile", "relatorio.pdf", fileUrl);
+            }
+        }
         private static string LinhaEstilo(RelatorioGastoPorCategoriaResponse item,int index)
         {
             if (item.ValorLimite < item.ValorTotal)
