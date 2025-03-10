@@ -51,6 +51,8 @@ namespace PCF.API.Configuration
             services.AddScoped<IRelatorioService, RelatorioService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IAppIdentityUser, AppIdentityUser>();
+            services.AddScoped<PdfExportService>();
+            services.AddScoped<ExcelExportService>();
 
             return services;
         }

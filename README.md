@@ -10,7 +10,7 @@ O objetivo principal desenvolver uma plataforma de Controle Financeiro Pessoal w
 projetada para ajudar usuários a gerenciar suas finanças de forma eficiente e organizada. A solução deve oferecer um painel integrado para registro de transações financeiras, relatórios interativos, e ferramentas de planejamento
 financeiro, garantindo segurança, usabilidade e escalabilidade.
 
-### **Autor(es)**
+### **Autores**
 - **Eduardo Gimenes**
 - **Filipe Alan Elias**
 - **Jonatas Cruz**
@@ -52,6 +52,7 @@ A estrutura do projeto é organizada da seguinte forma:
   - PCF.SPA/ - Projeto Blazor
   - PCF.Api/ - API RESTful
   - PCF.Core/ - Modelos de Dados e Configuração do EF Core
+- tests/ - Testes unitários e de integração
      
 - README.md - Arquivo de Documentação do Projeto
 - FEEDBACK.md - Arquivo para Consolidação dos Feedbacks
