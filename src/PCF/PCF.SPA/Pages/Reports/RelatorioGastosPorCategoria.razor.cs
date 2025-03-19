@@ -75,10 +75,10 @@ namespace PCF.SPA.Pages.Reports
         private static string LinhaEstilo(RelatorioGastoPorCategoriaResponse item,int index)
         {
             if (item.ValorLimite < item.ValorTotal)
-            {
-                return "background-color: red; color: white;"; // Altera a cor de fundo para vermelho e a cor do texto para branco
+            {                
+                return "background-color: rgba(255, 0, 0, 0.2); color: black;";
             }
-            return ""; // Retorna uma string vazia para o estilo padrão
+            return "";
         }
     }
 }
